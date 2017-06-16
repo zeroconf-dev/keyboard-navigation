@@ -1,0 +1,6 @@
+dist/
+lib/
+lib2015/
+libnext/
+node_modules/
+*.log

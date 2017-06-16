@@ -1,0 +1,16 @@
+{
+    "extends": [
+        "tslint-secoya"
+    ],
+    "rules": {
+        "indent": [
+            true,
+            "spaces",
+            4
+        ],
+        "no-relative-imports": false,
+        "semicolon": [
+            "always"
+        ]
+    }
+}

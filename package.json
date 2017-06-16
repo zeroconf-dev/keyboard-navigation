@@ -1,0 +1,62 @@
+{
+    "name": "@secoya/form-tab-navigation.ts",
+    "version": "1.0.0",
+    "dependencies": {
+        "@secoya/collection.ts": "^2.0.3",
+        "prop-types": "^15.5.10",
+        "react": "^15.6.1",
+        "react-dom": "^15.6.1"
+    },
+    "devDependencies": {
+        "@types/jest": "^19.2.4",
+        "@types/prop-types": "^15.5.1",
+        "@types/react": "^15.0.28",
+        "jest": "^20.0.4",
+        "jest-environment-node-debug": "^2.0.0",
+        "prettier": "^1.4.4",
+        "ts-jest": "^20.0.6",
+        "tslib": "^1.7.1",
+        "tslint": "^5.4.3",
+        "tslint-secoya": "^1.0.4",
+        "typescript": "^2.3.4"
+    },
+    "jest": {
+        "globals": {
+            "__TS_CONFIG__": "tsconfig.test.json"
+        },
+        "moduleDirectories": [
+            "node_modules"
+        ],
+        "modulePathIgnorePatterns": [
+            "<rootDir>/build",
+            "<rootDir>/.next"
+        ],
+        "moduleFileExtensions": [
+            "js",
+            "jsx",
+            "ts",
+            "tsx",
+            "json"
+        ],
+        "testRegex": "/__tests__/.*\\.(ts|tsx)$",
+        "transform": {
+            "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+        }
+    },
+    "license": "BSD-3-Clause",
+    "repository": "https://github.com/secoya/form-tab-navigation.ts",
+    "scripts": {
+        "clean": "rm -Rf dist lib lib2015 libnext",
+        "build": "tsc -p tsconfig.json && tsc -p tsconfig.es2015.json && tsc -p tsconfig.esnext.json && tsc -p tsconfig.amd.json && tsc -p tsconfig.umd.json && tsc -p tsconfig.system.json",
+        "build:amd": "rm -Rf dist/amd && tsc -p tsconfig.amd.json",
+        "build:es5": "rm -Rf lib && tsc -p tsconfig.json",
+        "build:es2015": "rm -Rf lib2015 && tsc -p tsconfig.es2015.json",
+        "build:esnext": "rm -Rf libnext && tsc -p tsconfig.esnext.json",
+        "build:system": "rm -Rf dist/system && tsc -p tsconfig.system.json",
+        "build:umd": "rm -Rf dist/umd && tsc -p tsconfig.umd.json",
+        "fmt": "prettier --write --print-width 120 --tab-width 4 --single-quote --trailing-comma all --parser typescript \"src/**/*.ts?(x)\"",
+        "lint": "tslint --project tsconfig.json",
+        "prepublishOnly": "rm -Rf dist lib lib2015 libnext && tsc -p tsconfig.json && tsc -p tsconfig.es2015.json && tsc -p tsconfig.esnext.json && tsc -p tsconfig.amd.json && tsc -p tsconfig.umd.json && tsc -p tsconfig.system.json",
+        "test": "jest"
+    }
+}

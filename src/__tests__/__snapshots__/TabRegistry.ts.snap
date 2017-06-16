@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TabRegistry .add() adding duplicate keys throws 1`] = `"The value: 1 already exists"`;
+
+exports[`TabRegistry .addAfter() adding duplicate keys throws 1`] = `"The value 1 does already exist"`;
+
+exports[`TabRegistry .addBefore() adding duplicate keys throws 1`] = `"The value 1 does already exist"`;
+
+exports[`TabRegistry .delete() deleting a key that doesn't exist throws 1`] = `"The value 1 does not exist"`;
+
+exports[`TabRegistry .moveNext() moving a key that doesn't exist throws 1`] = `"Focuser for 1 was not found"`;
+
+exports[`TabRegistry .movePrev() moving a key that doesn't exist throws 1`] = `"Focuser for 1 was not found"`;
