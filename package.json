@@ -1,8 +1,9 @@
 {
-    "name": "@secoya/form-tab-navigation.ts",
+    "name": "@secoya/tab-navigation.ts",
     "version": "1.0.0",
     "dependencies": {
         "@secoya/collection.ts": "^2.0.3",
+        "@types/react-dom": "^15.5.0",
         "prop-types": "^15.5.10",
         "react": "^15.6.1",
         "react-dom": "^15.6.1"
@@ -10,7 +11,7 @@
     "devDependencies": {
         "@types/jest": "^19.2.4",
         "@types/prop-types": "^15.5.1",
-        "@types/react": "^15.0.28",
+        "@types/react": "^15.0.30",
         "jest": "^20.0.4",
         "jest-environment-node-debug": "^2.0.0",
         "prettier": "^1.4.4",
