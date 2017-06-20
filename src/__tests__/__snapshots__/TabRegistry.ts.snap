@@ -8,6 +8,20 @@ exports[`TabRegistry .addBefore() adding duplicate keys throws 1`] = `"The value
 
 exports[`TabRegistry .delete() deleting a key that doesn't exist throws 1`] = `"The value 1 does not exist"`;
 
+exports[`TabRegistry .focusNext() focus next to a key that doesn't exist throws 1`] = `"The value 1 does not exist"`;
+
+exports[`TabRegistry .focusNextIn() when first key in does not exist throws 1`] = `"The value 2 does not exist"`;
+
+exports[`TabRegistry .focusPrev() focus prev of a key that doesn't exist throws 1`] = `"The value 1 does not exist"`;
+
+exports[`TabRegistry .focusPrevIn() when first key in does not exist throws 1`] = `"The value 2 does not exist"`;
+
+exports[`TabRegistry .getNext() getting a focuser next to a key that does not exists should throw 1`] = `"The value 2 does not exist"`;
+
+exports[`TabRegistry .getPrev() getting a focuser prev to a key that does not exists should throw 1`] = `"The value 2 does not exist"`;
+
 exports[`TabRegistry .moveNext() moving a key that doesn't exist throws 1`] = `"Focuser for 1 was not found"`;
 
 exports[`TabRegistry .movePrev() moving a key that doesn't exist throws 1`] = `"Focuser for 1 was not found"`;
+
+exports[`TabRegistry .set() setting a focuser where key does not exist throws 1`] = `"Key does not exist: 2"`;

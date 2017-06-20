@@ -23,11 +23,19 @@ const focusOriginPrev: FocuserOptions = { focusOrigin: 'prev' };
  * Library class for controlling complex nested linked structures.
  */
 export class TabRegistry<E = any> {
+    public get first(): Focuser | null {
+        const first = this.firstKey;
+        if (first == null) {
+            return null;
+        }
+        return this.focuserMap.get(first) as Focuser;
+    }
+
     /**
      * The first key of the registry.
      * Is `null` if registry is empty.
      */
-    public get first(): E | null {
+    public get firstKey(): E | null {
         if (this.isEmpty) {
             return null;
         }
@@ -48,11 +56,19 @@ export class TabRegistry<E = any> {
         return this.registry.isEmpty;
     }
 
+    public get last(): Focuser | null {
+        const last = this.lastKey;
+        if (last == null) {
+            return null;
+        }
+        return this.focuserMap.get(last) as Focuser;
+    }
+
     /**
      * The last key of the registry.
      * Is `null` if registry is empty.
      */
-    public get last(): E | null {
+    public get lastKey(): E | null {
         if (this.isEmpty) {
             return null;
         }
@@ -159,7 +175,7 @@ export class TabRegistry<E = any> {
             return;
         }
 
-        let key: E | null = this.first;
+        let key: E | null = this.firstKey;
         while (key) {
             if (key instanceof TabRegistry) {
                 yield* Array.from(key);
@@ -235,13 +251,16 @@ export class TabRegistry<E = any> {
      * Returns `false` if the focuser does not exist.
      */
     public focus(key?: E, options?: FocuserOptions): boolean {
-        let internalKey = key;
+        let internalKey: E | undefined | null = key;
         if (internalKey == null) {
-            const first = this.first;
-            if (first == null) {
+            if (options != null && options.focusOrigin === 'next') {
+                internalKey = this.lastKey;
+            } else {
+                internalKey = this.firstKey;
+            }
+            if (internalKey == null) {
                 return false;
             }
-            internalKey = first;
         }
 
         const focuser = this.focuserMap.get(internalKey);
@@ -463,7 +482,7 @@ export class TabRegistry<E = any> {
         if (next == null) {
             return false;
         }
-        return this.focusIn([next, ...keys]);
+        return this.focusIn([next, ...keys], focusOriginPrev);
     }
 
     /**
@@ -548,7 +567,7 @@ export class TabRegistry<E = any> {
         if (prev == null) {
             return false;
         }
-        return this.focusIn([prev, ...keys]);
+        return this.focusIn([prev, ...keys], focusOriginNext);
     }
 
     /**
@@ -637,6 +656,9 @@ export class TabRegistry<E = any> {
      * Returns whether or not there exists a focuser after `key`.
      */
     public hasNext(key: E): boolean {
+        if (!this.registry.has(key)) {
+            return false;
+        }
         return this.registry.next(key) != null;
     }
 
@@ -644,6 +666,9 @@ export class TabRegistry<E = any> {
      * Returns whether or not there exists a focuser prev `key`.
      */
     public hasPrev(key: E): boolean {
+        if (!this.registry.has(key)) {
+            return false;
+        }
         return this.registry.prev(key) != null;
     }
 
