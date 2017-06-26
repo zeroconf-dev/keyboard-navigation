@@ -1,5 +1,5 @@
 import * as PropTypes from 'prop-types';
-import * as React from 'React';
+import * as React from 'react';
 import { TabRegistry } from 'TabRegistry';
 
 export interface TabBoundryProps {
@@ -40,7 +40,9 @@ export class TabBoundry extends React.Component<TabBoundryProps, TabBoundryState
         }
     }
 
-    private onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {};
+    private onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        return e;
+    };
 
     public getChildContext() {
         return {
