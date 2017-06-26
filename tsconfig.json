@@ -26,7 +26,10 @@
     },
     "exclude": [
         "**/__tests__/*",
+        "dist",
         "lib",
+        "lib2015",
+        "libnext",
         "node_modules"
     ]
 }
