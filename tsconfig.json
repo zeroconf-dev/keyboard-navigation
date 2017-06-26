@@ -19,7 +19,9 @@
             "dom"
         ],
         "paths": {
-            "@secoya/tab-navigation.ts": "./src"
+            "@secoya/tab-navigation.ts": [
+                "./src"
+            ]
         }
     },
     "exclude": [
