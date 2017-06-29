@@ -1,4 +1,4 @@
-import { DoublyLinkedOrderedSet } from '@secoya/collection.ts/lib/index';
+import { DoublyLinkedOrderedSet } from '@secoya/collection.ts';
 
 export interface FocuserOptions {
     focusOrigin: 'next' | 'prev' | 'none';

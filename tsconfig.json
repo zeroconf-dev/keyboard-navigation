@@ -15,14 +15,9 @@
         "moduleResolution": "node",
         "baseUrl": "./src",
         "lib": [
-            "es2015",
-            "dom"
-        ],
-        "paths": {
-            "@secoya/tab-navigation.ts": [
-                "./src"
-            ]
-        }
+            "dom",
+            "es2015"
+        ]
     },
     "exclude": [
         "**/__tests__/*",

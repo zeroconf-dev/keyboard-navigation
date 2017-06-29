@@ -1,8 +1,9 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
+        "declaration": false,
         "module": "system",
-        "outDir": "./dist/system",
+        "outFile": "./dist/bundle.system.js",
         "sourceMap": false
     }
 }

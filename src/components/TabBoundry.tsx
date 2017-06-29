@@ -1,3 +1,4 @@
+import { TabContextTypes } from 'components/TabContext';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { TabRegistry } from 'TabRegistry';
@@ -9,19 +10,20 @@ export interface TabBoundryProps {
 
 export interface TabBoundryState {}
 
-export interface ContextTypes {
-    tabRegistry?: TabRegistry;
-}
-
 export class TabBoundry extends React.Component<TabBoundryProps, TabBoundryState> {
     public static childContextTypes = {
         tabRegistry: PropTypes.instanceOf(TabRegistry),
     };
+
+    public static contextTypes = {
+        tabRegistry: PropTypes.instanceOf(TabBoundry),
+    };
+
     private tabRegistry: TabRegistry<any>;
 
-    public context: ContextTypes | null | undefined;
+    public context: TabContextTypes | null | undefined;
 
-    public constructor(props: TabBoundryProps, context?: ContextTypes) {
+    public constructor(props: TabBoundryProps, context?: TabContextTypes) {
         super(props, context);
         this.tabRegistry = new TabRegistry({
             cycle: !!props.cycle,
@@ -41,7 +43,16 @@ export class TabBoundry extends React.Component<TabBoundryProps, TabBoundryState
     }
 
     private onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        return e;
+        if (e.key === 'Tab' && e.target != null && (e.target as any).name != null) {
+            const name = (e.target as any).name as string;
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.shiftKey) {
+                this.tabRegistry.focusPrev(name);
+            } else {
+                this.tabRegistry.focusNext(name);
+            }
+        }
     };
 
     public getChildContext() {

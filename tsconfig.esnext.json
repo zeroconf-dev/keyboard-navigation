@@ -1,11 +1,11 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "outDir": "./libnext",
-        "target": "esnext",
         "lib": [
             "esnext",
             "dom"
-        ]
+        ],
+        "outDir": "./libnext",
+        "target": "esnext"
     }
 }

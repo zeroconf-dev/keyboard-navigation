@@ -1,26 +1,28 @@
+import { TabContextTypes } from 'components/TabContext';
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { TabRegistry } from 'TabRegistry';
 
 export interface TabbableProps {
     focus: boolean;
-    tabId: string;
+    name: string;
 }
 export interface TabbableState {
     hasFocus: boolean;
-}
-
-export interface ContextTypes {
-    tabRegistry?: TabRegistry;
 }
 
 export function Tabbable<CompProps>(
     Comp: new () => React.Component<CompProps>,
 ): React.ComponentClass<CompProps & TabbableProps> {
     return class extends React.Component<CompProps & TabbableProps, TabbableState> {
-        private refComponent: React.ReactElement<CompProps>;
-        public context: ContextTypes | null | undefined;
+        public static contextTypes = {
+            tabRegistry: PropTypes.instanceOf(TabRegistry),
+        };
 
-        public constructor(props: CompProps & TabbableProps, context?: ContextTypes) {
+        private refComponent: React.ReactElement<CompProps>;
+        public context: TabContextTypes | null | undefined;
+
+        public constructor(props: CompProps & TabbableProps, context?: TabContextTypes) {
             super(props, context);
             this.state = {
                 hasFocus: false,
@@ -29,7 +31,7 @@ export function Tabbable<CompProps>(
 
         public componentDidMount() {
             if (this.context != null && this.context.tabRegistry != null) {
-                this.context.tabRegistry.add(this.props.tabId, this.focusTabble);
+                this.context.tabRegistry.add(this.props.name, this.focusTabble);
             }
         }
 
@@ -58,35 +60,7 @@ export function Tabbable<CompProps>(
     };
 }
 
-class HTMLButton extends React.Component<React.HTMLProps<HTMLButtonElement>, {}> {
-    public render() {
-        return <button {...this.props} />;
-    }
-}
-
-class HTMLInput extends React.Component<React.HTMLProps<HTMLInputElement>, {}> {
-    public render() {
-        return <input {...this.props} />;
-    }
-}
-
-class HTMLSelect extends React.Component<React.HTMLProps<HTMLSelectElement>, {}> {
-    public render() {
-        return (
-            <select {...this.props}>
-                {this.props.children}
-            </select>
-        );
-    }
-}
-
-class HTMLTextArea extends React.Component<React.HTMLProps<HTMLTextAreaElement>, {}> {
-    public render() {
-        return <textarea {...this.props} />;
-    }
-}
-
-export const Button = Tabbable(HTMLButton);
-export const Input = Tabbable(HTMLInput);
-export const Select = Tabbable(HTMLSelect);
-export const TextArea = Tabbable(HTMLTextArea);
+export const Button = Tabbable('button' as any);
+export const Input = Tabbable('input' as any);
+export const Select = Tabbable('select' as any);
+export const TextArea = Tabbable('textarea' as any);
