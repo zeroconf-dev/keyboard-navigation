@@ -22,7 +22,6 @@
         "rollup-plugin-node-resolve": "^3.0.0",
         "rollup-plugin-replace": "^1.1.1",
         "rollup-plugin-ts": "^0.1.0",
-        "rollup-plugin-typescript2": "^0.4.5",
         "ts-jest": "^20.0.6",
         "tslib": "^1.7.1",
         "tslint": "^5.4.3",

@@ -1,7 +1,10 @@
-import path from 'path';
+import fs from 'fs';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
-import typescript from 'rollup-plugin-typescript2';
+import ts from 'rollup-plugin-ts';
+import typescript from 'typescript';
+
+const tsconfig = JSON.parse(fs.readFileSync('./tsconfig.json').toString());
 
 export default {
     context: 'window',
@@ -18,8 +21,12 @@ export default {
             'process.env.NODE_ENV': JSON.stringify('production'),
         }),
         resolve(),
-        typescript({
-            tsconfig: path.resolve('tsconfig.lib2015.json'),
+        ts({
+            typescript: typescript,
+            tsconfig: Object.assign({}, tsconfig.compilerOptions, {
+                module: 'es2015',
+                target: 'es2015',
+            }),
         }),
     ],
     targets: [
