@@ -1,7 +1,7 @@
+import path from 'path';
+import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
-import ts from 'rollup-plugin-ts';
-import typescript from 'typescript';
-const tsconfig = require('./tsconfig.json');
+import typescript from 'rollup-plugin-typescript2';
 
 export default {
     context: 'window',
@@ -13,13 +13,13 @@ export default {
         'prop-types': 'PropTypes',
     },
     plugins: [
+        'external-helpers',
+        replace({
+            'process.env.NODE_ENV': JSON.stringify('production'),
+        }),
         resolve(),
-        ts({
-            exclude: tsconfig.exclude,
-            typescript: typescript,
-            tsconfig: Object.assign({}, tsconfig.compilerOptions, {
-                target: 'es2015',
-            }),
+        typescript({
+            tsconfig: path.resolve('tsconfig.lib2015.json'),
         }),
     ],
     targets: [

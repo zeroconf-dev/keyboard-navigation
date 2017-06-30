@@ -3,9 +3,6 @@
         "target": "es5",
         "module": "commonjs",
         "jsx": "react",
-        "declaration": true,
-        "sourceMap": true,
-        "outDir": "./lib",
         "importHelpers": true,
         "strict": true,
         "noUnusedLocals": true,
@@ -13,12 +10,17 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
+        "rootDir": "./src",
         "baseUrl": "./src",
         "lib": [
             "dom",
             "es2015"
         ]
     },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx"
+    ],
     "exclude": [
         "**/__tests__/*",
         "dist",

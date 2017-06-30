@@ -3,9 +3,8 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { TabRegistry } from 'TabRegistry';
 
-export interface TabbableProps {
-    focus: boolean;
-    name: string;
+export interface TabbableProps extends React.HTMLProps<HTMLInputElement> {
+    focus?: boolean;
 }
 export interface TabbableState {
     hasFocus: boolean;

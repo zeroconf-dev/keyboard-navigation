@@ -4,4 +4,5 @@ lib/
 lib2015/
 libnext/
 node_modules/
+types/
 *.log

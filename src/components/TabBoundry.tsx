@@ -4,7 +4,7 @@ import * as React from 'react';
 import { TabRegistry } from 'TabRegistry';
 
 export interface TabBoundryProps {
-    boundryKey: string;
+    boundryKey?: string;
     cycle?: boolean;
 }
 
@@ -16,7 +16,7 @@ export class TabBoundry extends React.Component<TabBoundryProps, TabBoundryState
     };
 
     public static contextTypes = {
-        tabRegistry: PropTypes.instanceOf(TabBoundry),
+        tabRegistry: PropTypes.instanceOf(TabRegistry),
     };
 
     private tabRegistry: TabRegistry<any>;
