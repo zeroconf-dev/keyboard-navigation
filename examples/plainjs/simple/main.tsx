@@ -1,4 +1,4 @@
-import { Button, Input, Select, TabBoundry } from 'index';
+import { Button, Input, Select, TabBoundary } from 'index';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -17,7 +17,7 @@ class App extends React.Component {
         return (
             // tslint:disable-next-line:jsx-no-lambda
             <form onSubmit={this.preventDefault}>
-                <TabBoundry cycle={true}>
+                <TabBoundary cycle={true}>
                     <label htmlFor="username">Username:</label>
                     <div>
                         <Input id="username" name="username" />
@@ -41,7 +41,7 @@ class App extends React.Component {
                         </Select>
                     </div>
                     <label htmlFor="submit">Form controls</label>
-                    <TabBoundry boundryKey="controls">
+                    <TabBoundary boundryKey="controls">
                         <Input
                             name="reset"
                             type="reset"
@@ -52,8 +52,8 @@ class App extends React.Component {
                         <Button id="submit" name="submit">
                             Submit
                         </Button>
-                    </TabBoundry>
-                </TabBoundry>
+                    </TabBoundary>
+                </TabBoundary>
             </form>
         );
     }

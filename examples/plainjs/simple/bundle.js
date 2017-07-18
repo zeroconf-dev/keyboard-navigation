@@ -636,7 +636,7 @@ class TabRegistry {
         if (focuser == null) {
             return false;
         }
-        return focuser instanceof TabRegistry ? focuser.focus(null, options) : focuser(options || focusOriginNone);
+        return focuser instanceof TabRegistry ? focuser.focus(undefined, options) : focuser(options || focusOriginNone);
     }
     /**
      * Execute first focuser in the registry.
@@ -686,6 +686,9 @@ class TabRegistry {
      */
     focusIn(keys, options) {
         let key = keys.shift();
+        if (key == null) {
+            return false;
+        }
         let registry = this;
         while (registry.has(key)) {
             const focuser = registry.get(key);
@@ -704,7 +707,7 @@ class TabRegistry {
             }
             else {
                 if (focuser instanceof TabRegistry) {
-                    return focuser.focus(null, options);
+                    return focuser.focus(undefined, options);
                 }
                 else {
                     if (options == null) {
@@ -964,6 +967,9 @@ class TabRegistry {
      */
     hasIn(keys) {
         let key = keys.shift();
+        if (key == null) {
+            return false;
+        }
         let registry = this;
         while (registry.has(key)) {
             const focuser = registry.get(key);
@@ -3819,7 +3825,7 @@ const Input = Tabbable('input');
 const Select = Tabbable('select');
 const TextArea = Tabbable('textarea');
 
-class TabBoundry extends react_1 {
+class TabBoundary extends react_1 {
     constructor(props, context) {
         super(props, context);
         this.onKeyDown = (e) => {
@@ -3858,10 +3864,10 @@ class TabBoundry extends react_1 {
         return (react_2("div", { onKeyDown: this.onKeyDown }, this.props.children));
     }
 }
-TabBoundry.childContextTypes = {
+TabBoundary.childContextTypes = {
     tabRegistry: index_2(TabRegistry),
 };
-TabBoundry.contextTypes = {
+TabBoundary.contextTypes = {
     tabRegistry: index_2(TabRegistry),
 };
 
@@ -16627,7 +16633,7 @@ class App extends react_1 {
         return (
         // tslint:disable-next-line:jsx-no-lambda
         react_2("form", { onSubmit: this.preventDefault },
-            react_2(TabBoundry, { cycle: true },
+            react_2(TabBoundary, { cycle: true },
                 react_2("label", { htmlFor: "username" }, "Username:"),
                 react_2("div", null,
                     react_2(Input, { id: "username", name: "username" })),
@@ -16644,7 +16650,7 @@ class App extends react_1 {
                         react_2("option", { value: "female" }, "Female"),
                         react_2("option", { value: "male" }, "Male"))),
                 react_2("label", { htmlFor: "submit" }, "Form controls"),
-                react_2(TabBoundry, { boundryKey: "controls" },
+                react_2(TabBoundary, { boundryKey: "controls" },
                     react_2(Input, { name: "reset", type: "reset", value: "Reset", 
                         // tslint:disable-next-line:jsx-no-multiline-js jsx-no-lambda react-tsx-curly-spacing
                         onClick: this.focusFirst }),

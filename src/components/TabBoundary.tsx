@@ -3,14 +3,14 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { TabRegistry } from 'TabRegistry';
 
-export interface TabBoundryProps {
+export interface TabBoundaryProps {
     boundryKey?: string;
     cycle?: boolean;
 }
 
-export interface TabBoundryState {}
+export interface TabBoundaryState {}
 
-export class TabBoundry extends React.Component<TabBoundryProps, TabBoundryState> {
+export class TabBoundary extends React.Component<TabBoundaryProps, TabBoundaryState> {
     public static childContextTypes = {
         tabRegistry: PropTypes.instanceOf(TabRegistry),
     };
@@ -23,7 +23,7 @@ export class TabBoundry extends React.Component<TabBoundryProps, TabBoundryState
 
     public context: TabContextTypes | null | undefined;
 
-    public constructor(props: TabBoundryProps, context?: TabContextTypes) {
+    public constructor(props: TabBoundaryProps, context?: TabContextTypes) {
         super(props, context);
         this.tabRegistry = new TabRegistry({
             cycle: !!props.cycle,

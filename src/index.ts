@@ -1,3 +1,3 @@
 export * from 'TabRegistry';
 export * from 'components/Tabbable';
-export * from 'components/TabBoundry';
+export * from 'components/TabBoundary';
