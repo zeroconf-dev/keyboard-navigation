@@ -5,7 +5,7 @@ export interface FocuserOptions {
 }
 
 export type FocuserFn = (foucuserOpts: FocuserOptions) => boolean;
-export type Focuser = TabRegistry<any> | FocuserFn;
+export type Focuser<E = any> = TabRegistry<E> | FocuserFn;
 
 export interface TabRegistryOptions {
     /**
@@ -23,12 +23,12 @@ const focusOriginPrev: FocuserOptions = { focusOrigin: 'prev' };
  * Library class for controlling complex nested linked structures.
  */
 export class TabRegistry<E = any> {
-    public get first(): Focuser | null {
+    public get first(): Focuser<E> | null {
         const first = this.firstKey;
         if (first == null) {
             return null;
         }
-        return this.focuserMap.get(first) as Focuser;
+        return this.focuserMap.get(first) as Focuser<E>;
     }
 
     /**
@@ -56,12 +56,12 @@ export class TabRegistry<E = any> {
         return this.registry.isEmpty;
     }
 
-    public get last(): Focuser | null {
+    public get last(): Focuser<E> | null {
         const last = this.lastKey;
         if (last == null) {
             return null;
         }
-        return this.focuserMap.get(last) as Focuser;
+        return this.focuserMap.get(last) as Focuser<E>;
     }
 
     /**
@@ -78,15 +78,15 @@ export class TabRegistry<E = any> {
     /**
      * Constructs any empty registry with default options.
      */
-    public static empty<E = any>() {
-        return new TabRegistry<E>();
+    public static empty<EStatic = any>() {
+        return new TabRegistry<EStatic>();
     }
     /**
      * Construct registry from nested map structure.
      */
-    public static fromMap<E = any>(map: Map<E, any>, options?: TabRegistryOptions): TabRegistry<E> {
-        const registry = new TabRegistry<E>(options);
-        map.forEach((value: FocuserFn | Map<E, FocuserFn>, key: E) => {
+    public static fromMap<EStatic = any>(map: Map<EStatic, any>, options?: TabRegistryOptions): TabRegistry<EStatic> {
+        const registry = new TabRegistry<EStatic>(options);
+        map.forEach((value: FocuserFn | Map<EStatic, FocuserFn>, key: EStatic) => {
             if (value instanceof Map) {
                 const r = TabRegistry.fromMap(value);
                 registry.add(key, r);
@@ -112,12 +112,12 @@ export class TabRegistry<E = any> {
     /**
      * Internal map from key to a `focuser`
      */
-    private focuserMap: Map<E, Focuser>;
+    private focuserMap: Map<E, Focuser<E>>;
 
     /**
      * Reference to the parent registry if it exists.
      */
-    private parentRegistry: TabRegistry<any> | null;
+    private parentRegistry: TabRegistry<E> | null;
 
     /**
      * The key to this registry from the parent registry if it exists.
@@ -170,7 +170,7 @@ export class TabRegistry<E = any> {
     /**
      * Enabling iterating through all the focusers.
      */
-    public [Symbol.iterator] = function*(this: TabRegistry<E>): IterableIterator<Focuser> {
+    public [Symbol.iterator] = function*(this: TabRegistry<E>): IterableIterator<Focuser<E>> {
         if (this.isEmpty) {
             return;
         }
@@ -180,7 +180,7 @@ export class TabRegistry<E = any> {
             if (key instanceof TabRegistry) {
                 yield* Array.from(key);
             } else {
-                yield this.focuserMap.get(key) as Focuser;
+                yield this.focuserMap.get(key) as Focuser<E>;
             }
             key = this.registry.next(key);
         }
@@ -189,7 +189,7 @@ export class TabRegistry<E = any> {
     /**
      * Add a `focuser` to the registry referenced by `key`.
      */
-    public add(key: E, focuser: Focuser): void {
+    public add(key: E, focuser: Focuser<E>): void {
         this.registry.add(key);
         this.focuserMap.set(key, focuser);
         if (focuser instanceof TabRegistry) {
@@ -201,7 +201,7 @@ export class TabRegistry<E = any> {
      * Add a `focuser` to the registry after the `afterKey`
      * referenced by `key`.
      */
-    public addAfter(key: E, focuser: Focuser, afterKey: E): void {
+    public addAfter(key: E, focuser: Focuser<E>, afterKey: E): void {
         this.registry.addAfter(key, afterKey);
         this.focuserMap.set(key, focuser);
         if (focuser instanceof TabRegistry) {
@@ -213,7 +213,7 @@ export class TabRegistry<E = any> {
      * Add a `focuser` to the registry before the `beforeKey`
      * referenced by `key`.
      */
-    public addBefore(key: E, focuser: Focuser, beforeKey: E): void {
+    public addBefore(key: E, focuser: Focuser<E>, beforeKey: E): void {
         this.registry.addBefore(key, beforeKey);
         this.focuserMap.set(key, focuser);
         if (focuser instanceof TabRegistry) {
@@ -268,7 +268,7 @@ export class TabRegistry<E = any> {
             return false;
         }
 
-        return focuser instanceof TabRegistry ? focuser.focus(null, options) : focuser(options || focusOriginNone);
+        return focuser instanceof TabRegistry ? focuser.focus(undefined, options) : focuser(options || focusOriginNone);
     }
 
     /**
@@ -323,7 +323,10 @@ export class TabRegistry<E = any> {
      */
     public focusIn(keys: E[], options?: FocuserOptions): boolean {
         let key = keys.shift();
-        let registry = this as TabRegistry<any>;
+        if (key == null) {
+            return false;
+        }
+        let registry: TabRegistry<E> = this;
         while (registry.has(key)) {
             const focuser = registry.get(key);
             if (focuser == null) {
@@ -340,7 +343,7 @@ export class TabRegistry<E = any> {
                 }
             } else {
                 if (focuser instanceof TabRegistry) {
-                    return focuser.focus(null, options);
+                    return focuser.focus(undefined, options);
                 } else {
                     if (options == null) {
                         return focuser(focusOriginNone);
@@ -575,7 +578,7 @@ export class TabRegistry<E = any> {
      * otherwise return `null`.
      */
     // tslint:disable-next-line:no-reserved-keywords
-    public get(key: E): Focuser | null {
+    public get(key: E): Focuser<E> | null {
         const focuser = this.focuserMap.get(key);
         if (focuser == null) {
             return null;
@@ -588,7 +591,7 @@ export class TabRegistry<E = any> {
      * Returns the forcuser after `key` if it exists
      * otherwise return `null`.
      */
-    public getNext(key: E): Focuser | null {
+    public getNext(key: E): Focuser<E> | null {
         const next = this.registry.next(key);
         if (next == null) {
             return null;
@@ -604,7 +607,7 @@ export class TabRegistry<E = any> {
      * Returns the forcuser before `key` if it exists
      * otherwise return `null`.
      */
-    public getPrev(key: E): Focuser | null {
+    public getPrev(key: E): Focuser<E> | null {
         const prev = this.registry.prev(key);
         if (prev == null) {
             return null;
@@ -629,7 +632,10 @@ export class TabRegistry<E = any> {
      */
     public hasIn(keys: E[]): boolean {
         let key = keys.shift();
-        let registry = this as TabRegistry<any>;
+        if (key == null) {
+            return false;
+        }
+        let registry: TabRegistry<E> = this;
         while (registry.has(key)) {
             const focuser = registry.get(key);
             if (focuser == null) {
@@ -741,7 +747,7 @@ export class TabRegistry<E = any> {
      * It throws if `key` does not exist.
      */
     // tslint:disable-next-line:no-reserved-keywords
-    public set(key: E, focuser: Focuser) {
+    public set(key: E, focuser: Focuser<E>) {
         const existingFocuser = this.focuserMap.get(key);
         if (existingFocuser == null) {
             throw new Error(`Key does not exist: ${key}`);
@@ -754,7 +760,7 @@ export class TabRegistry<E = any> {
      * Set the `key` of this registry from
      * the `parentRegistry`.
      */
-    public setParentRegistry(parentRegistryKey: any, parentRegistry: TabRegistry) {
+    public setParentRegistry(parentRegistryKey: any, parentRegistry: TabRegistry<E>) {
         this.parentRegistry = parentRegistry;
         this.parentRegistryKey = parentRegistryKey;
     }
