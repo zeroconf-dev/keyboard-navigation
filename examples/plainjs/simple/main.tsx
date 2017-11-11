@@ -1,6 +1,6 @@
-import { Button, Input, Select, TabBoundary } from 'index';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Button, Input, Select, TabBoundary } from '../../../src/index';
 
 class App extends React.Component {
     private focusFirst = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -33,21 +33,19 @@ class App extends React.Component {
                     <label htmlFor="gender">Gender:</label>
                     <div>
                         <Select id="gender" name="gender">
-                            <option value="">
-                                {''}
-                            </option>
+                            <option value="">{''}</option>
                             <option value="female">Female</option>
                             <option value="male">Male</option>
                         </Select>
                     </div>
                     <label htmlFor="submit">Form controls</label>
-                    <TabBoundary boundryKey="controls">
+                    <TabBoundary boundaryKey="controls">
                         <Input
                             name="reset"
-                            type="reset"
-                            value="Reset"
                             // tslint:disable-next-line:jsx-no-multiline-js jsx-no-lambda react-tsx-curly-spacing
                             onClick={this.focusFirst}
+                            type="reset"
+                            value="Reset"
                         />
                         <Button id="submit" name="submit">
                             Submit

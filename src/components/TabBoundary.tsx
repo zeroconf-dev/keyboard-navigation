@@ -4,7 +4,7 @@ import { TabRegistry } from '../TabRegistry';
 import { TabContextTypes } from './TabContext';
 
 export interface TabBoundaryProps {
-    boundryKey?: string;
+    boundaryKey?: string;
     cycle?: boolean;
 }
 
@@ -32,13 +32,13 @@ export class TabBoundary extends React.Component<TabBoundaryProps, TabBoundarySt
 
     public componentDidMount() {
         if (this.context != null && this.context.tabRegistry != null) {
-            this.context.tabRegistry.add(this.props.boundryKey, this.tabRegistry);
+            this.context.tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
         }
     }
 
     public componentWillUnmount() {
         if (this.context != null && this.context.tabRegistry != null) {
-            this.context.tabRegistry.delete(this.props.boundryKey);
+            this.context.tabRegistry.delete(this.props.boundaryKey);
         }
     }
 
