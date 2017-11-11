@@ -46,5 +46,5 @@
         "prepublishOnly": "rm -Rf dist lib lib2015 libnext types && tslint --project tsconfig.json && jest && tsc -p tsconfig.lib.json && tsc -p tsconfig.lib2015.json && tsc -p tsconfig.libnext.json && rollup -c rollup.config.dist.js",
         "test": "jest"
     },
-    "types": "lib/index.d.ts"
+    "types": "types/index.d.ts"
 }

@@ -1,7 +1,7 @@
-import { TabContextTypes } from 'components/TabContext';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { TabRegistry } from 'TabRegistry';
+import { TabRegistry } from '../TabRegistry';
+import { TabContextTypes } from './TabContext';
 
 export interface TabBoundaryProps {
     boundryKey?: string;
@@ -62,10 +62,6 @@ export class TabBoundary extends React.Component<TabBoundaryProps, TabBoundarySt
     }
 
     public render() {
-        return (
-            <div onKeyDown={this.onKeyDown}>
-                {this.props.children}
-            </div>
-        );
+        return <div onKeyDown={this.onKeyDown}>{this.props.children}</div>;
     }
 }

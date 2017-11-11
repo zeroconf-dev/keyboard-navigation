@@ -1,7 +1,7 @@
-import { TabContextTypes } from 'components/TabContext';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { TabRegistry } from 'TabRegistry';
+import { TabRegistry } from '../TabRegistry';
+import { TabContextTypes } from './TabContext';
 
 export interface TabbableProps extends React.HTMLProps<HTMLInputElement> {
     focus?: boolean;
