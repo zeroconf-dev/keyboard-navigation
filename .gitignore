@@ -1,8 +1,10 @@
-.rpt2_cache/
-dist/
-lib/
-lib2015/
-libnext/
-node_modules/
-types/
+/.rpt2_cache/
+/dist/
+/lib/
+/lib2015/
+/libnext/
+/node_modules/
+/types/
+
 *.log
+*.tgz
