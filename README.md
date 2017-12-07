@@ -1,8 +1,7 @@
 # <FormTabNavigation />
 
-This library ships with an implementation that works with react,
-but it is not limited too react. Maybe later the react part will
-be moved to separate library.
+This library ships with an implementation that works with react, but it is not limited too react. Maybe later the react
+part will be moved to separate library.
 
 ## Table of contents
 
@@ -15,19 +14,19 @@ be moved to separate library.
 
 ## Getting Started
 
-First add the form-tab-navigation.ts to your project
+First add the tab-navigation.ts to your project
 
 ```shell
-npm install @secoya/form-tab-navigation.ts
+npm install @secoya/tab-navigation.ts
 ```
 
 ```html
 <html>
 <head>
-    <script type="application/javascript" src="//github.com/secoya/form-tab-navigation.ts/blob/latest/dist/umd.js">
+    <script type="application/javascript" src="//github.com/secoya/tab-navigation.ts/blob/latest/dist/umd.js">
 </head>
 <body>
-    
+
     <form>
         <p>
             <label for="first-name">First name</label>
@@ -56,9 +55,7 @@ npm install @secoya/form-tab-navigation.ts
 ```
 
 ```js
-import { TabRegistry } from '@secoya/form-tab-navigation.ts'
-
-
+import { TabRegistry } from '@secoya/tab-navigation.ts';
 ```
 
 ## Examples
