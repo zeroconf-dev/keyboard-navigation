@@ -107,7 +107,7 @@ export class TabRegistry<E = any> {
      * Indicator for if focus cycle is running.
      * This is used for detect infinite loops.
      */
-    private focusCycleStartKey: E | null;
+    private focusCycleStartKey: E | null = null;
 
     /**
      * Internal map from key to a `focuser`

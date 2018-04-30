@@ -15,7 +15,18 @@ if (!entry.startsWith('examples')) {
 }
 export default {
     context: 'window',
-    entry: path.resolve(entry),
+    input: path.resolve(entry),
+    output: {
+        file: path.resolve(path.dirname(entry), 'bundle.js'),
+        format: 'iife',
+        external: ['react', 'react-dom', 'prop-types'],
+        globals: {
+            react: 'React',
+            'react-dom': 'ReactDOM',
+            'prop-types': 'PropTypes',
+        },
+        name: 'example',
+    },
     plugins: [
         'external-helpers',
         replace({
@@ -38,12 +49,5 @@ export default {
                 'node_modules/prop-types/index.js': ['object', 'instanceOf'],
             },
         }),
-    ],
-    targets: [
-        {
-            dest: path.resolve(path.dirname(entry), 'bundle.js'),
-            format: 'iife',
-            moduleName: 'example',
-        },
     ],
 };

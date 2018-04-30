@@ -18,7 +18,7 @@ export function Tabbable<CompProps>(
             tabRegistry: PropTypes.instanceOf(TabRegistry),
         };
 
-        private refComponent: React.ReactElement<CompProps>;
+        private refComponent: React.ReactElement<CompProps> | null = null;
         public context: TabContextTypes | null | undefined;
 
         public constructor(props: CompProps & TabbableProps, context?: TabContextTypes) {

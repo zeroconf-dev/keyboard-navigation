@@ -8,13 +8,30 @@ const tsconfig = JSON.parse(fs.readFileSync('./tsconfig.json').toString());
 
 export default {
     context: 'window',
-    entry: 'src/index.ts',
+    input: 'src/index.ts',
     external: ['react', 'react-dom', 'prop-types'],
-    globals: {
-        react: 'React',
-        'react-dom': 'ReactDOM',
-        'prop-types': 'PropTypes',
-    },
+    output: [
+        {
+            file: 'dist/bundle.amd.js',
+            format: 'amd',
+            globals: {
+                react: 'React',
+                'react-dom': 'ReactDOM',
+                'prop-types': 'PropTypes',
+            },
+            name: 'tab-navigation',
+        },
+        {
+            file: 'dist/bundle.umd.js',
+            format: 'umd',
+            globals: {
+                react: 'React',
+                'react-dom': 'ReactDOM',
+                'prop-types': 'PropTypes',
+            },
+            name: 'tab-navigation',
+        },
+    ],
     plugins: [
         'external-helpers',
         replace({
@@ -28,17 +45,5 @@ export default {
                 target: 'es2015',
             }),
         }),
-    ],
-    targets: [
-        {
-            dest: 'dist/bundle.amd.js',
-            format: 'amd',
-            moduleName: 'tab-navigation',
-        },
-        {
-            dest: 'dist/bundle.umd.js',
-            format: 'umd',
-            moduleName: 'tab-navigation',
-        },
     ],
 };

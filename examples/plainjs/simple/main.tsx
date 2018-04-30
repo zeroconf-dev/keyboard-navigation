@@ -3,21 +3,26 @@ import * as ReactDOM from 'react-dom';
 import { Button, Input, Select, TabBoundary } from '../../../src/index';
 
 class App extends React.Component {
+    private refBoundary: TabBoundary | null = null;
     private focusFirst = (e: React.MouseEvent<HTMLInputElement>) => {
         // this is not the real implementation
         // but a quick hack to proof that the concept works.
-        const comp = (e as any)._dispatchInstances._currentElement._owner;
-        const context = comp._context;
-        context.tabRegistry.parentRegistry.focusFirst();
+        if (this.refBoundary != null) {
+            this.refBoundary.getChildContext().tabRegistry.focusFirst();
+        }
     };
 
     private preventDefault = (e: React.FormEvent<HTMLFormElement>) => e.preventDefault();
+
+    private setBoundaryRef = (ref: TabBoundary | null) => {
+        this.refBoundary = ref;
+    };
 
     public render() {
         return (
             // tslint:disable-next-line:jsx-no-lambda
             <form onSubmit={this.preventDefault}>
-                <TabBoundary cycle={true}>
+                <TabBoundary cycle={true} ref={this.setBoundaryRef}>
                     <label htmlFor="username">Username:</label>
                     <div>
                         <Input id="username" name="username" />
