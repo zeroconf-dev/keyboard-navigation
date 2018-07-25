@@ -3,14 +3,19 @@ import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
 import { TabContextTypes } from './TabContext';
 
-export interface TabBoundaryProps {
+export interface TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
     boundaryKey?: string;
+    component?: TComp;
+    componentProps?: JSX.IntrinsicElements[TComp];
     cycle?: boolean;
 }
 
 export interface TabBoundaryState {}
 
-export class TabBoundary extends React.Component<TabBoundaryProps, TabBoundaryState> {
+export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
+    TabBoundaryProps<TComp>,
+    TabBoundaryState
+> {
     public static childContextTypes = {
         tabRegistry: PropTypes.instanceOf(TabRegistry),
     };
@@ -23,7 +28,7 @@ export class TabBoundary extends React.Component<TabBoundaryProps, TabBoundarySt
 
     public context: TabContextTypes | null | undefined;
 
-    public constructor(props: TabBoundaryProps, context?: TabContextTypes) {
+    public constructor(props: TabBoundaryProps<TComp>, context?: TabContextTypes) {
         super(props, context);
         this.tabRegistry = new TabRegistry({
             cycle: !!props.cycle,
@@ -42,7 +47,7 @@ export class TabBoundary extends React.Component<TabBoundaryProps, TabBoundarySt
         }
     }
 
-    private onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    private onKeyDown = (e: React.KeyboardEvent<any>) => {
         if (e.key === 'Tab' && e.target != null && (e.target as any).name != null) {
             const name = (e.target as any).name as string;
             e.preventDefault();
@@ -62,6 +67,11 @@ export class TabBoundary extends React.Component<TabBoundaryProps, TabBoundarySt
     }
 
     public render() {
-        return <div onKeyDown={this.onKeyDown}>{this.props.children}</div>;
+        const comp = this.props.component == null ? 'div' : this.props.component;
+        return React.createElement(
+            comp,
+            Object.assign({}, this.props.componentProps, { onKeyDown: this.onKeyDown }),
+            this.props.children,
+        );
     }
 }

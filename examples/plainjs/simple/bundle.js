@@ -1081,90 +1081,13 @@
      *
      * This source code is licensed under the MIT license found in the
      * LICENSE file in the root directory of this source tree.
-     *
-     * 
-     */
-
-    function makeEmptyFunction(arg) {
-      return function () {
-        return arg;
-      };
-    }
-
-    /**
-     * This function accepts and discards inputs; it has no side effects. This is
-     * primarily useful idiomatically for overridable function endpoints which
-     * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
-     */
-    var emptyFunction = function emptyFunction() {};
-
-    emptyFunction.thatReturns = makeEmptyFunction;
-    emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
-    emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
-    emptyFunction.thatReturnsNull = makeEmptyFunction(null);
-    emptyFunction.thatReturnsThis = function () {
-      return this;
-    };
-    emptyFunction.thatReturnsArgument = function (arg) {
-      return arg;
-    };
-
-    var emptyFunction_1 = emptyFunction;
-
-    /**
-     * Copyright (c) 2013-present, Facebook, Inc.
-     *
-     * This source code is licensed under the MIT license found in the
-     * LICENSE file in the root directory of this source tree.
-     *
-     */
-
-    /**
-     * Use invariant() to assert state which your program assumes to be true.
-     *
-     * Provide sprintf-style format (only %s is supported) and arguments
-     * to provide information about what broke and what you were
-     * expecting.
-     *
-     * The invariant message will be stripped in production, but the invariant
-     * will remain to ensure logic does not differ in production.
-     */
-
-    var validateFormat = function validateFormat(format) {};
-
-    function invariant(condition, format, a, b, c, d, e, f) {
-      validateFormat(format);
-
-      if (!condition) {
-        var error;
-        if (format === undefined) {
-          error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-        } else {
-          var args = [a, b, c, d, e, f];
-          var argIndex = 0;
-          error = new Error(format.replace(/%s/g, function () {
-            return args[argIndex++];
-          }));
-          error.name = 'Invariant Violation';
-        }
-
-        error.framesToPop = 1; // we don't care about invariant's own frame
-        throw error;
-      }
-    }
-
-    var invariant_1 = invariant;
-
-    /**
-     * Copyright (c) 2013-present, Facebook, Inc.
-     *
-     * This source code is licensed under the MIT license found in the
-     * LICENSE file in the root directory of this source tree.
      */
 
     var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
     var ReactPropTypesSecret_1 = ReactPropTypesSecret;
+
+    function emptyFunction() {}
 
     var factoryWithThrowingShims = function() {
       function shim(props, propName, componentName, location, propFullName, secret) {
@@ -1172,12 +1095,13 @@
           // It is still safe when called from React.
           return;
         }
-        invariant_1(
-          false,
+        var err = new Error(
           'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
           'Use PropTypes.checkPropTypes() to call them. ' +
           'Read more at http://fb.me/use-check-prop-types'
         );
+        err.name = 'Invariant Violation';
+        throw err;
       }  shim.isRequired = shim;
       function getShim() {
         return shim;
@@ -1204,7 +1128,7 @@
         exact: getShim
       };
 
-      ReactPropTypes.checkPropTypes = emptyFunction_1;
+      ReactPropTypes.checkPropTypes = emptyFunction;
       ReactPropTypes.PropTypes = ReactPropTypes;
 
       return ReactPropTypes;
@@ -1228,6 +1152,7 @@
     var propTypes_2 = propTypes.instanceOf;
 
     function Tabbable(Comp) {
+        var _a;
         return _a = class extends React.Component {
                 constructor(props, context) {
                     super(props, context);
@@ -1262,7 +1187,6 @@
                 tabRegistry: propTypes_2(TabRegistry),
             },
             _a;
-        var _a;
     }
     const Button = Tabbable('button');
     const Input = Tabbable('input');
@@ -1305,7 +1229,8 @@
             };
         }
         render() {
-            return React.createElement("div", { onKeyDown: this.onKeyDown }, this.props.children);
+            const comp = this.props.component == null ? 'div' : this.props.component;
+            return React.createElement(comp, Object.assign({}, this.props.componentProps, { onKeyDown: this.onKeyDown }), this.props.children);
         }
     }
     TabBoundary.childContextTypes = {
