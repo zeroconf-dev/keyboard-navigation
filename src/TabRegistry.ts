@@ -182,7 +182,7 @@ export class TabRegistry<E = any> {
             } else {
                 yield this.focuserMap.get(key) as Focuser<E>;
             }
-            key = this.registry.next(key);
+            key = this.getNextKey(key);
         }
     };
 
@@ -417,7 +417,7 @@ export class TabRegistry<E = any> {
         // if cycly is enabled.
         let focuser;
         let current;
-        let next = this.registry.next(key);
+        let next = this.getNextKey(key);
         const totalCount = this.registry.size;
 
         for (let i = totalCount; i > 0; i--) {
@@ -427,7 +427,7 @@ export class TabRegistry<E = any> {
 
             current = next;
             focuser = this.focuserMap.get(current);
-            next = this.registry.next(current);
+            next = this.getNextKey(current);
 
             if (focuser == null) {
                 continue;
@@ -481,7 +481,7 @@ export class TabRegistry<E = any> {
         if (key == null) {
             return false;
         }
-        const next = this.registry.next(key);
+        const next = this.getNextKey(key);
         if (next == null) {
             return false;
         }
@@ -502,7 +502,7 @@ export class TabRegistry<E = any> {
         // if cycly is enabled.
         let focuser;
         let current;
-        let prev = this.registry.prev(key);
+        let prev = this.getPrevKey(key);
         const totalCount = this.registry.size;
 
         for (let i = totalCount; i > 0; i--) {
@@ -512,7 +512,7 @@ export class TabRegistry<E = any> {
 
             current = prev;
             focuser = this.focuserMap.get(prev);
-            prev = this.registry.prev(prev);
+            prev = this.getPrevKey(prev);
 
             if (focuser == null) {
                 continue;
@@ -566,7 +566,7 @@ export class TabRegistry<E = any> {
         if (key == null) {
             return false;
         }
-        const prev = this.registry.prev(key);
+        const prev = this.getPrevKey(key);
         if (prev == null) {
             return false;
         }
@@ -592,7 +592,7 @@ export class TabRegistry<E = any> {
      * otherwise return `null`.
      */
     public getNext(key: E): Focuser<E> | null {
-        const next = this.registry.next(key);
+        const next = this.getNextKey(key);
         if (next == null) {
             return null;
         }
@@ -604,11 +604,18 @@ export class TabRegistry<E = any> {
     }
 
     /**
+     * Returns the key next to the key parameter.
+     */
+    public getNextKey(key: E): E | null {
+        return this.registry.next(key);
+    }
+
+    /**
      * Returns the forcuser before `key` if it exists
      * otherwise return `null`.
      */
     public getPrev(key: E): Focuser<E> | null {
-        const prev = this.registry.prev(key);
+        const prev = this.getPrevKey(key);
         if (prev == null) {
             return null;
         }
@@ -617,6 +624,13 @@ export class TabRegistry<E = any> {
             return null;
         }
         return focuser;
+    }
+
+    /**
+     * Returns the key previous to the key parameter.
+     */
+    public getPrevKey(key: E): E | null {
+        return this.registry.prev(key);
     }
 
     /**
@@ -665,7 +679,7 @@ export class TabRegistry<E = any> {
         if (!this.registry.has(key)) {
             return false;
         }
-        return this.registry.next(key) != null;
+        return this.getNextKey(key) != null;
     }
 
     /**
@@ -675,7 +689,7 @@ export class TabRegistry<E = any> {
         if (!this.registry.has(key)) {
             return false;
         }
-        return this.registry.prev(key) != null;
+        return this.getPrevKey(key) != null;
     }
 
     /**
@@ -689,7 +703,7 @@ export class TabRegistry<E = any> {
         let key: E | null = this.registry.first;
         while (key) {
             yield key;
-            key = this.registry.next(key);
+            key = this.getNextKey(key);
         }
     };
 
@@ -710,7 +724,7 @@ export class TabRegistry<E = any> {
             } else {
                 yield key;
             }
-            key = this.registry.next(key);
+            key = this.getNextKey(key);
         }
     };
 
@@ -722,7 +736,7 @@ export class TabRegistry<E = any> {
         if (focuser == null) {
             throw new Error(`Focuser for ${key} was not found`);
         }
-        const next = this.registry.next(key);
+        const next = this.getNextKey(key);
         if (next != null) {
             this.registry.setAfter(key, next);
         }
@@ -736,7 +750,7 @@ export class TabRegistry<E = any> {
         if (focuser == null) {
             throw new Error(`Focuser for ${key} was not found`);
         }
-        const prev = this.registry.prev(key);
+        const prev = this.getPrevKey(key);
         if (prev != null) {
             this.registry.setBefore(key, prev);
         }
