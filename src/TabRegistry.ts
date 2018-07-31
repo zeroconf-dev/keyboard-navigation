@@ -1,7 +1,9 @@
 import { DoublyLinkedOrderedSet } from '@secoya/collection.ts';
 
+export type FocusOrigin = 'none' | 'next' | 'prev' | 'parent' | 'child' | 'user' | 'keyboard' | 'mouse' | 'custom';
+
 export interface FocuserOptions {
-    focusOrigin: 'next' | 'prev' | 'none';
+    focusOrigin: FocusOrigin;
 }
 
 export type FocuserFn = (foucuserOpts: FocuserOptions) => boolean;
@@ -18,6 +20,7 @@ export interface TabRegistryOptions {
 const focusOriginNone: FocuserOptions = { focusOrigin: 'none' };
 const focusOriginNext: FocuserOptions = { focusOrigin: 'next' };
 const focusOriginPrev: FocuserOptions = { focusOrigin: 'prev' };
+const focusOriginChild: FocuserOptions = { focusOrigin: 'child' };
 
 /**
  * Library class for controlling complex nested linked structures.
@@ -75,6 +78,10 @@ export class TabRegistry<E = any> {
         return this.registry.last;
     }
 
+    public get parentRegistry(): TabRegistry<E> | null {
+        return this.internalParentRegistry;
+    }
+
     /**
      * Constructs any empty registry with default options.
      */
@@ -117,7 +124,7 @@ export class TabRegistry<E = any> {
     /**
      * Reference to the parent registry if it exists.
      */
-    private parentRegistry: TabRegistry<E> | null;
+    private internalParentRegistry: TabRegistry<E> | null;
 
     /**
      * The key to this registry from the parent registry if it exists.
@@ -135,7 +142,7 @@ export class TabRegistry<E = any> {
     constructor(options?: TabRegistryOptions) {
         this.focuserMap = new Map();
         this.registry = new DoublyLinkedOrderedSet<E>();
-        this.parentRegistry = null;
+        this.internalParentRegistry = null;
         if (options != null) {
             this.cycle = options.cycle === true;
         } else {
@@ -462,9 +469,9 @@ export class TabRegistry<E = any> {
             return this.focusFirst();
         }
 
-        if (this.parentRegistry != null) {
+        if (this.internalParentRegistry != null) {
             this.focusCycleStartKey = null;
-            this.parentRegistry.focusNext(this.parentRegistryKey);
+            this.internalParentRegistry.focusNext(this.parentRegistryKey);
             return true;
         }
 
@@ -486,6 +493,16 @@ export class TabRegistry<E = any> {
             return false;
         }
         return this.focusIn([next, ...keys], focusOriginPrev);
+    }
+
+    /**
+     * Focus the parent registry.
+     */
+    public focusParent(): boolean {
+        if (this.internalParentRegistry != null) {
+            return this.internalParentRegistry.focus(undefined, focusOriginChild);
+        }
+        return false;
     }
 
     /**
@@ -547,9 +564,9 @@ export class TabRegistry<E = any> {
             return this.focusLast();
         }
 
-        if (this.parentRegistry != null) {
+        if (this.internalParentRegistry != null) {
             this.focusCycleStartKey = null;
-            this.parentRegistry.focusPrev(this.parentRegistryKey);
+            this.internalParentRegistry.focusPrev(this.parentRegistryKey);
             return true;
         }
 
@@ -775,7 +792,7 @@ export class TabRegistry<E = any> {
      * the `parentRegistry`.
      */
     public setParentRegistry(parentRegistryKey: any, parentRegistry: TabRegistry<E>) {
-        this.parentRegistry = parentRegistry;
+        this.internalParentRegistry = parentRegistry;
         this.parentRegistryKey = parentRegistryKey;
     }
 

@@ -1170,6 +1170,59 @@ describe('TabRegistry', () => {
         });
     });
 
+    describe('.parentRegistry', () => {
+        test('returning null when no parent is set', () => {
+            const tr = new TabRegistry<number>();
+            expect(tr.parentRegistry).toBeNull();
+        });
+
+        test('returning parent registry when one is set', () => {
+            const tr = new TabRegistry<number>();
+            const parentTr = new TabRegistry<number>();
+            tr.setParentRegistry(0, parentTr);
+            expect(tr.parentRegistry).toBe(parentTr);
+        });
+    });
+
+    describe('.focusParent()', () => {
+        test('trying to focus parent, when no parent is set should return false', () => {
+            const tr = new TabRegistry<number>();
+            expect(tr.focusParent()).toBe(false);
+        });
+
+        test('trying to focus parent should return value of parent first child focuser', () => {
+            const parentTr = new TabRegistry<number>();
+            const tr = new TabRegistry<number>();
+
+            const focuser1 = getSuccessFocuser();
+            const focuser2 = getNotFocuser();
+
+            parentTr.add(0, focuser1);
+            parentTr.add(1, tr);
+
+            expect(tr.focusParent()).toBe(true);
+
+            parentTr.delete(0);
+            parentTr.add(0, focuser2);
+
+            expect(tr.focusParent()).toBe(false);
+        });
+
+        test('parent focuser is called with child origin', () => {
+            const parentTr = new TabRegistry<number>();
+            const tr = new TabRegistry<number>();
+
+            const focuser1 = getSuccessFocuser();
+
+            parentTr.add(0, focuser1);
+            parentTr.add(1, tr);
+
+            tr.focusParent();
+
+            expect(focuser1).toHaveBeenCalledWith({ focusOrigin: 'child' });
+        });
+    });
+
     describe('Nested registries', () => {
         test('iterating through', () => {
             const focuser1 = getSuccessFocuser();
