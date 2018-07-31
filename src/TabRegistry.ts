@@ -15,6 +15,11 @@ export interface TabRegistryOptions {
      * but just focus the opposite end of the tab registry.
      */
     cycle?: boolean;
+
+    /**
+     * If focus is called with origin child focus next parent.
+     */
+    focusParentOnChildOrigin?: boolean;
 }
 
 const focusOriginNone: FocuserOptions = { focusOrigin: 'none' };
@@ -122,6 +127,11 @@ export class TabRegistry<E = any> {
     private focuserMap: Map<E, Focuser<E>>;
 
     /**
+     * If focus is called with origin child focus next parent.
+     */
+    private readonly focusParentOnChildOrigin: boolean;
+
+    /**
      * Reference to the parent registry if it exists.
      */
     private internalParentRegistry: TabRegistry<E> | null;
@@ -143,10 +153,12 @@ export class TabRegistry<E = any> {
         this.focuserMap = new Map();
         this.registry = new DoublyLinkedOrderedSet<E>();
         this.internalParentRegistry = null;
-        if (options != null) {
-            this.cycle = options.cycle === true;
-        } else {
+        if (options == null) {
             this.cycle = false;
+            this.focusParentOnChildOrigin = false;
+        } else {
+            this.cycle = options.cycle === true;
+            this.focusParentOnChildOrigin = options.focusParentOnChildOrigin === true;
         }
     }
 
@@ -258,6 +270,11 @@ export class TabRegistry<E = any> {
      * Returns `false` if the focuser does not exist.
      */
     public focus(key?: E, options?: FocuserOptions): boolean {
+        const opts = options || focusOriginNone;
+        if (this.focusParentOnChildOrigin && opts.focusOrigin === 'child') {
+            return this.focusParent();
+        }
+
         let internalKey: E | undefined | null = key;
         if (internalKey == null) {
             if (options != null && options.focusOrigin === 'next') {
@@ -275,7 +292,7 @@ export class TabRegistry<E = any> {
             return false;
         }
 
-        return focuser instanceof TabRegistry ? focuser.focus(undefined, options) : focuser(options || focusOriginNone);
+        return focuser instanceof TabRegistry ? focuser.focus(undefined, opts) : focuser(opts);
     }
 
     /**
