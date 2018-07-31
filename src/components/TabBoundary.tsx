@@ -8,6 +8,8 @@ export interface TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements = 'd
     component?: TComp;
     componentProps?: JSX.IntrinsicElements[TComp];
     cycle?: boolean;
+    focusParentOnChildOrigin?: boolean;
+    focusParentOnEscape?: boolean;
 }
 
 export interface TabBoundaryState {}
@@ -31,7 +33,8 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
     public constructor(props: TabBoundaryProps<TComp>, context?: TabContextTypes) {
         super(props, context);
         this.tabRegistry = new TabRegistry({
-            cycle: !!props.cycle,
+            cycle: props.cycle,
+            focusParentOnChildOrigin: props.focusParentOnChildOrigin,
         });
     }
 
@@ -57,6 +60,10 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
             } else {
                 this.tabRegistry.focusNext(name);
             }
+        } else if (e.key === 'Escape' && this.props.focusParentOnEscape) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.tabRegistry.focusParent();
         }
     };
 
