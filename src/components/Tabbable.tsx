@@ -3,25 +3,42 @@ import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
 import { TabContextTypes } from './TabContext';
 
-export interface TabbableProps extends React.HTMLProps<HTMLInputElement> {
+export interface TabbableProps {
     focus?: boolean;
+    name: string;
 }
 export interface TabbableState {
     hasFocus: boolean;
 }
 
-export function Tabbable<CompProps>(
-    Comp: new () => React.Component<CompProps>,
-): React.ComponentClass<CompProps & TabbableProps> {
-    return class extends React.Component<CompProps & TabbableProps, TabbableState> {
+type Component = keyof JSX.IntrinsicElements | React.ComponentClass<any>;
+
+type ComponentPropTypes<TComp extends Component> = TComp extends keyof JSX.IntrinsicElements
+    ? JSX.IntrinsicElements[TComp]
+    : TComp extends React.ComponentClass<infer Props> ? Props : never;
+
+export function Tabbable<TElm extends keyof JSX.IntrinsicElements>(
+    Comp: TElm,
+): React.ComponentClass<ComponentPropTypes<TElm> & TabbableProps>;
+export function Tabbable<TComp extends React.ComponentClass<any>>(
+    Comp: TComp,
+): React.ComponentClass<ComponentPropTypes<TComp> & TabbableProps>;
+export function Tabbable<TComp extends Component>(
+    Comp: Component,
+): React.ComponentClass<ComponentPropTypes<TComp> & TabbableProps> {
+    type OriginalProps = ComponentPropTypes<TComp>;
+    type ResultProps = OriginalProps & TabbableProps;
+
+    type ContextType = TabContextTypes | undefined;
+    return class extends React.Component<ResultProps, TabbableState> {
         public static contextTypes = {
             tabRegistry: PropTypes.instanceOf(TabRegistry),
         };
 
-        private refComponent: React.ReactElement<CompProps> | null = null;
-        public context: TabContextTypes | null | undefined;
+        private refComponent: React.ReactElement<OriginalProps> | null = null;
+        public context: ContextType;
 
-        public constructor(props: CompProps & TabbableProps, context?: TabContextTypes) {
+        public constructor(props?: ResultProps, context?: ContextType) {
             super(props, context);
             this.state = {
                 hasFocus: false,
@@ -59,7 +76,7 @@ export function Tabbable<CompProps>(
     };
 }
 
-export const Button = Tabbable('button' as any);
-export const Input = Tabbable('input' as any);
-export const Select = Tabbable('select' as any);
-export const TextArea = Tabbable('textarea' as any);
+export const Button = Tabbable('button');
+export const Input = Tabbable('input');
+export const Select = Tabbable('select');
+export const TextArea = Tabbable('textarea');
