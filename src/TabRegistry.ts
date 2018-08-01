@@ -1,6 +1,19 @@
 import { DoublyLinkedOrderedSet } from '@secoya/collection.ts';
 
-export type FocusOrigin = 'none' | 'next' | 'prev' | 'parent' | 'child' | 'user' | 'keyboard' | 'mouse' | 'custom';
+export type FocusOrigin =
+    | 'child'
+    | 'custom'
+    | 'down'
+    | 'keyboard'
+    | 'left'
+    | 'mouse'
+    | 'next'
+    | 'none'
+    | 'parent'
+    | 'prev'
+    | 'right'
+    | 'up'
+    | 'user';
 
 export interface FocuserOptions {
     focusOrigin: FocusOrigin;

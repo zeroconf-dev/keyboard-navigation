@@ -9,22 +9,11 @@
             "request": "launch",
             "name": "Debug test",
             "protocol": "inspector",
-            "program": "${workspaceRoot}/node_modules/jest-cli/bin/jest",
-            "args": [
-                "--no-cache",
-                "--runInBand",
-                "--env",
-                "jest-environment-node-debug",
-                "${relativeFile}"
-            ],
-            "runtimeArgs": [
-                "--no-lazy",
-                "--harmony"
-            ],
+            "program": "${workspaceRoot}/node_modules/.bin/jest",
+            "args": ["--no-cache", "--runInBand", "${relativeFile}"],
+            "runtimeArgs": ["--no-lazy"],
             "smartStep": true,
-            "outFiles": [
-                "${workspaceRoot}/lib/**/*.js"
-            ]
+            "outFiles": ["${workspaceRoot}/lib/**/*.js"]
         }
     ]
 }
