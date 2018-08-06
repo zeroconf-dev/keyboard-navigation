@@ -2,6 +2,9 @@ import { ArrowKey } from './components/Focuser';
 import { FocuserOptions, TabRegistry } from './TabRegistry';
 
 type Maybe<T> = T | null;
+function assertNever(_: never, msg: string): never {
+    throw new Error(msg);
+}
 
 export type FieldMap<T extends string | number> =
     | [Maybe<T>][]
@@ -61,10 +64,10 @@ function focusDown<T extends string | number>(
     const yCandidate = y + 1;
     const nextField = fieldMap[yCandidate][x];
 
-    if (nextField == null || !tabRegistry.focus(nextField, origin)) {
-        return focusDown(fieldMap, getTabRegistry, x, yCandidate, maxX, maxY, origin);
-    }
-    return false;
+    return (
+        (nextField != null && tabRegistry.focus(nextField, origin)) ||
+        focusDown(fieldMap, getTabRegistry, x, yCandidate, maxX, maxY, origin)
+    );
 }
 
 function focusLeft<T extends string | number>(
@@ -84,15 +87,12 @@ function focusLeft<T extends string | number>(
     const xCandidate = x - 1;
     const nextField = fieldMap[y][xCandidate];
 
-    if (nextField == null || !tabRegistry.focus(nextField, origin)) {
-        return (
-            focusUp(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
-            focusDown(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
-            focusLeft(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin)
-        );
-    }
-
-    return true;
+    return (
+        (nextField != null && tabRegistry.focus(nextField, origin)) ||
+        focusUp(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
+        focusDown(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
+        focusLeft(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin)
+    );
 }
 
 function focusRight<T extends string | number>(
@@ -112,15 +112,12 @@ function focusRight<T extends string | number>(
     const xCandidate = x + 1;
     const nextField = fieldMap[y][xCandidate];
 
-    if (nextField == null || !tabRegistry.focus(nextField, origin)) {
-        return (
-            focusUp(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
-            focusDown(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
-            focusRight(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin)
-        );
-    }
-
-    return true;
+    return (
+        (nextField != null && tabRegistry.focus(nextField, origin)) ||
+        focusUp(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
+        focusDown(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
+        focusRight(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin)
+    );
 }
 
 function focusUp<T extends string | number>(
@@ -140,11 +137,10 @@ function focusUp<T extends string | number>(
     const yCandidate = y - 1;
     const nextField = fieldMap[yCandidate][x];
 
-    if (nextField == null || !tabRegistry.focus(nextField, origin)) {
-        return focusUp(fieldMap, getTabRegistry, x, yCandidate, maxX, maxY, origin);
-    }
-
-    return false;
+    return (
+        (nextField != null && tabRegistry.focus(nextField, origin)) ||
+        focusUp(fieldMap, getTabRegistry, x, yCandidate, maxX, maxY, origin)
+    );
 }
 
 export function createNavigationHandler<T extends string | number>(
@@ -172,7 +168,7 @@ export function createNavigationHandler<T extends string | number>(
             case 'ArrowRight':
                 return focusRight(fieldMap, getTabRegistry, x, y, maxX, maxY, originLeft);
             default:
-                throw new Error(`Unknown arrowKey: ${arrowKey}`);
+                return assertNever(arrowKey, `Unknown arrowKey: ${arrowKey}`);
         }
     };
 }

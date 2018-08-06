@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
-import { TabContextTypes } from './TabContext';
+import { TabBoundaryContext } from './TabBoundary';
 
 export interface TabbableProps {
     focus?: boolean;
@@ -29,7 +29,7 @@ export function Tabbable<TComp extends Component>(
     type OriginalProps = ComponentPropTypes<TComp>;
     type ResultProps = OriginalProps & TabbableProps;
 
-    type ContextType = TabContextTypes | undefined;
+    type ContextType = TabBoundaryContext<string> | undefined;
     return class extends React.Component<ResultProps, TabbableState> {
         public static contextTypes = {
             tabRegistry: PropTypes.instanceOf(TabRegistry),

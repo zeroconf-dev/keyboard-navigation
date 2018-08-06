@@ -19,7 +19,7 @@ export interface FocuserOptions {
     focusOrigin: FocusOrigin;
 }
 
-export type FocuserFn = (foucuserOpts: FocuserOptions) => boolean;
+export type FocuserFn = (foucuserOpts?: FocuserOptions) => boolean;
 export type Focuser<E = any> = TabRegistry<E> | FocuserFn;
 
 export interface TabRegistryOptions {
@@ -140,11 +140,6 @@ export class TabRegistry<E = any> {
     private focuserMap: Map<E, Focuser<E>>;
 
     /**
-     * If focus is called with origin child focus next parent.
-     */
-    private readonly focusParentOnChildOrigin: boolean;
-
-    /**
      * Reference to the parent registry if it exists.
      */
     private internalParentRegistry: TabRegistry<E> | null;
@@ -158,6 +153,11 @@ export class TabRegistry<E = any> {
      * The internal set that maintain order.
      */
     private registry: DoublyLinkedOrderedSet<E>;
+
+    /**
+     * If focus is called with origin child focus next parent.
+     */
+    public focusParentOnChildOrigin: boolean;
 
     /**
      * Constructs a registry with optional parent registry.
