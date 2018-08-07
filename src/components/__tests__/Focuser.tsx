@@ -3,33 +3,15 @@ import { cleanup, fireEvent, render } from 'react-testing-library';
 import { assertNever } from '../../util';
 import { Focuser } from '../Focuser';
 import { TabBoundary } from '../TabBoundary';
-
-type AllEventKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | 'Tab' | ' ' | 'Enter' | 'Escape' | 'Delete';
-
-const allNavigationEvents: { key: AllEventKey; shiftKey?: true }[] = [
-    { key: 'ArrowUp' },
-    { key: 'ArrowDown' },
-    { key: 'ArrowLeft' },
-    { key: 'ArrowRight' },
-    { key: 'Tab' },
-    { key: 'Tab', shiftKey: true },
-    { key: ' ' },
-    { key: 'Enter' },
-    { key: 'Escape' },
-    { key: 'Delete' },
-];
+import { allNavigationEvents, shiftTab, tab } from './__helpers__/event';
 
 describe('Focuser', () => {
-    afterEach(() => {
-        cleanup();
-    });
+    afterEach(cleanup);
 
     test('focuser rendered outside boundary does not act on tab navigation', () => {
         const { getByValue } = render(<Focuser focusKey="test" />);
         const inputElement = getByValue('');
-        const result = fireEvent.keyDown(inputElement, {
-            key: 'Tab',
-        });
+        const result = tab(inputElement);
         expect(result).toBe(true);
     });
 
@@ -44,9 +26,7 @@ describe('Focuser', () => {
 
         const focuser1 = container.querySelector('[name=focuser1]') as HTMLInputElement;
 
-        fireEvent.keyDown(focuser1, {
-            key: 'Tab',
-        });
+        tab(focuser1);
 
         expect(onFocus).toHaveBeenCalled();
     });
@@ -62,10 +42,7 @@ describe('Focuser', () => {
 
         const focuser2 = container.querySelector('[name=focuser2]') as HTMLInputElement;
 
-        fireEvent.keyDown(focuser2, {
-            key: 'Tab',
-            shiftKey: true,
-        });
+        shiftTab(focuser2);
 
         expect(onFocus).toHaveBeenCalled();
     });
@@ -82,9 +59,7 @@ describe('Focuser', () => {
 
         const focuser2 = container.querySelector('[name=focuser2]') as HTMLInputElement;
 
-        fireEvent.keyDown(focuser2, {
-            key: 'Tab',
-        });
+        tab(focuser2);
 
         expect(onFocus1).not.toHaveBeenCalled();
         expect(onFocus2).not.toHaveBeenCalled();
@@ -102,10 +77,7 @@ describe('Focuser', () => {
 
         const focuser1 = container.querySelector('[name=focuser1]') as HTMLInputElement;
 
-        fireEvent.keyDown(focuser1, {
-            key: 'Tab',
-            shiftKey: true,
-        });
+        shiftTab(focuser1);
 
         expect(onFocus1).not.toHaveBeenCalled();
         expect(onFocus2).not.toHaveBeenCalled();
@@ -122,9 +94,7 @@ describe('Focuser', () => {
 
         const focuser1 = container.querySelector('[name=focuser1]') as HTMLInputElement;
 
-        fireEvent.keyDown(focuser1, {
-            key: 'Tab',
-        });
+        tab(focuser1);
 
         expect(onFocus).not.toHaveBeenCalled();
     });

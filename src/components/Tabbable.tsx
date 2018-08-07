@@ -51,13 +51,6 @@ export function Tabbable<TComp extends Component>(
             }
         }
 
-        private bindComponentRef = (ref: any): void => {
-            this.refComponent = ref;
-            if (this.props.focus) {
-                this.focusTabble();
-            }
-        };
-
         private focusTabble = (): boolean => {
             if (this.refComponent instanceof HTMLElement) {
                 this.refComponent.focus();
@@ -66,9 +59,16 @@ export function Tabbable<TComp extends Component>(
             return false;
         };
 
+        private setComponentRef = (ref: any): void => {
+            this.refComponent = ref;
+            if (this.props.focus) {
+                this.focusTabble();
+            }
+        };
+
         public render() {
             return (
-                <Comp {...this.props} {...this.state} ref={this.bindComponentRef}>
+                <Comp {...this.props} {...this.state} ref={this.setComponentRef}>
                     {this.props.children}
                 </Comp>
             );

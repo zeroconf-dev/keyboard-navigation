@@ -18,7 +18,7 @@ export class Section extends React.Component<Props, State> {
 
     private onEnterKey = () => {
         if (this.context.tabRegistry != null) {
-            this.context.tabRegistry.focusIn([this.props.focusKey, 'section-container'], {
+            this.context.tabRegistry.focusIn([this.props.focusKey, 'section'], {
                 focusOrigin: 'parent',
             });
         }

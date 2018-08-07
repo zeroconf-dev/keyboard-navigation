@@ -1,4 +1,4 @@
-import { Focuser, FocuserFn, TabRegistry } from '../TabRegistry';
+import { FocuserFn, FocuserType, TabRegistry } from '../TabRegistry';
 
 const getSuccessFocuser = () => jest.fn().mockReturnValue(true);
 const getNotFocuser = () => jest.fn().mockReturnValue(false);
@@ -406,10 +406,10 @@ describe('TabRegistry', () => {
         test('focus a deeply nested registry', () => {
             const focuser = getSuccessFocuser();
             const tr5 = TabRegistry.fromMap(new Map([[1, focuser]]));
-            const tr4 = TabRegistry.fromMap(new Map<number, Focuser>([[1, focuser], [2, tr5]]));
-            const tr3 = TabRegistry.fromMap(new Map<number, Focuser>([[1, focuser], [2, tr4]]));
-            const tr2 = TabRegistry.fromMap(new Map<number, Focuser>([[1, focuser], [2, tr3]]));
-            const tr1 = TabRegistry.fromMap(new Map<number, Focuser>([[1, focuser], [2, tr2]]));
+            const tr4 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr5]]));
+            const tr3 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr4]]));
+            const tr2 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr3]]));
+            const tr1 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr2]]));
 
             expect(tr1.focusIn([2, 2, 2, 2, 1])).toBe(true);
             expect(focuser).toHaveBeenCalledTimes(1);
@@ -612,13 +612,13 @@ describe('TabRegistry', () => {
             ]));
 
             // prettier-ignore
-            const rowRegistry1 = TabRegistry.fromMap(new Map<string, Focuser>([
+            const rowRegistry1 = TabRegistry.fromMap(new Map<string, FocuserType>([
                 ['input', row1Input],
                 ['control-row', row1ControlRow],
             ]));
 
             // prettier-ignore
-            const rowRegistry2 = TabRegistry.fromMap(new Map<string, Focuser>([
+            const rowRegistry2 = TabRegistry.fromMap(new Map<string, FocuserType>([
                 ['input', row2Input],
                 ['control-row', row2ControlRow],
             ]));
@@ -709,13 +709,13 @@ describe('TabRegistry', () => {
             ]));
 
             // prettier-ignore
-            const rowRegistry1 = TabRegistry.fromMap(new Map<string, Focuser>([
+            const rowRegistry1 = TabRegistry.fromMap(new Map<string, FocuserType>([
                 ['input', row1Input],
                 ['control-row', row1ControlRow],
             ]));
 
             // prettier-ignore
-            const rowRegistry2 = TabRegistry.fromMap(new Map<string, Focuser>([
+            const rowRegistry2 = TabRegistry.fromMap(new Map<string, FocuserType>([
                 ['input', row2Input],
                 ['control-row', row2ControlRow],
             ]));
@@ -885,13 +885,13 @@ describe('TabRegistry', () => {
             ]));
 
             // prettier-ignore
-            const rowRegistry1 = TabRegistry.fromMap(new Map<string, Focuser>([
+            const rowRegistry1 = TabRegistry.fromMap(new Map<string, FocuserType>([
                 ['input', row1Input],
                 ['control-row', row1ControlRow],
             ]));
 
             // prettier-ignore
-            const rowRegistry2 = TabRegistry.fromMap(new Map<string, Focuser>([
+            const rowRegistry2 = TabRegistry.fromMap(new Map<string, FocuserType>([
                 ['input', row2Input],
                 ['control-row', row2ControlRow],
             ]));
@@ -999,13 +999,13 @@ describe('TabRegistry', () => {
             ]));
 
             // prettier-ignore
-            const rowRegistry1 = TabRegistry.fromMap(new Map<string, Focuser>([
+            const rowRegistry1 = TabRegistry.fromMap(new Map<string, FocuserType>([
                 ['input', focuser],
                 ['control-row', row1ControlRow],
             ]));
 
             // prettier-ignore
-            const rowRegistry2 = TabRegistry.fromMap(new Map<string, Focuser>([
+            const rowRegistry2 = TabRegistry.fromMap(new Map<string, FocuserType>([
                 ['input', focuser],
                 ['control-row', row2ControlRow],
             ]));

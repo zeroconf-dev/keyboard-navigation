@@ -3,14 +3,14 @@ import { FocuserOptions } from '../TabRegistry';
 import { ArrowKey, Focuser, NavigationKey } from './Focuser';
 import { TabBoundary } from './TabBoundary';
 
-interface Props<T extends number | string = string> {
+interface Props<TKey extends number | string = string> {
     disabled?: boolean;
-    label: T;
-    onArrowKeys?: (label: T, arrowKey: ArrowKey) => void;
+    label: TKey;
+    onArrowKeys?: (label: TKey, arrowKey: ArrowKey) => void;
     onDelete?: () => void;
     onEditStart?: (stopEditing: () => void) => void;
     onEditStop?: () => void;
-    onNavKeys?: (label: T, navKey: NavigationKey) => void;
+    onNavigationKeys?: (label: TKey, navKey: NavigationKey) => void;
     onSubmit: (stopEditing: (preventFocus?: boolean) => void) => void;
     preventBlurHandler?: boolean;
     renderEditor: (isEditing: boolean, stopEditing: () => void) => JSX.Element | null | false;
@@ -19,18 +19,18 @@ interface State {
     isEditing: boolean;
 }
 
-export class Field<T extends number | string = string> extends React.Component<Props<T>, State> {
+export class Field<TKey extends number | string = string> extends React.Component<Props<TKey>, State> {
     public static readonly contextTypes = TabBoundary.childContextTypes;
 
-    private refFocuser: Focuser<T> | null = null;
-    public constructor(props: Props<T>) {
+    private refFocuser: Focuser<TKey> | null = null;
+    public constructor(props: Props<TKey>) {
         super(props);
         this.state = {
             isEditing: false,
         };
     }
 
-    public componentWillReceiveProps(nextProps: Props<T>) {
+    public componentWillReceiveProps(nextProps: Props<TKey>) {
         if (!this.props.disabled && nextProps.disabled) {
             this.stopEditing(true);
         }
@@ -60,8 +60,6 @@ export class Field<T extends number | string = string> extends React.Component<P
         e.stopPropagation();
         this.startEditing();
     };
-
-    private onEnter = () => this.startEditing();
 
     private onEscape = () => {
         if (this.state.isEditing) {
@@ -94,7 +92,7 @@ export class Field<T extends number | string = string> extends React.Component<P
         });
     };
 
-    private setFocuserRef = (ref: Focuser<T> | null) => {
+    private setFocuserRef = (ref: Focuser<TKey> | null) => {
         this.refFocuser = ref;
     };
 
@@ -145,9 +143,10 @@ export class Field<T extends number | string = string> extends React.Component<P
                     key="focuser"
                     onArrowKeys={this.props.onArrowKeys}
                     onDelete={this.props.onDelete}
-                    onEnter={this.onEnter}
+                    onEnter={this.startEditing}
                     onEscape={this.onEscape}
-                    onNavigationKeys={this.props.onNavKeys}
+                    onNavigationKeys={this.props.onNavigationKeys}
+                    onSpace={this.startEditing}
                     ref={this.setFocuserRef}
                 />
                 <div className="field" onBlur={this.onBlur} onClick={this.onClick} onKeyDown={this.onFieldKeyDown}>
