@@ -9,11 +9,17 @@
             "request": "launch",
             "name": "Debug test",
             "protocol": "inspector",
-            "program": "${workspaceRoot}/node_modules/.bin/jest",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
             "args": ["--no-cache", "--runInBand", "${relativeFile}"],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
             "runtimeArgs": ["--no-lazy"],
             "smartStep": true,
-            "outFiles": ["${workspaceRoot}/lib/**/*.js"]
+            "sourceMaps": true,
+            "outFiles": ["${workspaceFolder}/build/**/*.js"],
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+            }
         }
     ]
 }
