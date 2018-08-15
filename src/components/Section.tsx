@@ -1,22 +1,44 @@
 import * as React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
+import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
 import { ArrowKey, Focuser } from './Focuser';
 import { TabBoundary, TabBoundaryContext } from './TabBoundary';
 
-interface Props<TKey extends number | string> {
-    className?: string;
-    containerClassName?: string;
+interface ComponentProps<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> {
+    component?: TComp;
     cycle?: boolean;
     disabled?: boolean;
     focusKey: TKey;
     navigationHandler?: (focusKey: TKey, arrowKey: ArrowKey) => void;
     onFocus?: (opts?: FocuserOptions) => void;
 }
+
+type Props<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> = UnpackedHTMLAttributes<TComp> &
+    ComponentProps<TComp, TKey>;
+
 interface State {}
 
-export class Section<TKey extends number | string = string> extends React.Component<Props<TKey>, State> {
+export class Section<
+    TComp extends keyof JSX.IntrinsicElements = 'div',
+    TKey extends number | string = string
+> extends React.Component<Props<TComp, TKey>, State> {
     public static readonly contextTypes = TabBoundary.childContextTypes;
     public context!: TabBoundaryContext<TKey>;
+
+    private filterPropKeys = (propKey: keyof ComponentProps<TComp, TKey>) => {
+        switch (propKey) {
+            case 'component':
+            case 'cycle':
+            case 'disabled':
+            case 'focusKey':
+            case 'navigationHandler':
+            case 'onFocus':
+                return false;
+            default:
+                assertNeverNonThrow(propKey);
+                return true;
+        }
+    };
 
     private navigationHandler = (_: TKey, arrowKey: ArrowKey) => {
         if (this.props.navigationHandler != null) {
@@ -42,12 +64,18 @@ export class Section<TKey extends number | string = string> extends React.Compon
     };
 
     public render() {
-        const containerClassName =
-            this.props.containerClassName == null ? 'section-container' : this.props.containerClassName;
-        const sectionClassName = this.props.className == null ? 'section' : this.props.className;
         const navigationHandler = this.props.navigationHandler == null ? undefined : this.navigationHandler;
+        const boundaryProps = filterPropKeys<ComponentProps<TComp, TKey>, TComp, Props<TComp, TKey>>(
+            this.props,
+            this.filterPropKeys,
+        );
         return (
-            <TabBoundary boundaryKey={this.props.focusKey} className={containerClassName}>
+            <TabBoundary
+                className="section-container"
+                {...boundaryProps}
+                boundaryKey={this.props.focusKey}
+                component={this.props.component}
+            >
                 <Focuser
                     disabled={this.props.disabled}
                     focusKey={'section-focuser' as TKey}
@@ -58,7 +86,7 @@ export class Section<TKey extends number | string = string> extends React.Compon
                 />
                 <TabBoundary
                     boundaryKey="section"
-                    className={sectionClassName}
+                    className="section"
                     cycle={this.props.cycle}
                     focusParentOnChildOrigin={true}
                     focusParentOnEscape={true}

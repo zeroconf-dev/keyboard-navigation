@@ -16,13 +16,13 @@ describe('<Grid />', () => {
         const renderGrid = (navigationHandler: (focusKey: string, arrowKey: ArrowKey) => void) => (
             <div>
                 <Section
-                    containerClassName="section1"
+                    className="section1"
                     focusKey="section1"
                     navigationHandler={navigationHandler}
                     onFocus={onFocus1}
                 />
                 <Section
-                    containerClassName="section2"
+                    className="section2"
                     focusKey="section2"
                     navigationHandler={navigationHandler}
                     onFocus={onFocus2}

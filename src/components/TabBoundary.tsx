@@ -1,6 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
+import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '../util';
 
 function hasNameProperty<T>(obj: T): obj is T & { name: string } {
     return obj != null && typeof (obj as any).name === 'string';
@@ -11,18 +12,18 @@ function stringToKey<TKey extends string | number>(str: string): TKey {
     return Number.isNaN(numValue) || String(numValue) !== str ? (numValue as TKey) : (str as TKey);
 }
 
-function assertNever(obj: never): never {
-    return obj;
-}
-
-interface ComponentProps<TKey extends number | string> {
+interface ComponentProps<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> {
     boundaryKey?: TKey;
+    component?: TComp;
     cycle?: boolean;
     focusParentOnChildOrigin?: boolean;
     focusParentOnEscape?: boolean;
 }
 
-type TabBoundaryProps<TKey extends number | string> = React.HTMLAttributes<HTMLDivElement> & ComponentProps<TKey>;
+type TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> = React.HTMLAttributes<
+    UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>
+> &
+    ComponentProps<TComp, TKey>;
 
 export interface TabBoundaryContext<TKey extends number | string> {
     tabRegistry?: TabRegistry<TKey>;
@@ -30,10 +31,10 @@ export interface TabBoundaryContext<TKey extends number | string> {
 
 interface TabBoundaryState {}
 
-export class TabBoundary<TKey extends number | string = string> extends React.Component<
-    TabBoundaryProps<TKey>,
-    TabBoundaryState
-> {
+export class TabBoundary<
+    TComp extends keyof JSX.IntrinsicElements = 'div',
+    TKey extends number | string = string
+> extends React.Component<TabBoundaryProps<TComp, TKey>, TabBoundaryState> {
     public static childContextTypes = {
         tabRegistry: PropTypes.instanceOf(TabRegistry),
     };
@@ -45,9 +46,9 @@ export class TabBoundary<TKey extends number | string = string> extends React.Co
     private tabRegistry: TabRegistry<TKey>;
 
     public context!: TabBoundaryContext<TKey>;
-    public props!: TabBoundaryProps<TKey>;
+    public props!: TabBoundaryProps<TComp, TKey>;
 
-    public constructor(props: TabBoundaryProps<TKey>, context?: TabBoundaryContext<TKey>) {
+    public constructor(props: TabBoundaryProps<TComp, TKey>, context?: TabBoundaryContext<TKey>) {
         super(props, context);
         this.tabRegistry = new TabRegistry({
             cycle: props.cycle,
@@ -61,7 +62,7 @@ export class TabBoundary<TKey extends number | string = string> extends React.Co
         }
     }
 
-    public componentWillReceiveProps(nextProps: TabBoundaryProps<TKey>) {
+    public componentWillReceiveProps(nextProps: TabBoundaryProps<TComp, TKey>) {
         const tabRegistry = this.context == null ? null : this.context.tabRegistry;
         if (tabRegistry != null) {
             if (this.props.cycle !== nextProps.cycle) {
@@ -88,6 +89,20 @@ export class TabBoundary<TKey extends number | string = string> extends React.Co
             this.context.tabRegistry.delete(this.props.boundaryKey);
         }
     }
+
+    private filterPropKeys = (propKey: keyof ComponentProps<TComp, TKey>) => {
+        switch (propKey) {
+            case 'boundaryKey':
+            case 'component':
+            case 'cycle':
+            case 'focusParentOnEscape':
+            case 'focusParentOnChildOrigin':
+                return false;
+            default:
+                assertNeverNonThrow(propKey);
+                return true;
+        }
+    };
 
     private onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'Tab' && hasNameProperty(e.target)) {
@@ -116,34 +131,20 @@ export class TabBoundary<TKey extends number | string = string> extends React.Co
     }
 
     public render() {
-        const propKeys = Object.keys(this.props) as (keyof TabBoundaryProps<TKey>)[];
-        const props = propKeys
-            .filter((propKey: keyof TabBoundaryProps<TKey>) => {
-                const boundaryProp = propKey as keyof ComponentProps<TKey>;
-                switch (boundaryProp) {
-                    case 'boundaryKey':
-                    case 'cycle':
-                    case 'focusParentOnEscape':
-                    case 'focusParentOnChildOrigin':
-                        return false;
-                    default:
-                        assertNever(boundaryProp);
-                        return true;
-                }
-            })
-            .reduce(
-                (carry: React.HTMLAttributes<HTMLDivElement>, propKey: keyof TabBoundaryProps<TKey>) => {
-                    const intrinsicProp = propKey as keyof React.HTMLAttributes<HTMLDivElement>;
-                    carry[intrinsicProp] = this.props[intrinsicProp];
-                    return carry;
-                },
-                {} as React.HTMLAttributes<HTMLDivElement>,
-            );
+        const props = filterPropKeys<ComponentProps<TComp, TKey>, TComp, TabBoundaryProps<TComp, TKey>>(
+            this.props,
+            this.filterPropKeys,
+        );
 
-        return (
-            <div {...props} onKeyDown={this.onKeyDown}>
-                {this.props.children}
-            </div>
+        const comp = this.props.component == null ? 'div' : this.props.component;
+
+        return React.createElement(
+            comp,
+            {
+                ...props,
+                onKeyDown: this.onKeyDown,
+            },
+            this.props.children,
         );
     }
 }
