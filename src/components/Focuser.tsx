@@ -24,6 +24,19 @@ interface Props<T extends number | string = string> {
 }
 interface State {}
 
+const styles: React.CSSProperties = {
+    border: 'none',
+    display: 'inline',
+    float: 'left',
+    fontSize: 0,
+    height: 0,
+    lineHeight: 0,
+    margin: 0,
+    outline: 'none',
+    padding: 0,
+    width: 0,
+};
+
 export class Focuser<TKey extends number | string = string> extends React.Component<Props<TKey>, State> {
     public static readonly contextTypes = TabBoundary.childContextTypes;
 
@@ -157,7 +170,7 @@ export class Focuser<TKey extends number | string = string> extends React.Compon
                     this.props.onNavigationKeys(this.props.focusKey, 'Tab');
                 }
             }
-        } else {
+        } else if (!(e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)) {
             shouldPrevent = true;
         }
 
@@ -192,6 +205,7 @@ export class Focuser<TKey extends number | string = string> extends React.Compon
                 onBlur={this.props.onBlur}
                 onKeyDown={this.onKeyDown}
                 ref={this.setFocuserRef}
+                style={styles}
                 tabIndex={-1}
                 value=""
             />

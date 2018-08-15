@@ -44,7 +44,7 @@ export default {
         commonjs({
             include: 'node_modules/**',
             namedExports: {
-                'node_modules/react/react.js': ['Component', 'createElement'],
+                'node_modules/react/react.js': ['Component', 'createElement', 'Fragment'],
                 'node_modules/react-dom/index.js': ['render'],
                 'node_modules/prop-types/index.js': ['object', 'instanceOf'],
             },

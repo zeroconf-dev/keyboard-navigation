@@ -5,6 +5,7 @@ import { ArrowKey, Focuser } from './Focuser';
 import { TabBoundary, TabBoundaryContext } from './TabBoundary';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> {
+    autoFocus?: boolean;
     component?: TComp;
     cycle?: boolean;
     disabled?: boolean;
@@ -23,10 +24,13 @@ export class Section<
     TKey extends number | string = string
 > extends React.Component<Props<TComp, TKey>, State> {
     public static readonly contextTypes = TabBoundary.childContextTypes;
+
+    private refFocuser: Focuser<TKey> | null = null;
     public context!: TabBoundaryContext<TKey>;
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp, TKey>) => {
         switch (propKey) {
+            case 'autoFocus':
             case 'component':
             case 'cycle':
             case 'disabled':
@@ -43,6 +47,16 @@ export class Section<
     private navigationHandler = (_: TKey, arrowKey: ArrowKey) => {
         if (this.props.navigationHandler != null) {
             this.props.navigationHandler(this.props.focusKey, arrowKey);
+        }
+    };
+
+    private onClick = (e: React.MouseEvent<any>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.refFocuser != null) {
+            this.refFocuser.focus({
+                focusOrigin: 'mouse',
+            });
         }
     };
 
@@ -63,6 +77,10 @@ export class Section<
         }
     };
 
+    private setFocuserRef = (ref: Focuser<TKey> | null) => {
+        this.refFocuser = ref;
+    };
+
     public render() {
         const navigationHandler = this.props.navigationHandler == null ? undefined : this.navigationHandler;
         const boundaryProps = filterPropKeys<ComponentProps<TComp, TKey>, TComp, Props<TComp, TKey>>(
@@ -75,14 +93,17 @@ export class Section<
                 {...boundaryProps}
                 boundaryKey={this.props.focusKey}
                 component={this.props.component}
+                onClick={this.onClick}
             >
                 <Focuser
+                    autoFocus={this.props.autoFocus}
                     disabled={this.props.disabled}
                     focusKey={'section-focuser' as TKey}
                     onArrowKeys={navigationHandler}
                     onEnter={this.onEnterKey}
                     onEscape={this.onEscapeKey}
                     onFocus={this.props.onFocus}
+                    ref={this.setFocuserRef}
                 />
                 <TabBoundary
                     boundaryKey="section"

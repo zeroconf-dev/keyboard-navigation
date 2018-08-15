@@ -9,7 +9,7 @@ function hasNameProperty<T>(obj: T): obj is T & { name: string } {
 
 function stringToKey<TKey extends string | number>(str: string): TKey {
     const numValue = Number(str);
-    return Number.isNaN(numValue) || String(numValue) !== str ? (numValue as TKey) : (str as TKey);
+    return (Number.isNaN(numValue) || String(numValue) !== str ? str : numValue) as TKey;
 }
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> {
