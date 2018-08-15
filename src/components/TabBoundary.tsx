@@ -15,18 +15,14 @@ function assertNever(obj: never): never {
     return obj;
 }
 
-interface ComponentProps<TKey extends number | string, TComp extends keyof JSX.IntrinsicElements> {
+interface ComponentProps<TKey extends number | string> {
     boundaryKey?: TKey;
-    component?: TComp;
     cycle?: boolean;
     focusParentOnChildOrigin?: boolean;
     focusParentOnEscape?: boolean;
 }
 
-type TabBoundaryProps<
-    TKey extends number | string,
-    TComp extends keyof JSX.IntrinsicElements
-> = JSX.IntrinsicElements[TComp] & ComponentProps<TKey, TComp>;
+type TabBoundaryProps<TKey extends number | string> = React.HTMLAttributes<HTMLDivElement> & ComponentProps<TKey>;
 
 export interface TabBoundaryContext<TKey extends number | string> {
     tabRegistry?: TabRegistry<TKey>;
@@ -34,10 +30,10 @@ export interface TabBoundaryContext<TKey extends number | string> {
 
 interface TabBoundaryState {}
 
-export class TabBoundary<
-    TKey extends number | string,
-    TComp extends keyof JSX.IntrinsicElements
-> extends React.Component<TabBoundaryProps<TKey, TComp>, TabBoundaryState> {
+export class TabBoundary<TKey extends number | string = string> extends React.Component<
+    TabBoundaryProps<TKey>,
+    TabBoundaryState
+> {
     public static childContextTypes = {
         tabRegistry: PropTypes.instanceOf(TabRegistry),
     };
@@ -49,9 +45,9 @@ export class TabBoundary<
     private tabRegistry: TabRegistry<TKey>;
 
     public context!: TabBoundaryContext<TKey>;
-    public props!: TabBoundaryProps<TKey, TComp>;
+    public props!: TabBoundaryProps<TKey>;
 
-    public constructor(props: TabBoundaryProps<TKey, TComp>, context?: TabBoundaryContext<TKey>) {
+    public constructor(props: TabBoundaryProps<TKey>, context?: TabBoundaryContext<TKey>) {
         super(props, context);
         this.tabRegistry = new TabRegistry({
             cycle: props.cycle,
@@ -65,7 +61,7 @@ export class TabBoundary<
         }
     }
 
-    public componentWillReceiveProps(nextProps: TabBoundaryProps<TKey, TComp>) {
+    public componentWillReceiveProps(nextProps: TabBoundaryProps<TKey>) {
         const tabRegistry = this.context == null ? null : this.context.tabRegistry;
         if (tabRegistry != null) {
             if (this.props.cycle !== nextProps.cycle) {
@@ -93,7 +89,7 @@ export class TabBoundary<
         }
     }
 
-    private onKeyDown: JSX.IntrinsicElements[TComp]['onKeyDown'] = (e: React.KeyboardEvent<any>) => {
+    private onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'Tab' && hasNameProperty(e.target)) {
             e.preventDefault();
             e.stopPropagation();
@@ -120,14 +116,12 @@ export class TabBoundary<
     }
 
     public render() {
-        const component = this.props.component;
-        const propKeys = Object.keys(this.props) as (keyof TabBoundaryProps<TKey, TComp>)[];
+        const propKeys = Object.keys(this.props) as (keyof TabBoundaryProps<TKey>)[];
         const props = propKeys
-            .filter((propKey: keyof TabBoundaryProps<TKey, TComp>) => {
-                const boundaryProp = propKey as keyof ComponentProps<TKey, TComp>;
+            .filter((propKey: keyof TabBoundaryProps<TKey>) => {
+                const boundaryProp = propKey as keyof ComponentProps<TKey>;
                 switch (boundaryProp) {
                     case 'boundaryKey':
-                    case 'component':
                     case 'cycle':
                     case 'focusParentOnEscape':
                     case 'focusParentOnChildOrigin':
@@ -138,15 +132,18 @@ export class TabBoundary<
                 }
             })
             .reduce(
-                (carry: JSX.IntrinsicElements[TComp], propKey: keyof TabBoundaryProps<TKey, TComp>) => {
-                    const intrinsicProp = propKey as keyof JSX.IntrinsicElements[TComp];
+                (carry: React.HTMLAttributes<HTMLDivElement>, propKey: keyof TabBoundaryProps<TKey>) => {
+                    const intrinsicProp = propKey as keyof React.HTMLAttributes<HTMLDivElement>;
                     carry[intrinsicProp] = this.props[intrinsicProp];
                     return carry;
                 },
-                {} as JSX.IntrinsicElements[TComp],
+                {} as React.HTMLAttributes<HTMLDivElement>,
             );
 
-        const Comp: TComp = component == null ? ('div' as TComp) : (component as TComp);
-        return React.createElement(Comp, Object.assign({}, props, { onKeyDown: this.onKeyDown }), this.props.children);
+        return (
+            <div {...props} onKeyDown={this.onKeyDown}>
+                {this.props.children}
+            </div>
+        );
     }
 }
