@@ -16459,7 +16459,7 @@
 	            constructor(props, context) {
 	                super(props, context);
 	                this.refComponent = null;
-	                this.focusTabble = () => {
+	                this.focusTabbable = () => {
 	                    if (this.refComponent instanceof HTMLElement) {
 	                        this.refComponent.focus();
 	                        return true;
@@ -16469,7 +16469,7 @@
 	                this.setComponentRef = (ref) => {
 	                    this.refComponent = ref;
 	                    if (this.props.focus) {
-	                        this.focusTabble();
+	                        this.focusTabbable();
 	                    }
 	                };
 	                this.state = {
@@ -16478,7 +16478,7 @@
 	            }
 	            componentDidMount() {
 	                if (this.context != null && this.context.tabRegistry != null) {
-	                    this.context.tabRegistry.add(this.props.name, this.focusTabble);
+	                    this.context.tabRegistry.add(this.props.name, this.focusTabbable);
 	                }
 	            }
 	            render() {
