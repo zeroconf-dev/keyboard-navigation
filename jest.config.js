@@ -5,10 +5,11 @@ module.exports = {
         },
     },
     moduleDirectories: ['node_modules'],
-    modulePathIgnorePatterns: ['<rootDir>/build', '<rootDir>/.next'],
+    modulePathIgnorePatterns: ['<rootDir>/build'],
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
-    testRegex: '/__tests__/.*\\.(ts|tsx)$',
+    testRegex: '/__tests__/.*\\.tsx?$',
+    testPathIgnorePatterns: ['/node_modules/', '/__helpers__/'],
     transform: {
-        '^.+\\.tsx?$': '<rootDir>/node_modules/ts-jest/preprocessor.js',
+        '^.+\\.tsx?$': 'ts-jest',
     },
 };

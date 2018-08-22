@@ -15175,6 +15175,100 @@
 	var reactDom = ReactDOM_1;
 	var reactDom_1 = reactDom.render;
 
+	function assertNever(_, msg) {
+	    throw new Error(msg);
+	}
+	const originUp = {
+	    focusOrigin: 'up',
+	};
+	const originDown = {
+	    focusOrigin: 'down',
+	};
+	const originLeft = {
+	    focusOrigin: 'left',
+	};
+	const originRight = {
+	    focusOrigin: 'right',
+	};
+	function findFieldCoordinates(fieldMap, label, maxX, maxY) {
+	    for (let y = 0; y <= maxY; y++) {
+	        for (let x = 0; x <= maxX; x++) {
+	            if (label === fieldMap[y][x]) {
+	                return [x, y];
+	            }
+	        }
+	    }
+	    return null;
+	}
+	function focusDown(fieldMap, getTabRegistry, x, y, maxX, maxY, origin) {
+	    const tabRegistry = getTabRegistry();
+	    if (y === maxY || tabRegistry == null) {
+	        return false;
+	    }
+	    const yCandidate = y + 1;
+	    const nextField = fieldMap[yCandidate][x];
+	    return ((nextField != null && tabRegistry.focus(nextField, origin)) ||
+	        focusDown(fieldMap, getTabRegistry, x, yCandidate, maxX, maxY, origin));
+	}
+	function focusLeft(fieldMap, getTabRegistry, x, y, maxX, maxY, origin) {
+	    const tabRegistry = getTabRegistry();
+	    if (x === 0 || tabRegistry == null) {
+	        return false;
+	    }
+	    const xCandidate = x - 1;
+	    const nextField = fieldMap[y][xCandidate];
+	    return ((nextField != null && tabRegistry.focus(nextField, origin)) ||
+	        focusUp(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
+	        focusDown(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
+	        focusLeft(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin));
+	}
+	function focusRight(fieldMap, getTabRegistry, x, y, maxX, maxY, origin) {
+	    const tabRegistry = getTabRegistry();
+	    if (x === maxX || tabRegistry == null) {
+	        return false;
+	    }
+	    const xCandidate = x + 1;
+	    const nextField = fieldMap[y][xCandidate];
+	    return ((nextField != null && tabRegistry.focus(nextField, origin)) ||
+	        focusUp(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
+	        focusDown(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
+	        focusRight(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin));
+	}
+	function focusUp(fieldMap, getTabRegistry, x, y, maxX, maxY, origin) {
+	    const tabRegistry = getTabRegistry();
+	    if (y === 0 || tabRegistry == null) {
+	        return false;
+	    }
+	    const yCandidate = y - 1;
+	    const nextField = fieldMap[yCandidate][x];
+	    return ((nextField != null && tabRegistry.focus(nextField, origin)) ||
+	        focusUp(fieldMap, getTabRegistry, x, yCandidate, maxX, maxY, origin));
+	}
+	function createNavigationHandler(fieldMap, getTabRegistry) {
+	    const maxY = fieldMap.length - 1;
+	    const maxX = fieldMap[0].length - 1;
+	    return (label, arrowKey) => {
+	        const coordinates = findFieldCoordinates(fieldMap, label, maxX, maxY);
+	        if (coordinates == null) {
+	            return;
+	        }
+	        const x = coordinates[0];
+	        const y = coordinates[1];
+	        switch (arrowKey) {
+	            case 'ArrowUp':
+	                return focusUp(fieldMap, getTabRegistry, x, y, maxX, maxY, originDown);
+	            case 'ArrowDown':
+	                return focusDown(fieldMap, getTabRegistry, x, y, maxX, maxY, originUp);
+	            case 'ArrowLeft':
+	                return focusLeft(fieldMap, getTabRegistry, x, y, maxX, maxY, originRight);
+	            case 'ArrowRight':
+	                return focusRight(fieldMap, getTabRegistry, x, y, maxX, maxY, originLeft);
+	            default:
+	                return assertNever(arrowKey, `Unknown arrowKey: ${arrowKey}`);
+	        }
+	    };
+	}
+
 	/**
 	 * The base error for this package.
 	 */
@@ -16277,6 +16371,20 @@
 	    }
 	}
 
+	// tslint:disable-next-line:variable-name
+	function filterPropKeys(props, filterFn) {
+	    const propKeys = Object.keys(props);
+	    return propKeys
+	        .filter((propKey) => {
+	        return filterFn(propKey);
+	    })
+	        .reduce((carry, propKey) => {
+	        const intrinsicProp = propKey;
+	        carry[intrinsicProp] = props[intrinsicProp];
+	        return carry;
+	    }, {});
+	}
+
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
@@ -16344,20 +16452,6 @@
 	});
 	var propTypes_1 = propTypes$1.object;
 	var propTypes_2 = propTypes$1.instanceOf;
-
-	// tslint:disable-next-line:variable-name
-	function filterPropKeys(props, filterFn) {
-	    const propKeys = Object.keys(props);
-	    return propKeys
-	        .filter((propKey) => {
-	        return filterFn(propKey);
-	    })
-	        .reduce((carry, propKey) => {
-	        const intrinsicProp = propKey;
-	        carry[intrinsicProp] = props[intrinsicProp];
-	        return carry;
-	    }, {});
-	}
 
 	function hasNameProperty(obj) {
 	    return obj != null && typeof obj.name === 'string';
@@ -16453,6 +16547,286 @@
 	    tabRegistry: propTypes_2(TabRegistry),
 	};
 
+	class Grid extends react_1 {
+	    constructor(props, context) {
+	        super(props, context);
+	        this.filterPropKeys = (propKey) => {
+	            switch (propKey) {
+	                case 'children':
+	                case 'component':
+	                case 'fieldMap':
+	                case 'focusKey':
+	                    return false;
+	                default:
+	                    return true;
+	            }
+	        };
+	        this.getTabRegistry = () => {
+	            if (this.context == null || this.context.tabRegistry == null) {
+	                throw new Error(`tabRegistry was not found on context of ${this.props.focusKey}`);
+	            }
+	            const tabRegistry = this.context.tabRegistry.get(this.props.focusKey);
+	            if (!(tabRegistry instanceof TabRegistry)) {
+	                throw new Error(`tabRegistry of ${this.props.focusKey} was not found`);
+	            }
+	            return tabRegistry;
+	        };
+	        this.state = {
+	            navigationHandler: createNavigationHandler(props.fieldMap, this.getTabRegistry),
+	        };
+	    }
+	    componentWillReceiveProps(nextProps) {
+	        if (this.props.fieldMap !== nextProps.fieldMap) {
+	            this.setState(_ => ({
+	                navigationHandler: createNavigationHandler(nextProps.fieldMap, this.getTabRegistry),
+	            }));
+	        }
+	    }
+	    render() {
+	        const props = filterPropKeys(this.props, this.filterPropKeys);
+	        return (react_2(TabBoundary, Object.assign({}, props, { boundaryKey: this.props.focusKey, component: this.props.component }), this.props.children(this.state.navigationHandler)));
+	    }
+	}
+	Grid.contextTypes = TabBoundary.childContextTypes;
+
+	const styles = {
+	    border: 'none',
+	    display: 'inline',
+	    float: 'left',
+	    fontSize: 0,
+	    height: 0,
+	    lineHeight: 0,
+	    margin: 0,
+	    outline: 'none',
+	    padding: 0,
+	    width: 0,
+	};
+	class Focuser extends react_1 {
+	    constructor() {
+	        super(...arguments);
+	        this.refFocuser = null;
+	        this.onKeyDown = (e) => {
+	            if (this.props.disabled) {
+	                return;
+	            }
+	            let shouldPrevent = false;
+	            if (e.key === 'Enter') {
+	                if (this.props.onEnter != null) {
+	                    shouldPrevent = true;
+	                    this.props.onEnter(e);
+	                }
+	                if (this.props.onNavigationKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onNavigationKeys(this.props.focusKey, 'Enter');
+	                }
+	            }
+	            else if (e.key === ' ') {
+	                if (this.props.onSpace != null) {
+	                    shouldPrevent = true;
+	                    this.props.onSpace(e);
+	                }
+	                if (this.props.onNavigationKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onNavigationKeys(this.props.focusKey, 'Space');
+	                }
+	            }
+	            else if (e.key === 'Escape') {
+	                if (this.props.onEscape != null) {
+	                    shouldPrevent = true;
+	                    this.props.onEscape(e);
+	                }
+	                if (this.props.onNavigationKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onNavigationKeys(this.props.focusKey, 'Escape');
+	                }
+	            }
+	            else if (e.key === 'Delete') {
+	                if (this.props.onDelete != null) {
+	                    shouldPrevent = true;
+	                    this.props.onDelete(e);
+	                }
+	                if (this.props.onNavigationKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onNavigationKeys(this.props.focusKey, 'Delete');
+	                }
+	            }
+	            else if (e.key === 'ArrowUp') {
+	                if (this.props.onArrowUp != null) {
+	                    shouldPrevent = true;
+	                    this.props.onArrowUp(e);
+	                }
+	                if (this.props.onArrowKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onArrowKeys(this.props.focusKey, 'ArrowUp');
+	                }
+	                if (this.props.onNavigationKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onNavigationKeys(this.props.focusKey, 'ArrowUp');
+	                }
+	            }
+	            else if (e.key === 'ArrowDown') {
+	                if (this.props.onArrowDown != null) {
+	                    shouldPrevent = true;
+	                    this.props.onArrowDown(e);
+	                }
+	                if (this.props.onArrowKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onArrowKeys(this.props.focusKey, 'ArrowDown');
+	                }
+	                if (this.props.onNavigationKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onNavigationKeys(this.props.focusKey, 'ArrowDown');
+	                }
+	            }
+	            else if (e.key === 'ArrowLeft') {
+	                if (this.props.onArrowLeft != null) {
+	                    shouldPrevent = true;
+	                    this.props.onArrowLeft(e);
+	                }
+	                if (this.props.onArrowKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onArrowKeys(this.props.focusKey, 'ArrowLeft');
+	                }
+	                if (this.props.onNavigationKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onNavigationKeys(this.props.focusKey, 'ArrowLeft');
+	                }
+	            }
+	            else if (e.key === 'ArrowRight') {
+	                if (this.props.onArrowRight != null) {
+	                    shouldPrevent = true;
+	                    this.props.onArrowRight(e);
+	                }
+	                if (this.props.onArrowKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onArrowKeys(this.props.focusKey, 'ArrowRight');
+	                }
+	                if (this.props.onNavigationKeys != null) {
+	                    shouldPrevent = true;
+	                    this.props.onNavigationKeys(this.props.focusKey, 'ArrowRight');
+	                }
+	            }
+	            else if (e.key === 'Tab') {
+	                if (e.shiftKey) {
+	                    if (this.context.tabRegistry != null) {
+	                        shouldPrevent = true;
+	                        this.context.tabRegistry.focusPrev(this.props.focusKey);
+	                    }
+	                    if (this.props.onNavigationKeys != null) {
+	                        shouldPrevent = true;
+	                        this.props.onNavigationKeys(this.props.focusKey, 'ShiftTab');
+	                    }
+	                }
+	                else {
+	                    if (this.context.tabRegistry != null) {
+	                        shouldPrevent = true;
+	                        this.context.tabRegistry.focusNext(this.props.focusKey);
+	                    }
+	                    if (this.props.onNavigationKeys != null) {
+	                        shouldPrevent = true;
+	                        this.props.onNavigationKeys(this.props.focusKey, 'Tab');
+	                    }
+	                }
+	            }
+	            else if (!(e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)) {
+	                shouldPrevent = true;
+	            }
+	            if (shouldPrevent) {
+	                e.preventDefault();
+	                e.stopPropagation();
+	            }
+	        };
+	        this.setFocuserRef = (ref) => {
+	            this.refFocuser = ref;
+	        };
+	        this.focus = (opts) => {
+	            if (this.props.disabled || this.context.tabRegistry == null || this.refFocuser == null) {
+	                return false;
+	            }
+	            this.refFocuser.focus();
+	            if (this.props.onFocus) {
+	                this.props.onFocus(opts);
+	            }
+	            return true;
+	        };
+	    }
+	    componentDidMount() {
+	        if (this.context.tabRegistry != null) {
+	            this.context.tabRegistry.add(this.props.focusKey, this.focus);
+	        }
+	    }
+	    componentWillUnmount() {
+	        if (this.context.tabRegistry != null) {
+	            this.context.tabRegistry.delete(this.props.focusKey);
+	        }
+	    }
+	    render() {
+	        return (react_2("input", { autoComplete: "off", autoFocus: this.props.autoFocus, disabled: this.props.disabled, key: "focuser", name: String(this.props.focusKey), onBlur: this.props.onBlur, onKeyDown: this.onKeyDown, ref: this.setFocuserRef, style: styles, tabIndex: -1, value: "" }));
+	    }
+	}
+	Focuser.contextTypes = TabBoundary.childContextTypes;
+
+	class Section extends react_1 {
+	    constructor() {
+	        super(...arguments);
+	        this.refFocuser = null;
+	        this.filterPropKeys = (propKey) => {
+	            switch (propKey) {
+	                case 'autoFocus':
+	                case 'component':
+	                case 'cycle':
+	                case 'disabled':
+	                case 'focusKey':
+	                case 'navigationHandler':
+	                case 'onFocus':
+	                    return false;
+	                default:
+	                    return true;
+	            }
+	        };
+	        this.navigationHandler = (_, arrowKey) => {
+	            if (this.props.navigationHandler != null) {
+	                this.props.navigationHandler(this.props.focusKey, arrowKey);
+	            }
+	        };
+	        this.onClick = (e) => {
+	            e.preventDefault();
+	            e.stopPropagation();
+	            if (this.refFocuser != null) {
+	                this.refFocuser.focus({
+	                    focusOrigin: 'mouse',
+	                });
+	            }
+	        };
+	        this.onEnterKey = () => {
+	            if (this.context.tabRegistry != null) {
+	                this.context.tabRegistry.focusIn([this.props.focusKey, 'section'], {
+	                    focusOrigin: 'parent',
+	                });
+	            }
+	        };
+	        this.onEscapeKey = () => {
+	            if (this.context.tabRegistry != null) {
+	                const reg = this.context.tabRegistry.get(this.props.focusKey);
+	                if (reg instanceof TabRegistry) {
+	                    reg.focusParent();
+	                }
+	            }
+	        };
+	        this.setFocuserRef = (ref) => {
+	            this.refFocuser = ref;
+	        };
+	    }
+	    render() {
+	        const navigationHandler = this.props.navigationHandler == null ? undefined : this.navigationHandler;
+	        const boundaryProps = filterPropKeys(this.props, this.filterPropKeys);
+	        return (react_2(TabBoundary, Object.assign({ className: "section-container" }, boundaryProps, { boundaryKey: this.props.focusKey, component: this.props.component, onClick: this.onClick }),
+	            react_2(Focuser, { autoFocus: this.props.autoFocus, disabled: this.props.disabled, focusKey: 'section-focuser', onArrowKeys: navigationHandler, onEnter: this.onEnterKey, onEscape: this.onEscapeKey, onFocus: this.props.onFocus, ref: this.setFocuserRef }),
+	            react_2(TabBoundary, { boundaryKey: "section", className: "section", cycle: this.props.cycle, focusParentOnChildOrigin: true, focusParentOnEscape: true }, this.props.children)));
+	    }
+	}
+	Section.contextTypes = TabBoundary.childContextTypes;
+
 	function Tabbable(Comp) {
 	    var _a;
 	    return _a = class extends react_1 {
@@ -16495,48 +16869,27 @@
 	const Select = Tabbable('select');
 	const TextArea = Tabbable('textarea');
 
+	const fieldMap = [['section1', 'section2'], ['section3', 'section4']];
 	class App extends react_1 {
 	    constructor() {
 	        super(...arguments);
-	        this.refBoundary = null;
-	        this.focusFirst = (e) => {
-	            // this is not the real implementation
-	            // but a quick hack to proof that the concept works.
-	            if (this.refBoundary != null) {
-	                this.refBoundary.getChildContext().tabRegistry.focusFirst();
-	            }
-	        };
-	        this.preventDefault = (e) => e.preventDefault();
-	        this.setBoundaryRef = (ref) => {
-	            this.refBoundary = ref;
+	        this.renderGrid = navigationHandler => {
+	            return (react_2("div", { className: "grid-content" },
+	                react_2("div", { className: "row" },
+	                    react_2(Section, { autoFocus: true, focusKey: "section1", navigationHandler: navigationHandler },
+	                        react_2(Section, { focusKey: "inner-section1" })),
+	                    react_2(Section, { focusKey: "section2", navigationHandler: navigationHandler },
+	                        react_2("div", null))),
+	                react_2("div", { className: "row" },
+	                    react_2(Section, { focusKey: "section3", navigationHandler: navigationHandler },
+	                        react_2("div", null)),
+	                    react_2(Section, { focusKey: "section4", navigationHandler: navigationHandler },
+	                        react_2("div", null)))));
 	        };
 	    }
 	    render() {
-	        return (
-	        // tslint:disable-next-line:jsx-no-lambda
-	        react_2("form", { onSubmit: this.preventDefault },
-	            react_2(TabBoundary, { cycle: true, ref: this.setBoundaryRef },
-	                react_2("label", { htmlFor: "username" }, "Username:"),
-	                react_2("div", null,
-	                    react_2(Input, { id: "username", name: "username" })),
-	                react_2("label", { htmlFor: "password" }, "Password:"),
-	                react_2("div", null,
-	                    react_2(Input, { id: "password", name: "password", type: "password" })),
-	                react_2("label", { htmlFor: "password-repeat" }, "Repeat password:"),
-	                react_2("div", null,
-	                    react_2(Input, { id: "password-repeat", name: "password-repeat", type: "password" })),
-	                react_2("label", { htmlFor: "gender" }, "Gender:"),
-	                react_2("div", null,
-	                    react_2(Select, { id: "gender", name: "gender" },
-	                        react_2("option", { value: "" }, ''),
-	                        react_2("option", { value: "female" }, "Female"),
-	                        react_2("option", { value: "male" }, "Male"))),
-	                react_2("label", { htmlFor: "submit" }, "Form controls"),
-	                react_2(TabBoundary, { boundaryKey: "controls" },
-	                    react_2(Input, { name: "reset", 
-	                        // tslint:disable-next-line:jsx-no-multiline-js jsx-no-lambda react-tsx-curly-spacing
-	                        onClick: this.focusFirst, type: "reset", value: "Reset" }),
-	                    react_2(Button, { id: "submit", name: "submit" }, "Submit")))));
+	        return (react_2(TabBoundary, null,
+	            react_2(Grid, { className: "grid", fieldMap: fieldMap, focusKey: "grid" }, this.renderGrid)));
 	    }
 	}
 	reactDom_1(react_2(App), document.querySelector('#root'));

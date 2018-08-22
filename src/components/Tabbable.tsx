@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
-import { TabContextTypes } from './TabContext';
+import { TabBoundaryContext } from './TabBoundary';
 
 export interface TabbableProps {
     focus?: boolean;
@@ -29,7 +29,7 @@ export function Tabbable<TComp extends Component>(
     type OriginalProps = ComponentPropTypes<TComp>;
     type ResultProps = OriginalProps & TabbableProps;
 
-    type ContextType = TabContextTypes | undefined;
+    type ContextType = TabBoundaryContext<string> | undefined;
     return class extends React.Component<ResultProps, TabbableState> {
         public static contextTypes = {
             tabRegistry: PropTypes.instanceOf(TabRegistry),
@@ -47,18 +47,11 @@ export function Tabbable<TComp extends Component>(
 
         public componentDidMount() {
             if (this.context != null && this.context.tabRegistry != null) {
-                this.context.tabRegistry.add(this.props.name, this.focusTabble);
+                this.context.tabRegistry.add(this.props.name, this.focusTabbable);
             }
         }
 
-        private bindComponentRef = (ref: any): void => {
-            this.refComponent = ref;
-            if (this.props.focus) {
-                this.focusTabble();
-            }
-        };
-
-        private focusTabble = (): boolean => {
+        private focusTabbable = (): boolean => {
             if (this.refComponent instanceof HTMLElement) {
                 this.refComponent.focus();
                 return true;
@@ -66,9 +59,16 @@ export function Tabbable<TComp extends Component>(
             return false;
         };
 
+        private setComponentRef = (ref: any): void => {
+            this.refComponent = ref;
+            if (this.props.focus) {
+                this.focusTabbable();
+            }
+        };
+
         public render() {
             return (
-                <Comp {...this.props} {...this.state} ref={this.bindComponentRef}>
+                <Comp {...this.props} {...this.state} ref={this.setComponentRef}>
                     {this.props.children}
                 </Comp>
             );
