@@ -5,12 +5,11 @@ part will be moved to separate library.
 
 ## Table of contents
 
-* [Getting Starterd](#getting-started)
-* [Examples](#examples)
-  * [Simple Example](#simple-example)
-  * [Advanced Example](#advanved-example)
-* [Extending Boundries](#extending-boundries)
-* [Usage With TypeScript](#usage-with-typescript)
+-   [Getting Started](#getting-started)
+-   [Examples](#examples)
+    -   [Simple Example](#simple-example)
+    -   [Advanced Example](#advanced-example)
+-   [Extending Boundaries](#extending-boundaries)
 
 ## Getting Started
 
@@ -41,11 +40,11 @@ npm install @secoya/tab-navigation.ts
             <input type="email" name="email" />
         </p>
         <p>
-            <label for="password">Passowrd</label>
+            <label for="password">Password</label>
             <input type="password" name="password" />
         </p>
         <p>
-            <label for="password">Passowrd</label>
+            <label for="password">Password</label>
             <input type="password" name="password" />
         </p>
     <form>
@@ -64,6 +63,4 @@ import { TabRegistry } from '@secoya/tab-navigation.ts';
 
 ### Advanced Example
 
-## Extending Boundries
-
-## Usage With Typescript
+## Extending Boundaries
