@@ -47,11 +47,11 @@ export function Tabbable<TComp extends Component>(
 
         public componentDidMount() {
             if (this.context != null && this.context.tabRegistry != null) {
-                this.context.tabRegistry.add(this.props.name, this.focusTabble);
+                this.context.tabRegistry.add(this.props.name, this.focusTabbable);
             }
         }
 
-        private focusTabble = (): boolean => {
+        private focusTabbable = (): boolean => {
             if (this.refComponent instanceof HTMLElement) {
                 this.refComponent.focus();
                 return true;
@@ -62,7 +62,7 @@ export function Tabbable<TComp extends Component>(
         private setComponentRef = (ref: any): void => {
             this.refComponent = ref;
             if (this.props.focus) {
-                this.focusTabble();
+                this.focusTabbable();
             }
         };
 
