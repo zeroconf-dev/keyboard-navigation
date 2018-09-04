@@ -1,6 +1,6 @@
 # <FormTabNavigation />
 
-This library ships with an implementation that works with react, but it is not limited too react. Maybe later the react
+This library ships with an implementation that works with react, but it is not limited to react. Maybe later the react
 part will be moved to separate library.
 
 ## Table of contents
