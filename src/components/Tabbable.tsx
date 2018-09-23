@@ -1,14 +1,10 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
-import { TabBoundaryContext } from './TabBoundary';
+import { NavigationContext } from './TabBoundary';
 
 export interface TabbableProps {
     focus?: boolean;
     name: string;
-}
-export interface TabbableState {
-    hasFocus: boolean;
 }
 
 type Component = keyof JSX.IntrinsicElements | React.ComponentClass<any>;
@@ -29,25 +25,14 @@ export function Tabbable<TComp extends Component>(
     type OriginalProps = ComponentPropTypes<TComp>;
     type ResultProps = OriginalProps & TabbableProps;
 
-    type ContextType = TabBoundaryContext<string> | undefined;
-    return class extends React.Component<ResultProps, TabbableState> {
-        public static contextTypes = {
-            tabRegistry: PropTypes.instanceOf(TabRegistry),
-        };
-
+    return class extends React.Component<ResultProps> {
         private refComponent: React.ReactElement<OriginalProps> | null = null;
-        public context: ContextType;
+        private tabRegistry: TabRegistry | null = null;
 
-        public constructor(props?: ResultProps, context?: ContextType) {
-            super(props, context);
-            this.state = {
-                hasFocus: false,
-            };
-        }
-
-        public componentDidMount() {
-            if (this.context != null && this.context.tabRegistry != null) {
-                this.context.tabRegistry.add(this.props.name, this.focusTabbable);
+        public componentWillUnmount() {
+            if (this.tabRegistry != null) {
+                this.tabRegistry.delete(this.props.name);
+                this.tabRegistry = null;
             }
         }
 
@@ -68,9 +53,22 @@ export function Tabbable<TComp extends Component>(
 
         public render() {
             return (
-                <Comp {...this.props} {...this.state} ref={this.setComponentRef}>
-                    {this.props.children}
-                </Comp>
+                <NavigationContext.Consumer>
+                    {tabRegistry => {
+                        if (this.tabRegistry != null && tabRegistry !== this.tabRegistry) {
+                            this.tabRegistry.delete(this.props.name);
+                        }
+                        if (tabRegistry != null) {
+                            tabRegistry.add(this.props.name, this.focusTabbable);
+                        }
+                        this.tabRegistry = tabRegistry;
+                        return (
+                            <Comp {...this.props} {...this.state} ref={this.setComponentRef}>
+                                {this.props.children}
+                            </Comp>
+                        );
+                    }}
+                </NavigationContext.Consumer>
             );
         }
     };

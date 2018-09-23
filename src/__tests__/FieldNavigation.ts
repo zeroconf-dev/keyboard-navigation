@@ -1,4 +1,3 @@
-import { create } from 'domain';
 import { ArrowKey } from '../components/Focuser';
 import { createNavigationHandler, FieldMap } from '../FieldNavigation';
 import { TabRegistry } from '../TabRegistry';

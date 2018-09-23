@@ -3,11 +3,12 @@ import { createNavigationHandler, FieldMap } from '../FieldNavigation';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
 import { ArrowKey } from './Focuser';
-import { TabBoundary, TabBoundaryContext } from './TabBoundary';
+import { NavigationContext, TabBoundary } from './TabBoundary';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> {
+    // tslint:disable-next-line:no-reserved-keywords
+    as?: TComp;
     children: (fn: (focusKey: TKey, arrowKey: ArrowKey) => void) => JSX.Element;
-    component?: TComp;
     fieldMap: FieldMap<TKey>;
     focusKey: TKey;
 }
@@ -23,11 +24,9 @@ export class Grid<
     TComp extends keyof JSX.IntrinsicElements = 'div',
     TKey extends number | string = string
 > extends React.Component<Props<TComp, TKey>, State<TKey>> {
-    public static contextTypes = TabBoundary.childContextTypes;
-    public context: TabBoundaryContext<TKey> | undefined;
-
-    public constructor(props: Props<TComp, TKey>, context: TabBoundaryContext<TKey>) {
-        super(props, context);
+    private tabRegistry: TabRegistry<TKey> | null = null;
+    public constructor(props: Props<TComp, TKey>) {
+        super(props);
         this.state = {
             navigationHandler: createNavigationHandler(props.fieldMap, this.getTabRegistry),
         };
@@ -43,8 +42,8 @@ export class Grid<
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp, TKey>) => {
         switch (propKey) {
+            case 'as':
             case 'children':
-            case 'component':
             case 'fieldMap':
             case 'focusKey':
                 return false;
@@ -55,10 +54,10 @@ export class Grid<
     };
 
     private getTabRegistry = () => {
-        if (this.context == null || this.context.tabRegistry == null) {
+        if (this.tabRegistry == null) {
             throw new Error(`tabRegistry was not found on context of ${this.props.focusKey}`);
         }
-        const tabRegistry = this.context.tabRegistry.get(this.props.focusKey);
+        const tabRegistry = this.tabRegistry.get(this.props.focusKey);
         if (!(tabRegistry instanceof TabRegistry)) {
             throw new Error(`tabRegistry of ${this.props.focusKey} was not found`);
         }
@@ -71,9 +70,16 @@ export class Grid<
             this.filterPropKeys,
         );
         return (
-            <TabBoundary {...props} boundaryKey={this.props.focusKey} component={this.props.component}>
-                {this.props.children(this.state.navigationHandler)}
-            </TabBoundary>
+            <NavigationContext.Consumer>
+                {tabRegistry => {
+                    this.tabRegistry = tabRegistry;
+                    return (
+                        <TabBoundary {...props} as={this.props.as} boundaryKey={this.props.focusKey}>
+                            {this.props.children(this.state.navigationHandler)}
+                        </TabBoundary>
+                    );
+                }}
+            </NavigationContext.Consumer>
         );
     }
 }

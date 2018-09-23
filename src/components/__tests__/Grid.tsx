@@ -14,20 +14,22 @@ describe('<Grid />', () => {
         const onFocus1 = jest.fn();
         const onFocus2 = jest.fn();
         const renderGrid = (navigationHandler: (focusKey: string, arrowKey: ArrowKey) => void) => (
-            <div>
+            <>
                 <Section
                     className="section1"
                     focusKey="section1"
+                    key="section1"
                     navigationHandler={navigationHandler}
                     onFocus={onFocus1}
                 />
                 <Section
                     className="section2"
                     focusKey="section2"
+                    key="section2"
                     navigationHandler={navigationHandler}
                     onFocus={onFocus2}
                 />
-            </div>
+            </>
         );
         const fieldMap: FieldMap<string> = [['section1'], ['section2']];
         const { container } = render(

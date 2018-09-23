@@ -21,6 +21,7 @@
         "src/**/*.tsx"
     ],
     "exclude": [
+        ".docz/**/*",
         "**/__tests__/*",
         "dist",
         "lib",

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cleanup, fireEvent, render } from 'react-testing-library';
+import { cleanup, render } from 'react-testing-library';
 import { Focuser } from '../Focuser';
 import { Section } from '../Section';
 import { TabBoundary } from '../TabBoundary';

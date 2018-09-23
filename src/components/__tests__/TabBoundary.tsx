@@ -1,12 +1,16 @@
 import * as React from 'react';
-import { cleanup, fireEvent, render } from 'react-testing-library';
+import { cleanup, render } from 'react-testing-library';
+import { TabRegistry } from '../../TabRegistry';
 import { Focuser } from '../Focuser';
-import { TabBoundary, TabBoundaryContext } from '../TabBoundary';
+import { NavigationContext, TabBoundary } from '../TabBoundary';
 import { escape, shiftTab, space, tab } from './__helpers__/event';
 
 describe('TabBoundary', () => {
     afterEach(cleanup);
     test('duplicate focus keys within same boundary throws', () => {
+        jest.spyOn(console, 'error').mockImplementation(() => {
+            return;
+        });
         expect(() =>
             render(
                 <TabBoundary>
@@ -15,7 +19,7 @@ describe('TabBoundary', () => {
                 </TabBoundary>,
             ),
         ).toThrowErrorMatchingSnapshot();
-        expect(cleanup).toThrowErrorMatchingSnapshot();
+        (console as any).error.mockRestore();
     });
 
     test(`tab beyond last focuser in boundary, focuses sibling boundary's "next" focuser in the tab direction`, () => {
@@ -126,16 +130,32 @@ describe('TabBoundary', () => {
 });
 
 class FocusParentOnSpace extends React.Component<{ focusKey: string; onFocus?: () => void }> {
-    public static contextTypes = TabBoundary.childContextTypes;
-    public context: TabBoundaryContext<string>;
+    private tabRegistry: TabRegistry | null = null;
+
+    public componentWillUnmount() {
+        this.tabRegistry = null;
+    }
 
     private focusParent = () => {
-        if (this.context.tabRegistry != null) {
-            this.context.tabRegistry.focusParent();
+        if (this.tabRegistry != null) {
+            this.tabRegistry.focusParent();
         }
     };
 
     public render() {
-        return <Focuser focusKey={this.props.focusKey} onFocus={this.props.onFocus} onSpace={this.focusParent} />;
+        return (
+            <NavigationContext.Consumer>
+                {tabRegistry => {
+                    this.tabRegistry = tabRegistry;
+                    return (
+                        <Focuser
+                            focusKey={this.props.focusKey}
+                            onFocus={this.props.onFocus}
+                            onSpace={this.focusParent}
+                        />
+                    );
+                }}
+            </NavigationContext.Consumer>
+        );
     }
 }

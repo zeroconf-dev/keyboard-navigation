@@ -181,7 +181,7 @@ describe('Focuser', () => {
                 case 'Escape':
                     return expect(onEscape).toHaveBeenCalled();
                 case 'Tab':
-                    break; // no explicit tab handler, tab events are handled by the registry.
+                    return; // no explicit tab handler, tab events are handled by the registry.
                 default:
                     return assertNever(event.key, `Unknown event key: ${event.key}`);
             }

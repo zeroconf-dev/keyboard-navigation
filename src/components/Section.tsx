@@ -2,11 +2,12 @@ import * as React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
 import { ArrowKey, Focuser } from './Focuser';
-import { TabBoundary, TabBoundaryContext } from './TabBoundary';
+import { NavigationContext, TabBoundary } from './TabBoundary';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> {
+    // tslint:disable-next-line:no-reserved-keywords
+    as?: TComp;
     autoFocus?: boolean;
-    component?: TComp;
     cycle?: boolean;
     disabled?: boolean;
     focusKey: TKey;
@@ -23,15 +24,13 @@ export class Section<
     TComp extends keyof JSX.IntrinsicElements = 'div',
     TKey extends number | string = string
 > extends React.Component<Props<TComp, TKey>, State> {
-    public static readonly contextTypes = TabBoundary.childContextTypes;
-
     private refFocuser: Focuser<TKey> | null = null;
-    public context!: TabBoundaryContext<TKey>;
+    private tabRegistry: TabRegistry<TKey> | null = null;
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp, TKey>) => {
         switch (propKey) {
+            case 'as':
             case 'autoFocus':
-            case 'component':
             case 'cycle':
             case 'disabled':
             case 'focusKey':
@@ -61,16 +60,16 @@ export class Section<
     };
 
     private onEnterKey = () => {
-        if (this.context.tabRegistry != null) {
-            this.context.tabRegistry.focusIn([this.props.focusKey, 'section' as TKey], {
+        if (this.tabRegistry != null) {
+            this.tabRegistry.focusIn([this.props.focusKey, 'section' as TKey], {
                 focusOrigin: 'parent',
             });
         }
     };
 
     private onEscapeKey = () => {
-        if (this.context.tabRegistry != null) {
-            const reg = this.context.tabRegistry.get(this.props.focusKey);
+        if (this.tabRegistry != null) {
+            const reg = this.tabRegistry.get(this.props.focusKey);
             if (reg instanceof TabRegistry) {
                 reg.focusParent();
             }
@@ -88,33 +87,40 @@ export class Section<
             this.filterPropKeys,
         );
         return (
-            <TabBoundary
-                className="section-container"
-                {...boundaryProps}
-                boundaryKey={this.props.focusKey}
-                component={this.props.component}
-                onClick={this.onClick}
-            >
-                <Focuser
-                    autoFocus={this.props.autoFocus}
-                    disabled={this.props.disabled}
-                    focusKey={'section-focuser' as TKey}
-                    onArrowKeys={navigationHandler}
-                    onEnter={this.onEnterKey}
-                    onEscape={this.onEscapeKey}
-                    onFocus={this.props.onFocus}
-                    ref={this.setFocuserRef}
-                />
-                <TabBoundary
-                    boundaryKey="section"
-                    className="section"
-                    cycle={this.props.cycle}
-                    focusParentOnChildOrigin={true}
-                    focusParentOnEscape={true}
-                >
-                    {this.props.children}
-                </TabBoundary>
-            </TabBoundary>
+            <NavigationContext.Consumer>
+                {tabRegistry => {
+                    this.tabRegistry = tabRegistry;
+                    return (
+                        <TabBoundary
+                            className="section-container"
+                            {...boundaryProps}
+                            as={this.props.as}
+                            boundaryKey={this.props.focusKey}
+                            onClick={this.onClick}
+                        >
+                            <Focuser
+                                autoFocus={this.props.autoFocus}
+                                disabled={this.props.disabled}
+                                focusKey={'section-focuser' as TKey}
+                                onArrowKeys={navigationHandler}
+                                onEnter={this.onEnterKey}
+                                onEscape={this.onEscapeKey}
+                                onFocus={this.props.onFocus}
+                                ref={this.setFocuserRef}
+                            />
+                            <TabBoundary
+                                boundaryKey="section"
+                                className="section"
+                                cycle={this.props.cycle}
+                                focusParentOnChildOrigin={true}
+                                focusParentOnEscape={true}
+                            >
+                                {this.props.children}
+                            </TabBoundary>
+                        </TabBoundary>
+                    );
+                }}
+            </NavigationContext.Consumer>
         );
     }
 }

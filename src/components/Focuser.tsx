@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { FocuserOptions } from '../TabRegistry';
-import { TabBoundary, TabBoundaryContext } from './TabBoundary';
+import { FocuserOptions, TabRegistry } from '../TabRegistry';
+import { NavigationContext } from './TabBoundary';
 
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
 export type NavigationKey = ArrowKey | 'Tab' | 'ShiftTab' | 'Escape' | 'Enter' | 'Delete' | 'Space';
@@ -38,20 +38,13 @@ const styles: React.CSSProperties = {
 };
 
 export class Focuser<TKey extends number | string = string> extends React.Component<Props<TKey>, State> {
-    public static readonly contextTypes = TabBoundary.childContextTypes;
-
     private refFocuser: HTMLInputElement | null = null;
-    public context!: TabBoundaryContext<TKey>;
-
-    public componentDidMount() {
-        if (this.context.tabRegistry != null) {
-            this.context.tabRegistry.add(this.props.focusKey, this.focus);
-        }
-    }
+    private tabRegistry: TabRegistry<TKey> | null = null;
 
     public componentWillUnmount() {
-        if (this.context.tabRegistry != null) {
-            this.context.tabRegistry.delete(this.props.focusKey);
+        if (this.tabRegistry != null) {
+            this.tabRegistry.delete(this.props.focusKey);
+            this.tabRegistry = null;
         }
     }
 
@@ -152,18 +145,18 @@ export class Focuser<TKey extends number | string = string> extends React.Compon
             }
         } else if (e.key === 'Tab') {
             if (e.shiftKey) {
-                if (this.context.tabRegistry != null) {
+                if (this.tabRegistry != null) {
                     shouldPrevent = true;
-                    this.context.tabRegistry.focusPrev(this.props.focusKey);
+                    this.tabRegistry.focusPrev(this.props.focusKey);
                 }
                 if (this.props.onNavigationKeys != null) {
                     shouldPrevent = true;
                     this.props.onNavigationKeys(this.props.focusKey, 'ShiftTab');
                 }
             } else {
-                if (this.context.tabRegistry != null) {
+                if (this.tabRegistry != null) {
                     shouldPrevent = true;
-                    this.context.tabRegistry.focusNext(this.props.focusKey);
+                    this.tabRegistry.focusNext(this.props.focusKey);
                 }
                 if (this.props.onNavigationKeys != null) {
                     shouldPrevent = true;
@@ -184,7 +177,7 @@ export class Focuser<TKey extends number | string = string> extends React.Compon
     };
 
     public focus = (opts?: FocuserOptions) => {
-        if (this.props.disabled || this.context.tabRegistry == null || this.refFocuser == null) {
+        if (this.props.disabled || this.tabRegistry == null || this.refFocuser == null) {
             return false;
         }
         this.refFocuser.focus();
@@ -196,19 +189,32 @@ export class Focuser<TKey extends number | string = string> extends React.Compon
 
     public render() {
         return (
-            <input
-                autoComplete="off"
-                autoFocus={this.props.autoFocus}
-                disabled={this.props.disabled}
-                key="focuser"
-                name={String(this.props.focusKey)}
-                onBlur={this.props.onBlur}
-                onKeyDown={this.onKeyDown}
-                ref={this.setFocuserRef}
-                style={styles}
-                tabIndex={-1}
-                value=""
-            />
+            <NavigationContext.Consumer>
+                {tabRegistry => {
+                    if (this.tabRegistry != null && this.tabRegistry !== tabRegistry) {
+                        this.tabRegistry.delete(this.props.focusKey);
+                    }
+                    if (tabRegistry != null && this.tabRegistry !== tabRegistry) {
+                        tabRegistry.add(this.props.focusKey, this.focus);
+                    }
+                    this.tabRegistry = tabRegistry;
+                    return (
+                        <input
+                            autoComplete="off"
+                            autoFocus={this.props.autoFocus}
+                            defaultValue=""
+                            disabled={this.props.disabled}
+                            key="focuser"
+                            name={String(this.props.focusKey)}
+                            onBlur={this.props.onBlur}
+                            onKeyDown={this.onKeyDown}
+                            ref={this.setFocuserRef}
+                            style={styles}
+                            tabIndex={-1}
+                        />
+                    );
+                }}
+            </NavigationContext.Consumer>
         );
     }
 }

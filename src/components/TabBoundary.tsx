@@ -1,4 +1,3 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '../util';
@@ -13,8 +12,9 @@ function stringToKey<TKey extends string | number>(str: string): TKey {
 }
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> {
+    // tslint:disable-next-line:no-reserved-keywords
+    as?: TComp;
     boundaryKey?: TKey;
-    component?: TComp;
     cycle?: boolean;
     focusParentOnChildOrigin?: boolean;
     focusParentOnEscape?: boolean;
@@ -25,45 +25,26 @@ type TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements, TKey extends nu
 > &
     ComponentProps<TComp, TKey>;
 
-export interface TabBoundaryContext<TKey extends number | string> {
-    tabRegistry?: TabRegistry<TKey>;
-}
-
-interface TabBoundaryState {}
+export const NavigationContext = React.createContext<TabRegistry | null>(null);
 
 export class TabBoundary<
     TComp extends keyof JSX.IntrinsicElements = 'div',
     TKey extends number | string = string
-> extends React.Component<TabBoundaryProps<TComp, TKey>, TabBoundaryState> {
-    public static childContextTypes = {
-        tabRegistry: PropTypes.instanceOf(TabRegistry),
-    };
-
-    public static contextTypes = {
-        tabRegistry: PropTypes.instanceOf(TabRegistry),
-    };
-
+> extends React.Component<TabBoundaryProps<TComp, TKey>> {
+    private parentRegistry: TabRegistry<TKey> | null = null;
     private tabRegistry: TabRegistry<TKey>;
 
-    public context!: TabBoundaryContext<TKey>;
-    public props!: TabBoundaryProps<TComp, TKey>;
+    public constructor(props: TabBoundaryProps<TComp, TKey>) {
+        super(props);
 
-    public constructor(props: TabBoundaryProps<TComp, TKey>, context?: TabBoundaryContext<TKey>) {
-        super(props, context);
         this.tabRegistry = new TabRegistry({
             cycle: props.cycle,
             focusParentOnChildOrigin: props.focusParentOnChildOrigin,
         });
     }
 
-    public componentDidMount() {
-        if (this.context.tabRegistry != null && this.props.boundaryKey != null) {
-            this.context.tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
-        }
-    }
-
     public componentWillReceiveProps(nextProps: TabBoundaryProps<TComp, TKey>) {
-        const tabRegistry = this.context == null ? null : this.context.tabRegistry;
+        const tabRegistry = this.parentRegistry;
         if (tabRegistry != null) {
             if (this.props.cycle !== nextProps.cycle) {
                 nextProps.cycle ? tabRegistry.enableCycle() : tabRegistry.disableCycle();
@@ -85,15 +66,18 @@ export class TabBoundary<
     }
 
     public componentWillUnmount() {
-        if (this.context.tabRegistry != null && this.props.boundaryKey != null) {
-            this.context.tabRegistry.delete(this.props.boundaryKey);
+        if (this.parentRegistry != null) {
+            if (this.props.boundaryKey != null) {
+                this.parentRegistry.delete(this.props.boundaryKey);
+            }
+            this.parentRegistry = null;
         }
     }
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp, TKey>) => {
         switch (propKey) {
+            case 'as':
             case 'boundaryKey':
-            case 'component':
             case 'cycle':
             case 'focusParentOnEscape':
             case 'focusParentOnChildOrigin':
@@ -124,27 +108,38 @@ export class TabBoundary<
         }
     };
 
-    public getChildContext() {
-        return {
-            tabRegistry: this.tabRegistry,
-        };
-    }
-
     public render() {
         const props = filterPropKeys<ComponentProps<TComp, TKey>, TComp, TabBoundaryProps<TComp, TKey>>(
             this.props,
             this.filterPropKeys,
         );
 
-        const comp = this.props.component == null ? 'div' : this.props.component;
+        const comp = this.props.as == null ? 'div' : this.props.as;
 
-        return React.createElement(
+        const children = React.createElement(
             comp,
             {
                 ...props,
                 onKeyDown: this.onKeyDown,
             },
             this.props.children,
+        );
+
+        return (
+            <NavigationContext.Consumer>
+                {tabRegistry => {
+                    if (this.parentRegistry != null && this.props.boundaryKey != null && tabRegistry !== tabRegistry) {
+                        this.parentRegistry.delete(this.props.boundaryKey);
+                    }
+                    if (tabRegistry != null && this.props.boundaryKey != null) {
+                        tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
+                    }
+
+                    this.parentRegistry = tabRegistry || null;
+
+                    return <NavigationContext.Provider value={this.tabRegistry}>{children}</NavigationContext.Provider>;
+                }}
+            </NavigationContext.Consumer>
         );
     }
 }

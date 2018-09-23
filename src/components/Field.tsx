@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { FocuserOptions } from '../TabRegistry';
+import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { ArrowKey, Focuser, NavigationKey } from './Focuser';
-import { TabBoundary } from './TabBoundary';
+import { NavigationContext } from './TabBoundary';
 
 interface Props<TKey extends number | string = string> {
     disabled?: boolean;
@@ -20,9 +20,9 @@ interface State {
 }
 
 export class Field<TKey extends number | string = string> extends React.Component<Props<TKey>, State> {
-    public static readonly contextTypes = TabBoundary.childContextTypes;
-
     private refFocuser: Focuser<TKey> | null = null;
+    private tabRegistry: TabRegistry<TKey> | null = null;
+
     public constructor(props: Props<TKey>) {
         super(props);
         this.state = {
@@ -65,8 +65,8 @@ export class Field<TKey extends number | string = string> extends React.Componen
         if (this.state.isEditing) {
             this.stopEditing();
         } else {
-            if (this.context.tabRegistry != null) {
-                this.context.tabRegistry.focusParent();
+            if (this.tabRegistry != null) {
+                this.tabRegistry.focusParent();
             }
         }
     };
@@ -136,24 +136,36 @@ export class Field<TKey extends number | string = string> extends React.Componen
 
     public render() {
         return (
-            <div className="field-container">
-                <Focuser
-                    disabled={this.props.disabled}
-                    focusKey={this.props.label}
-                    key="focuser"
-                    onArrowKeys={this.props.onArrowKeys}
-                    onDelete={this.props.onDelete}
-                    onEnter={this.startEditing}
-                    onEscape={this.onEscape}
-                    onNavigationKeys={this.props.onNavigationKeys}
-                    onSpace={this.startEditing}
-                    ref={this.setFocuserRef}
-                />
-                <div className="field" onBlur={this.onBlur} onClick={this.onClick} onKeyDown={this.onFieldKeyDown}>
-                    <label onClick={this.onLabelClick}>{this.props.label}</label>
-                    {this.props.renderEditor(this.state.isEditing, this.stopEditing)}
-                </div>
-            </div>
+            <NavigationContext.Consumer>
+                {tabRegistry => {
+                    this.tabRegistry = tabRegistry;
+                    return (
+                        <div className="field-container">
+                            <Focuser
+                                disabled={this.props.disabled}
+                                focusKey={this.props.label}
+                                key="focuser"
+                                onArrowKeys={this.props.onArrowKeys}
+                                onDelete={this.props.onDelete}
+                                onEnter={this.startEditing}
+                                onEscape={this.onEscape}
+                                onNavigationKeys={this.props.onNavigationKeys}
+                                onSpace={this.startEditing}
+                                ref={this.setFocuserRef}
+                            />
+                            <div
+                                className="field"
+                                onBlur={this.onBlur}
+                                onClick={this.onClick}
+                                onKeyDown={this.onFieldKeyDown}
+                            >
+                                <label onClick={this.onLabelClick}>{this.props.label}</label>
+                                {this.props.renderEditor(this.state.isEditing, this.stopEditing)}
+                            </div>
+                        </div>
+                    );
+                }}
+            </NavigationContext.Consumer>
         );
     }
 }
