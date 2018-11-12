@@ -4,6 +4,7 @@ import { ArrowKey, Focuser, NavigationKey } from './Focuser';
 import { NavigationContext } from './TabBoundary';
 
 interface Props<TKey extends number | string = string> {
+    className?: string;
     disabled?: boolean;
     label: TKey;
     onArrowKeys?: (label: TKey, arrowKey: ArrowKey) => void;
@@ -140,7 +141,7 @@ export class Field<TKey extends number | string = string> extends React.Componen
                 {tabRegistry => {
                     this.tabRegistry = tabRegistry;
                     return (
-                        <div className="field-container">
+                        <div className={this.props.className || 'field-container'}>
                             <Focuser
                                 disabled={this.props.disabled}
                                 focusKey={this.props.label}

@@ -1,6 +1,6 @@
 {
     "name": "@secoya/tab-navigation.ts",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "dependencies": {
         "@secoya/collection.ts": "2.11.0"
     },
@@ -9,26 +9,26 @@
         "react-dom": ">=16.0.0"
     },
     "devDependencies": {
-        "@types/jest": "23.3.2",
-        "@types/node": "10.10.3",
-        "@types/react": "16.4.14",
-        "@types/react-dom": "16.0.7",
-        "docz": "0.11.2",
+        "@types/jest": "23.3.9",
+        "@types/node": "10.12.5",
+        "@types/react": "16.7.3",
+        "@types/react-dom": "16.0.9",
+        "docz": "0.12.9",
         "jest": "23.6.0",
-        "prettier": "1.14.3",
-        "react": "16.5.2",
-        "react-dom": "16.5.2",
-        "react-testing-library": "5.1.0",
-        "rollup": "0.66.2",
-        "rollup-plugin-commonjs": "9.1.8",
+        "prettier": "1.15.2",
+        "react": "16.6.1",
+        "react-dom": "16.6.1",
+        "react-testing-library": "5.2.3",
+        "rollup": "0.67.1",
+        "rollup-plugin-commonjs": "9.2.0",
         "rollup-plugin-node-resolve": "3.4.0",
-        "rollup-plugin-replace": "2.0.0",
+        "rollup-plugin-replace": "2.1.0",
         "rollup-plugin-ts": "0.1.0",
-        "ts-jest": "23.10.1",
+        "ts-jest": "23.10.4",
         "tslib": "1.9.3",
         "tslint": "5.11.0",
         "tslint-secoya": "2.0.1",
-        "typescript": "3.0.3"
+        "typescript": "3.1.6"
     },
     "license": "BSD-3-Clause",
     "main": "lib/index.js",

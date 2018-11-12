@@ -5,8 +5,13 @@ import { NavigationContext } from './TabBoundary';
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
 export type NavigationKey = ArrowKey | 'Tab' | 'ShiftTab' | 'Escape' | 'Enter' | 'Delete' | 'Space';
 
+const emptyOnChange = () => {
+    return;
+};
+
 interface Props<T extends number | string = string> {
     autoFocus?: boolean;
+    className?: string;
     disabled?: boolean;
     focusKey: T;
     onArrowDown?: React.KeyboardEventHandler<HTMLInputElement>;
@@ -202,15 +207,17 @@ export class Focuser<TKey extends number | string = string> extends React.Compon
                         <input
                             autoComplete="off"
                             autoFocus={this.props.autoFocus}
-                            defaultValue=""
+                            className={this.props.className || 'focuser'}
                             disabled={this.props.disabled}
                             key="focuser"
                             name={String(this.props.focusKey)}
                             onBlur={this.props.onBlur}
+                            onChange={emptyOnChange}
                             onKeyDown={this.onKeyDown}
                             ref={this.setFocuserRef}
                             style={styles}
                             tabIndex={-1}
+                            value=""
                         />
                     );
                 }}

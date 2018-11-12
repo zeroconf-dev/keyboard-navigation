@@ -8,6 +8,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements, TKey extends
     // tslint:disable-next-line:no-reserved-keywords
     as?: TComp;
     autoFocus?: boolean;
+    className?: string;
     cycle?: boolean;
     disabled?: boolean;
     focusKey: TKey;
@@ -31,6 +32,7 @@ export class Section<
         switch (propKey) {
             case 'as':
             case 'autoFocus':
+            case 'className':
             case 'cycle':
             case 'disabled':
             case 'focusKey':
@@ -92,7 +94,7 @@ export class Section<
                     this.tabRegistry = tabRegistry;
                     return (
                         <TabBoundary
-                            className="section-container"
+                            className={this.props.className || 'section-container'}
                             {...boundaryProps}
                             as={this.props.as}
                             boundaryKey={this.props.focusKey}
