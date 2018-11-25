@@ -12,15 +12,17 @@ interface Props<TKey extends number | string = string> {
     onEditStart?: (stopEditing: () => void) => void;
     onEditStop?: () => void;
     onNavigationKeys?: (label: TKey, navKey: NavigationKey) => void;
-    onSubmit: (stopEditing: (preventFocus?: boolean) => void) => void;
-    preventBlurHandler?: boolean;
+    onSubmit: (stopEditing: (preventFocus?: boolean) => void, submittedOn: 'blur' | 'click-outside' | 'enter') => void;
     renderEditor: (isEditing: boolean, stopEditing: () => void) => JSX.Element | null | false;
+    submitOnBlur?: true;
+    submitOnClickOutside?: true;
 }
 interface State {
     isEditing: boolean;
 }
 
 export class Field<TKey extends number | string = string> extends React.Component<Props<TKey>, State> {
+    private refContainer: HTMLDivElement | null = null;
     private refFocuser: Focuser<TKey> | null = null;
     private tabRegistry: TabRegistry<TKey> | null = null;
 
@@ -31,11 +33,27 @@ export class Field<TKey extends number | string = string> extends React.Componen
         };
     }
 
+    public componentDidMount() {
+        document.addEventListener('click', this.clickOutside, false);
+    }
+
     public componentWillReceiveProps(nextProps: Props<TKey>) {
         if (!this.props.disabled && nextProps.disabled) {
             this.stopEditing(true);
         }
     }
+
+    public componentWillUnmount() {
+        document.removeEventListener('click', this.clickOutside, false);
+    }
+
+    private clickOutside = (e: MouseEvent) => {
+        if (this.state.isEditing && this.props.submitOnClickOutside) {
+            if (this.refContainer != null && !this.refContainer.contains(e.target as HTMLElement)) {
+                this.props.onSubmit(this.stopEditing, 'click-outside');
+            }
+        }
+    };
 
     private focus(opts?: FocuserOptions) {
         if (this.props.disabled || this.refFocuser == null) {
@@ -49,17 +67,22 @@ export class Field<TKey extends number | string = string> extends React.Componen
         // or else the field actually won't get blurred.
         e.stopPropagation();
 
-        if (this.props.disabled || !this.state.isEditing || this.props.preventBlurHandler) {
+        if (!this.state.isEditing || !this.props.submitOnBlur) {
             return;
         }
 
-        this.props.onSubmit(this.stopEditing);
+        this.props.onSubmit(this.stopEditing, 'blur');
     };
 
     private onClick = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
         this.startEditing();
+    };
+
+    private onContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        e.preventDefault();
     };
 
     private onEscape = () => {
@@ -77,10 +100,15 @@ export class Field<TKey extends number | string = string> extends React.Componen
             return;
         }
 
-        if (e.key === 'Enter' && !(e.shiftKey || e.metaKey || e.ctrlKey || e.altKey)) {
+        const modifier = e.shiftKey || e.metaKey || e.ctrlKey || e.altKey;
+        if (e.key === 'Enter' && !modifier) {
             e.preventDefault();
             e.stopPropagation();
-            this.props.onSubmit(this.stopEditing);
+            this.props.onSubmit(this.stopEditing, 'enter');
+        } else if (e.key === 'Escape' && !modifier) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.stopEditing();
         }
     };
 
@@ -91,6 +119,9 @@ export class Field<TKey extends number | string = string> extends React.Componen
         this.focus({
             focusOrigin: 'mouse',
         });
+    };
+    private setContainerRef = (ref: HTMLDivElement | null) => {
+        this.refContainer = ref;
     };
 
     private setFocuserRef = (ref: Focuser<TKey> | null) => {
@@ -141,7 +172,11 @@ export class Field<TKey extends number | string = string> extends React.Componen
                 {tabRegistry => {
                     this.tabRegistry = tabRegistry;
                     return (
-                        <div className={this.props.className || 'field-container'}>
+                        <div
+                            className={this.props.className || 'field-container'}
+                            onClick={this.onContainerClick}
+                            ref={this.setContainerRef}
+                        >
                             <Focuser
                                 disabled={this.props.disabled}
                                 focusKey={this.props.label}

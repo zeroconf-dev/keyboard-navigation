@@ -1,9 +1,20 @@
 import * as React from 'react';
 import { cleanup, fireEvent, render } from 'react-testing-library';
 import { assertNever } from '../../util';
-import { Focuser } from '../Focuser';
+import { Focuser, ModifierKeys } from '../Focuser';
 import { TabBoundary } from '../TabBoundary';
 import { allNavigationEvents, shiftTab, tab } from './__helpers__/event';
+
+const noModifiers: ModifierKeys = {
+    altKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+};
+
+const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
+    shiftKey: true,
+});
 
 describe('Focuser', () => {
     afterEach(cleanup);
@@ -107,10 +118,10 @@ describe('Focuser', () => {
 
         allNavigationEvents.forEach(event => fireEvent.keyDown(focuser, event));
 
-        expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowUp');
-        expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowDown');
-        expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowLeft');
-        expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowRight');
+        expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowUp', noModifiers);
+        expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowDown', noModifiers);
+        expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowLeft', noModifiers);
+        expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowRight', noModifiers);
         expect(onArrowKeys).toHaveBeenCalledTimes(4);
     });
 
@@ -122,16 +133,16 @@ describe('Focuser', () => {
 
         allNavigationEvents.forEach(event => fireEvent.keyDown(focuser, event));
 
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowUp');
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowDown');
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowLeft');
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowRight');
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Tab');
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ShiftTab');
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Escape');
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Delete');
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Enter');
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Space');
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowUp', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowDown', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowLeft', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowRight', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Tab', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Tab', shiftModifier);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Escape', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Delete', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Enter', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Space', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledTimes(10);
     });
 

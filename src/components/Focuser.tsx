@@ -3,7 +3,13 @@ import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { NavigationContext } from './TabBoundary';
 
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
-export type NavigationKey = ArrowKey | 'Tab' | 'ShiftTab' | 'Escape' | 'Enter' | 'Delete' | 'Space';
+export type NavigationKey = ArrowKey | 'Tab' | 'Escape' | 'Enter' | 'Delete' | 'Space' | 'Plus' | 'Minus';
+export interface ModifierKeys {
+    altKey: boolean;
+    ctrlKey: boolean;
+    metaKey: boolean;
+    shiftKey: boolean;
+}
 
 const emptyOnChange = () => {
     return;
@@ -14,18 +20,20 @@ interface Props<T extends number | string = string> {
     className?: string;
     disabled?: boolean;
     focusKey: T;
-    onArrowDown?: React.KeyboardEventHandler<HTMLInputElement>;
-    onArrowKeys?: (focusKey: T, arrowKey: ArrowKey) => void;
-    onArrowLeft?: React.KeyboardEventHandler<HTMLInputElement>;
-    onArrowRight?: React.KeyboardEventHandler<HTMLInputElement>;
-    onArrowUp?: React.KeyboardEventHandler<HTMLInputElement>;
+    onArrowDown?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    onArrowKeys?: (focusKey: T, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void;
+    onArrowLeft?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    onArrowRight?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    onArrowUp?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
     onBlur?: React.FocusEventHandler<HTMLInputElement>;
-    onDelete?: React.KeyboardEventHandler<HTMLInputElement>;
-    onEnter?: React.KeyboardEventHandler<HTMLInputElement>;
-    onEscape?: React.KeyboardEventHandler<HTMLInputElement>;
+    onDelete?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    onEnter?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    onEscape?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
     onFocus?: (opts?: FocuserOptions) => void;
-    onNavigationKeys?: (focusKey: T, navKey: NavigationKey) => void;
-    onSpace?: React.KeyboardEventHandler<HTMLInputElement>;
+    onMinus?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    onNavigationKeys?: (focusKey: T, navKey: NavigationKey, modifierKyes: ModifierKeys) => void;
+    onPlus?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    onSpace?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
 }
 interface State {}
 
@@ -59,94 +67,118 @@ export class Focuser<TKey extends number | string = string> extends React.Compon
         }
 
         let shouldPrevent = false;
+        const modifierKeys: ModifierKeys = {
+            altKey: e.altKey,
+            ctrlKey: e.ctrlKey,
+            metaKey: e.metaKey,
+            shiftKey: e.shiftKey,
+        };
 
         if (e.key === 'Enter') {
             if (this.props.onEnter != null) {
                 shouldPrevent = true;
-                this.props.onEnter(e);
+                this.props.onEnter(e, this.props.focusKey);
             }
             if (this.props.onNavigationKeys != null) {
                 shouldPrevent = true;
-                this.props.onNavigationKeys(this.props.focusKey, 'Enter');
+                this.props.onNavigationKeys(this.props.focusKey, 'Enter', modifierKeys);
             }
         } else if (e.key === ' ') {
             if (this.props.onSpace != null) {
                 shouldPrevent = true;
-                this.props.onSpace(e);
+                this.props.onSpace(e, this.props.focusKey);
             }
             if (this.props.onNavigationKeys != null) {
                 shouldPrevent = true;
-                this.props.onNavigationKeys(this.props.focusKey, 'Space');
+                this.props.onNavigationKeys(this.props.focusKey, 'Space', modifierKeys);
             }
         } else if (e.key === 'Escape') {
             if (this.props.onEscape != null) {
                 shouldPrevent = true;
-                this.props.onEscape(e);
+                this.props.onEscape(e, this.props.focusKey);
             }
             if (this.props.onNavigationKeys != null) {
                 shouldPrevent = true;
-                this.props.onNavigationKeys(this.props.focusKey, 'Escape');
+                this.props.onNavigationKeys(this.props.focusKey, 'Escape', modifierKeys);
             }
         } else if (e.key === 'Delete') {
             if (this.props.onDelete != null) {
                 shouldPrevent = true;
-                this.props.onDelete(e);
+                this.props.onDelete(e, this.props.focusKey);
             }
             if (this.props.onNavigationKeys != null) {
                 shouldPrevent = true;
-                this.props.onNavigationKeys(this.props.focusKey, 'Delete');
+                this.props.onNavigationKeys(this.props.focusKey, 'Delete', modifierKeys);
+            }
+        } else if (e.key === '+') {
+            if (this.props.onPlus != null) {
+                shouldPrevent = true;
+                this.props.onPlus(e, this.props.focusKey);
+            }
+            if (this.props.onNavigationKeys != null) {
+                shouldPrevent = true;
+                this.props.onNavigationKeys(this.props.focusKey, 'Plus', modifierKeys);
+            }
+        } else if (e.key === '-') {
+            if (this.props.onMinus != null) {
+                shouldPrevent = true;
+                this.props.onMinus(e, this.props.focusKey);
+            }
+            if (this.props.onNavigationKeys != null) {
+                shouldPrevent = true;
+                this.props.onNavigationKeys(this.props.focusKey, 'Minus', modifierKeys);
             }
         } else if (e.key === 'ArrowUp') {
             if (this.props.onArrowUp != null) {
                 shouldPrevent = true;
-                this.props.onArrowUp(e);
+                this.props.onArrowUp(e, this.props.focusKey);
             }
             if (this.props.onArrowKeys != null) {
                 shouldPrevent = true;
-                this.props.onArrowKeys(this.props.focusKey, 'ArrowUp');
+                this.props.onArrowKeys(this.props.focusKey, 'ArrowUp', modifierKeys);
             }
             if (this.props.onNavigationKeys != null) {
                 shouldPrevent = true;
-                this.props.onNavigationKeys(this.props.focusKey, 'ArrowUp');
+                this.props.onNavigationKeys(this.props.focusKey, 'ArrowUp', modifierKeys);
             }
         } else if (e.key === 'ArrowDown') {
             if (this.props.onArrowDown != null) {
                 shouldPrevent = true;
-                this.props.onArrowDown(e);
+                this.props.onArrowDown(e, this.props.focusKey);
             }
             if (this.props.onArrowKeys != null) {
                 shouldPrevent = true;
-                this.props.onArrowKeys(this.props.focusKey, 'ArrowDown');
+                this.props.onArrowKeys(this.props.focusKey, 'ArrowDown', modifierKeys);
             }
             if (this.props.onNavigationKeys != null) {
                 shouldPrevent = true;
-                this.props.onNavigationKeys(this.props.focusKey, 'ArrowDown');
+                this.props.onNavigationKeys(this.props.focusKey, 'ArrowDown', modifierKeys);
             }
         } else if (e.key === 'ArrowLeft') {
             if (this.props.onArrowLeft != null) {
                 shouldPrevent = true;
-                this.props.onArrowLeft(e);
+                this.props.onArrowLeft(e, this.props.focusKey);
             }
             if (this.props.onArrowKeys != null) {
                 shouldPrevent = true;
-                this.props.onArrowKeys(this.props.focusKey, 'ArrowLeft');
+                this.props.onArrowKeys(this.props.focusKey, 'ArrowLeft', modifierKeys);
             }
             if (this.props.onNavigationKeys != null) {
                 shouldPrevent = true;
-                this.props.onNavigationKeys(this.props.focusKey, 'ArrowLeft');
+                this.props.onNavigationKeys(this.props.focusKey, 'ArrowLeft', modifierKeys);
             }
         } else if (e.key === 'ArrowRight') {
             if (this.props.onArrowRight != null) {
                 shouldPrevent = true;
-                this.props.onArrowRight(e);
+                this.props.onArrowRight(e, this.props.focusKey);
             }
             if (this.props.onArrowKeys != null) {
                 shouldPrevent = true;
-                this.props.onArrowKeys(this.props.focusKey, 'ArrowRight');
+                this.props.onArrowKeys(this.props.focusKey, 'ArrowRight', modifierKeys);
             }
             if (this.props.onNavigationKeys != null) {
                 shouldPrevent = true;
-                this.props.onNavigationKeys(this.props.focusKey, 'ArrowRight');
+                this.props.onNavigationKeys(this.props.focusKey, 'ArrowRight', modifierKeys);
             }
         } else if (e.key === 'Tab') {
             if (e.shiftKey) {
@@ -154,19 +186,15 @@ export class Focuser<TKey extends number | string = string> extends React.Compon
                     shouldPrevent = true;
                     this.tabRegistry.focusPrev(this.props.focusKey);
                 }
-                if (this.props.onNavigationKeys != null) {
-                    shouldPrevent = true;
-                    this.props.onNavigationKeys(this.props.focusKey, 'ShiftTab');
-                }
             } else {
                 if (this.tabRegistry != null) {
                     shouldPrevent = true;
                     this.tabRegistry.focusNext(this.props.focusKey);
                 }
-                if (this.props.onNavigationKeys != null) {
-                    shouldPrevent = true;
-                    this.props.onNavigationKeys(this.props.focusKey, 'Tab');
-                }
+            }
+            if (this.props.onNavigationKeys != null) {
+                shouldPrevent = true;
+                this.props.onNavigationKeys(this.props.focusKey, 'Tab', modifierKeys);
             }
         } else if (!(e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)) {
             shouldPrevent = true;
@@ -182,7 +210,7 @@ export class Focuser<TKey extends number | string = string> extends React.Compon
     };
 
     public focus = (opts?: FocuserOptions) => {
-        if (this.props.disabled || this.tabRegistry == null || this.refFocuser == null) {
+        if (this.props.disabled || this.refFocuser == null) {
             return false;
         }
         this.refFocuser.focus();
