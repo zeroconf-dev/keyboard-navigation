@@ -142,10 +142,11 @@ describe('Focuser', () => {
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Escape', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Minus', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Plus', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'QuestionMark', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Space', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Tab', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Tab', shiftModifier);
-        expect(onNavigationKeys).toHaveBeenCalledTimes(12);
+        expect(onNavigationKeys).toHaveBeenCalledTimes(13);
     });
 
     test('all single event handlers are called', () => {
@@ -158,6 +159,7 @@ describe('Focuser', () => {
         const onEscape = jest.fn();
         const onMinus = jest.fn();
         const onPlus = jest.fn();
+        const onQuestionMark = jest.fn();
         const onSpace = jest.fn();
 
         const { container } = render(
@@ -172,6 +174,7 @@ describe('Focuser', () => {
                 onEscape={onEscape}
                 onMinus={onMinus}
                 onPlus={onPlus}
+                onQuestionMark={onQuestionMark}
                 onSpace={onSpace}
             />,
         );
@@ -187,6 +190,8 @@ describe('Focuser', () => {
                     return expect(onPlus).toHaveBeenCalled();
                 case '-':
                     return expect(onMinus).toHaveBeenCalled();
+                case '?':
+                    return expect(onQuestionMark).toHaveBeenCalled();
                 case 'ArrowDown':
                     return expect(onArrowDown).toHaveBeenCalled();
                 case 'ArrowLeft':
@@ -208,7 +213,7 @@ describe('Focuser', () => {
             }
         });
 
-        expect.assertions(10);
+        expect.assertions(11);
     });
 
     test('no non navigation key down events can bouble from the focuser', () => {
@@ -242,6 +247,7 @@ describe('Focuser', () => {
                     onEscape={handler}
                     onMinus={handler}
                     onPlus={handler}
+                    onQuestionMark={handler}
                     onSpace={handler}
                 />
             </TabBoundary>,

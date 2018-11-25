@@ -45,9 +45,9 @@ describe('TabBoundary', () => {
         const focuser3 = container.querySelector('[name=focuser3]') as HTMLInputElement;
 
         tab(focuser2);
-        expect(onFocus3).toHaveBeenCalledWith({ focusOrigin: 'prev' });
+        expect(onFocus3).toHaveBeenCalledWith({ focusOrigin: 'prev' }, 'focuser3');
         shiftTab(focuser3);
-        expect(onFocus2).toHaveBeenCalledWith({ focusOrigin: 'next' });
+        expect(onFocus2).toHaveBeenCalledWith({ focusOrigin: 'next' }, 'focuser2');
     });
 
     test('focus parent on escape focuses first focuser of parent boundary', () => {
@@ -65,7 +65,7 @@ describe('TabBoundary', () => {
         const childFocuser2 = container.querySelector('[name=child-focuser2]') as HTMLInputElement;
         escape(childFocuser2);
 
-        expect(onFocusParent).toHaveBeenCalledWith({ focusOrigin: 'child' });
+        expect(onFocusParent).toHaveBeenCalledWith({ focusOrigin: 'child' }, 'parent-focuser');
     });
 
     test('boundary with cycle enabled, focus the first/last focuser when crossing boundaries', () => {
@@ -108,7 +108,7 @@ describe('TabBoundary', () => {
         const childFocuser2 = container.querySelector('[name=child-focuser2]') as HTMLInputElement;
         space(childFocuser2);
 
-        expect(onFocusParent).toHaveBeenCalledWith({ focusOrigin: 'child' });
+        expect(onFocusParent).toHaveBeenCalledWith({ focusOrigin: 'child' }, 'parent-focuser');
     });
 
     test('duplicate keys in sibling boundary does not throw', () => {
@@ -142,20 +142,12 @@ class FocusParentOnSpace extends React.Component<{ focusKey: string; onFocus?: (
         }
     };
 
+    private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
+        this.tabRegistry = tabRegistry;
+        return <Focuser focusKey={this.props.focusKey} onFocus={this.props.onFocus} onSpace={this.focusParent} />;
+    };
+
     public render() {
-        return (
-            <NavigationContext.Consumer>
-                {tabRegistry => {
-                    this.tabRegistry = tabRegistry;
-                    return (
-                        <Focuser
-                            focusKey={this.props.focusKey}
-                            onFocus={this.props.onFocus}
-                            onSpace={this.focusParent}
-                        />
-                    );
-                }}
-            </NavigationContext.Consumer>
-        );
+        return <NavigationContext.Consumer>{this.renderWithTabRegistry}</NavigationContext.Consumer>;
     }
 }
