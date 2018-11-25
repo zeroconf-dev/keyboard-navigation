@@ -3,7 +3,6 @@ import { TabRegistry } from '../TabRegistry';
 import { NavigationContext } from './TabBoundary';
 
 export interface TabbableProps {
-    focus?: boolean;
     name: string;
 }
 
@@ -11,7 +10,9 @@ type Component = keyof JSX.IntrinsicElements | React.ComponentClass<any>;
 
 type ComponentPropTypes<TComp extends Component> = TComp extends keyof JSX.IntrinsicElements
     ? JSX.IntrinsicElements[TComp]
-    : TComp extends React.ComponentClass<infer Props> ? Props : never;
+    : TComp extends React.ComponentClass<infer Props>
+    ? Props
+    : never;
 
 export function Tabbable<TElm extends keyof JSX.IntrinsicElements>(
     Comp: TElm,
@@ -44,32 +45,27 @@ export function Tabbable<TComp extends Component>(
             return false;
         };
 
+        private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
+            if (this.tabRegistry != null && tabRegistry !== this.tabRegistry) {
+                this.tabRegistry.delete(this.props.name);
+            }
+            if (tabRegistry != null) {
+                tabRegistry.add(this.props.name, this.focusTabbable);
+            }
+            this.tabRegistry = tabRegistry;
+            return (
+                <Comp {...this.props} {...this.state} ref={this.setComponentRef}>
+                    {this.props.children}
+                </Comp>
+            );
+        };
+
         private setComponentRef = (ref: any): void => {
             this.refComponent = ref;
-            if (this.props.focus) {
-                this.focusTabbable();
-            }
         };
 
         public render() {
-            return (
-                <NavigationContext.Consumer>
-                    {tabRegistry => {
-                        if (this.tabRegistry != null && tabRegistry !== this.tabRegistry) {
-                            this.tabRegistry.delete(this.props.name);
-                        }
-                        if (tabRegistry != null) {
-                            tabRegistry.add(this.props.name, this.focusTabbable);
-                        }
-                        this.tabRegistry = tabRegistry;
-                        return (
-                            <Comp {...this.props} {...this.state} ref={this.setComponentRef}>
-                                {this.props.children}
-                            </Comp>
-                        );
-                    }}
-                </NavigationContext.Consumer>
-            );
+            return <NavigationContext.Consumer>{this.renderWithTabRegistry}</NavigationContext.Consumer>;
         }
     };
 }
