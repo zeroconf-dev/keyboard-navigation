@@ -1,0 +1,61 @@
+---
+name: Tabbable
+menu: Component
+route: /tabbable
+---
+
+import { Playground, PropsTable } from 'docz';
+import { Tabbable, Button, Input, Select, TextArea } from './Tabbable';
+
+## Button
+
+<Playground>
+    <Button name="submit">Submit</Button>
+</Playground>
+
+### Props
+
+Button has the same interface as a normal button component in React,
+except that a name prop is required, and the name must be unique among
+its siblings within the same TabBoundary/TabRegistry.
+
+## Input
+
+<Playground>
+    <Input autocomplete="off" name="username" placeholder="Username" />
+</Playground>
+
+### Props
+
+Input has the same interface as a normal input component in React,
+except that a name prop is required, and the name must be unique among
+its siblings within the same TabBoundary/TabRegistry.
+
+## Select
+
+<Playground>
+    <Select name="countryCode">
+        <option value="DK">DK</option>
+        <option value="US">US</option>
+    </Select>
+</Playground>
+
+### Props
+
+Select has the same interface as a normal select component in React,
+except that a name prop is required, and the name must be unique among
+its siblings within the same TabBoundary/TabRegistry.
+
+## TextArea
+
+<Playground>
+    <TextArea name="description" placeholder="A long description of something important..." rows="3" cols="50" />
+</Playground>
+
+### Props
+
+TextArea has the same interface as a normal textarea component in React,
+except that a name prop is required, and the name must be unique among
+its siblings within the same TabBoundary/TabRegistry.
+
+<PropsTable of={TextArea} />
