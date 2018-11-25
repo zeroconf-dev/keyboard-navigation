@@ -2,7 +2,7 @@
     "name": "@secoya/tab-navigation.ts",
     "version": "3.2.0",
     "dependencies": {
-        "@secoya/collection.ts": "2.11.0"
+        "@secoya/collection.ts": "^2.11.0"
     },
     "peerDependencies": {
         "react": ">=16.0.0",

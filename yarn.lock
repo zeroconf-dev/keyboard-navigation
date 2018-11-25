@@ -854,12 +854,12 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
-"@secoya/collection.ts@2.11.0":
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/@secoya/collection.ts/-/collection.ts-2.11.0.tgz#e71a4efe86b9d77c030b4b10dc6fabe6b0d56d8a"
-  integrity sha512-jKQ7XUBSQPGYkWwiIrWDvuhXxr6mhlHBBTx1zd38dyzNRZRP90RnsIaN8iFDZnX6dduay7rkdCN22hrWqUJZNw==
+"@secoya/collection.ts@^2.11.0":
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/@secoya/collection.ts/-/collection.ts-2.11.1.tgz#5e23b9265eab543e2acb8ad8d248c8270b272607"
+  integrity sha512-wHK3ZezV2AkYbvJy/gzX6CvQKN/491iSroVROmEdsX5WdEUd7M8In/2qFA74LLSv7cJxSFU0FPlqRp+O/24mag==
   dependencies:
-    tslib "^1.8.0"
+    tslib "^1.8.1"
 
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.2"
