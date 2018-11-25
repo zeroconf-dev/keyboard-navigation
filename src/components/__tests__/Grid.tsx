@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cleanup, render } from 'react-testing-library';
 import { FieldMap } from '../../FieldNavigation';
-import { ArrowKey } from '../Focuser';
+import { ArrowKey, ModifierKeys } from '../Focuser';
 import { Grid } from '../Grid';
 import { Section } from '../Section';
 import { TabBoundary } from '../TabBoundary';
@@ -13,7 +13,9 @@ describe('<Grid />', () => {
     test('focus between sections in a column', () => {
         const onFocus1 = jest.fn();
         const onFocus2 = jest.fn();
-        const renderGrid = (navigationHandler: (focusKey: string, arrowKey: ArrowKey) => void) => (
+        const renderGrid = (
+            navigationHandler: (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void,
+        ) => (
             <>
                 <Section
                     className="section1"

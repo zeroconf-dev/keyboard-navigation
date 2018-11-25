@@ -15,25 +15,25 @@ const emptyOnChange = () => {
     return;
 };
 
-interface Props<T extends number | string = string> {
+interface Props {
     autoFocus?: boolean;
     className?: string;
     disabled?: boolean;
-    focusKey: T;
-    onArrowDown?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
-    onArrowKeys?: (focusKey: T, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void;
-    onArrowLeft?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
-    onArrowRight?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
-    onArrowUp?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    focusKey: string;
+    onArrowDown?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
+    onArrowKeys?: (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void;
+    onArrowLeft?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
+    onArrowRight?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
+    onArrowUp?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
     onBlur?: React.FocusEventHandler<HTMLInputElement>;
-    onDelete?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
-    onEnter?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
-    onEscape?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    onDelete?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
+    onEnter?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
+    onEscape?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
     onFocus?: (opts?: FocuserOptions) => void;
-    onMinus?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
-    onNavigationKeys?: (focusKey: T, navKey: NavigationKey, modifierKyes: ModifierKeys) => void;
-    onPlus?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
-    onSpace?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: T) => void;
+    onMinus?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
+    onNavigationKeys?: (focusKey: string, navKey: NavigationKey, modifierKyes: ModifierKeys) => void;
+    onPlus?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
+    onSpace?: (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
 }
 interface State {}
 
@@ -50,9 +50,9 @@ const styles: React.CSSProperties = {
     width: 0,
 };
 
-export class Focuser<TKey extends number | string = string> extends React.Component<Props<TKey>, State> {
+export class Focuser extends React.Component<Props, State> {
     private refFocuser: HTMLInputElement | null = null;
-    private tabRegistry: TabRegistry<TKey> | null = null;
+    private tabRegistry: TabRegistry<string> | null = null;
 
     public componentWillUnmount() {
         if (this.tabRegistry != null) {

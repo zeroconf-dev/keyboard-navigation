@@ -1,6 +1,8 @@
 import { fireEvent } from 'react-testing-library';
 
 export type AllEventKey =
+    | '+'
+    | '-'
     | 'ArrowUp'
     | 'ArrowDown'
     | 'ArrowLeft'
@@ -12,6 +14,8 @@ export type AllEventKey =
     | 'Delete';
 
 export const allNavigationEvents: { key: AllEventKey; shiftKey?: true }[] = [
+    { key: '+' },
+    { key: '-' },
     { key: 'ArrowUp' },
     { key: 'ArrowDown' },
     { key: 'ArrowLeft' },
@@ -23,6 +27,18 @@ export const allNavigationEvents: { key: AllEventKey; shiftKey?: true }[] = [
     { key: 'Escape' },
     { key: 'Delete' },
 ];
+
+export function plus(elm: HTMLElement) {
+    return fireEvent.keyDown(elm, {
+        key: '+',
+    });
+}
+
+export function minus(elm: HTMLElement) {
+    return fireEvent.keyDown(elm, {
+        key: '-',
+    });
+}
 
 export function tab(elm: HTMLElement) {
     return fireEvent.keyDown(elm, {

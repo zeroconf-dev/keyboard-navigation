@@ -1,0 +1,27 @@
+---
+name: Field
+menu: Component
+route: /field
+---
+
+import { Playground, PropsTable } from 'docz';
+import { Field } from './Field';
+
+# Field
+
+<PropsTable of={Field} />
+
+## Basic usage
+
+<Playground>
+    <Field label="E-mail" onSubmit={(stopEditing, submittedOn) => stopEditing()} renderEditor={(isEditing, stopEditing) => {
+        const editor = isEditing ? (
+            <input autoFocus={true} defaultValue="user@domain.tld" type="email" onBlur={stopEditing} />
+        ) : <div className="value">user@domain.tld</div>;
+        return (
+            <div className={'editor' + isEditing ? ' active': ''}>
+                {editor}
+            </div>
+        );
+    }} />
+</Playground>

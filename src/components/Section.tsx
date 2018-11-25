@@ -1,34 +1,30 @@
 import * as React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
-import { ArrowKey, Focuser } from './Focuser';
+import { ArrowKey, Focuser, ModifierKeys } from './Focuser';
 import { NavigationContext, TabBoundary } from './TabBoundary';
 
-interface ComponentProps<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> {
+interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     // tslint:disable-next-line:no-reserved-keywords
     as?: TComp;
     autoFocus?: boolean;
     className?: string;
     cycle?: boolean;
     disabled?: boolean;
-    focusKey: TKey;
-    navigationHandler?: (focusKey: TKey, arrowKey: ArrowKey) => void;
+    focusKey: string;
+    navigationHandler?: (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void;
     onFocus?: (opts?: FocuserOptions) => void;
 }
 
-type Props<TComp extends keyof JSX.IntrinsicElements, TKey extends number | string> = UnpackedHTMLAttributes<TComp> &
-    ComponentProps<TComp, TKey>;
+type Props<TComp extends keyof JSX.IntrinsicElements> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
 
 interface State {}
 
-export class Section<
-    TComp extends keyof JSX.IntrinsicElements = 'div',
-    TKey extends number | string = string
-> extends React.Component<Props<TComp, TKey>, State> {
-    private refFocuser: Focuser<TKey> | null = null;
-    private tabRegistry: TabRegistry<TKey> | null = null;
+export class Section<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<Props<TComp>, State> {
+    private refFocuser: Focuser | null = null;
+    private tabRegistry: TabRegistry<string> | null = null;
 
-    private filterPropKeys = (propKey: keyof ComponentProps<TComp, TKey>) => {
+    private filterPropKeys = (propKey: keyof ComponentProps<TComp>) => {
         switch (propKey) {
             case 'as':
             case 'autoFocus':
@@ -45,9 +41,9 @@ export class Section<
         }
     };
 
-    private navigationHandler = (_: TKey, arrowKey: ArrowKey) => {
+    private navigationHandler = (_: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => {
         if (this.props.navigationHandler != null) {
-            this.props.navigationHandler(this.props.focusKey, arrowKey);
+            this.props.navigationHandler(this.props.focusKey, arrowKey, modifierKeys);
         }
     };
 
@@ -63,7 +59,7 @@ export class Section<
 
     private onEnterKey = () => {
         if (this.tabRegistry != null) {
-            this.tabRegistry.focusIn([this.props.focusKey, 'section' as TKey], {
+            this.tabRegistry.focusIn([this.props.focusKey, 'section'], {
                 focusOrigin: 'parent',
             });
         }
@@ -78,13 +74,13 @@ export class Section<
         }
     };
 
-    private setFocuserRef = (ref: Focuser<TKey> | null) => {
+    private setFocuserRef = (ref: Focuser | null) => {
         this.refFocuser = ref;
     };
 
     public render() {
         const navigationHandler = this.props.navigationHandler == null ? undefined : this.navigationHandler;
-        const boundaryProps = filterPropKeys<ComponentProps<TComp, TKey>, TComp, Props<TComp, TKey>>(
+        const boundaryProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(
             this.props,
             this.filterPropKeys,
         );
@@ -103,7 +99,7 @@ export class Section<
                             <Focuser
                                 autoFocus={this.props.autoFocus}
                                 disabled={this.props.disabled}
-                                focusKey={'section-focuser' as TKey}
+                                focusKey="section-focuser"
                                 onArrowKeys={navigationHandler}
                                 onEnter={this.onEnterKey}
                                 onEscape={this.onEscapeKey}

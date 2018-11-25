@@ -3,16 +3,19 @@ import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { ArrowKey, Focuser, NavigationKey } from './Focuser';
 import { NavigationContext } from './TabBoundary';
 
-interface Props<TKey extends number | string = string> {
+export interface Props {
     className?: string;
     disabled?: boolean;
-    label: TKey;
-    onArrowKeys?: (label: TKey, arrowKey: ArrowKey) => void;
+    label: string;
+    onArrowKeys?: (label: string, arrowKey: ArrowKey) => void;
     onDelete?: () => void;
     onEditStart?: (stopEditing: () => void) => void;
     onEditStop?: () => void;
-    onNavigationKeys?: (label: TKey, navKey: NavigationKey) => void;
-    onSubmit: (stopEditing: (preventFocus?: boolean) => void, submittedOn: 'blur' | 'click-outside' | 'enter') => void;
+    onNavigationKeys?: (label: string, navKey: NavigationKey) => void;
+    onSubmit: (
+        stopEditing: (preventFocus?: boolean) => void,
+        submittedOn: 'blur' | 'click-outside' | 'enter-key',
+    ) => void;
     renderEditor: (isEditing: boolean, stopEditing: () => void) => JSX.Element | null | false;
     submitOnBlur?: true;
     submitOnClickOutside?: true;
@@ -21,12 +24,16 @@ interface State {
     isEditing: boolean;
 }
 
-export class Field<TKey extends number | string = string> extends React.Component<Props<TKey>, State> {
+export class Field extends React.Component<Props, State> {
     private refContainer: HTMLDivElement | null = null;
-    private refFocuser: Focuser<TKey> | null = null;
-    private tabRegistry: TabRegistry<TKey> | null = null;
+    private refFocuser: Focuser | null = null;
+    private tabRegistry: TabRegistry<string> | null = null;
 
-    public constructor(props: Props<TKey>) {
+    public static defaultProps = {
+        disabled: false,
+    };
+
+    public constructor(props: Props) {
         super(props);
         this.state = {
             isEditing: false,
@@ -37,7 +44,7 @@ export class Field<TKey extends number | string = string> extends React.Componen
         document.addEventListener('click', this.clickOutside, false);
     }
 
-    public componentWillReceiveProps(nextProps: Props<TKey>) {
+    public componentWillReceiveProps(nextProps: Props) {
         if (!this.props.disabled && nextProps.disabled) {
             this.stopEditing(true);
         }
@@ -104,7 +111,7 @@ export class Field<TKey extends number | string = string> extends React.Componen
         if (e.key === 'Enter' && !modifier) {
             e.preventDefault();
             e.stopPropagation();
-            this.props.onSubmit(this.stopEditing, 'enter');
+            this.props.onSubmit(this.stopEditing, 'enter-key');
         } else if (e.key === 'Escape' && !modifier) {
             e.preventDefault();
             e.stopPropagation();
@@ -124,7 +131,7 @@ export class Field<TKey extends number | string = string> extends React.Componen
         this.refContainer = ref;
     };
 
-    private setFocuserRef = (ref: Focuser<TKey> | null) => {
+    private setFocuserRef = (ref: Focuser | null) => {
         this.refFocuser = ref;
     };
 
@@ -166,42 +173,35 @@ export class Field<TKey extends number | string = string> extends React.Componen
         }
     };
 
-    public render() {
+    private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
+        this.tabRegistry = tabRegistry;
         return (
-            <NavigationContext.Consumer>
-                {tabRegistry => {
-                    this.tabRegistry = tabRegistry;
-                    return (
-                        <div
-                            className={this.props.className || 'field-container'}
-                            onClick={this.onContainerClick}
-                            ref={this.setContainerRef}
-                        >
-                            <Focuser
-                                disabled={this.props.disabled}
-                                focusKey={this.props.label}
-                                key="focuser"
-                                onArrowKeys={this.props.onArrowKeys}
-                                onDelete={this.props.onDelete}
-                                onEnter={this.startEditing}
-                                onEscape={this.onEscape}
-                                onNavigationKeys={this.props.onNavigationKeys}
-                                onSpace={this.startEditing}
-                                ref={this.setFocuserRef}
-                            />
-                            <div
-                                className="field"
-                                onBlur={this.onBlur}
-                                onClick={this.onClick}
-                                onKeyDown={this.onFieldKeyDown}
-                            >
-                                <label onClick={this.onLabelClick}>{this.props.label}</label>
-                                {this.props.renderEditor(this.state.isEditing, this.stopEditing)}
-                            </div>
-                        </div>
-                    );
-                }}
-            </NavigationContext.Consumer>
+            <div
+                className={this.props.className || 'field-container'}
+                onClick={this.onContainerClick}
+                ref={this.setContainerRef}
+            >
+                <Focuser
+                    disabled={this.props.disabled}
+                    focusKey={this.props.label}
+                    key="focuser"
+                    onArrowKeys={this.props.onArrowKeys}
+                    onDelete={this.props.onDelete}
+                    onEnter={this.startEditing}
+                    onEscape={this.onEscape}
+                    onNavigationKeys={this.props.onNavigationKeys}
+                    onSpace={this.startEditing}
+                    ref={this.setFocuserRef}
+                />
+                <div className="field" onBlur={this.onBlur} onClick={this.onClick} onKeyDown={this.onFieldKeyDown}>
+                    <label onClick={this.onLabelClick}>{this.props.label}</label>
+                    {this.props.renderEditor(this.state.isEditing, this.stopEditing)}
+                </div>
+            </div>
         );
+    };
+
+    public render() {
+        return <NavigationContext.Consumer>{this.renderWithTabRegistry}</NavigationContext.Consumer>;
     }
 }

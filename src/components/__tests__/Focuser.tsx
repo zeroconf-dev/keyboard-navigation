@@ -133,17 +133,19 @@ describe('Focuser', () => {
 
         allNavigationEvents.forEach(event => fireEvent.keyDown(focuser, event));
 
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowUp', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowDown', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowLeft', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowRight', noModifiers);
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Tab', noModifiers);
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Tab', shiftModifier);
-        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Escape', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowUp', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Delete', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Enter', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Escape', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Minus', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Plus', noModifiers);
         expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Space', noModifiers);
-        expect(onNavigationKeys).toHaveBeenCalledTimes(10);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Tab', noModifiers);
+        expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'Tab', shiftModifier);
+        expect(onNavigationKeys).toHaveBeenCalledTimes(12);
     });
 
     test('all single event handlers are called', () => {
@@ -154,6 +156,8 @@ describe('Focuser', () => {
         const onDelete = jest.fn();
         const onEnter = jest.fn();
         const onEscape = jest.fn();
+        const onMinus = jest.fn();
+        const onPlus = jest.fn();
         const onSpace = jest.fn();
 
         const { container } = render(
@@ -166,6 +170,8 @@ describe('Focuser', () => {
                 onDelete={onDelete}
                 onEnter={onEnter}
                 onEscape={onEscape}
+                onMinus={onMinus}
+                onPlus={onPlus}
                 onSpace={onSpace}
             />,
         );
@@ -177,6 +183,10 @@ describe('Focuser', () => {
             switch (event.key) {
                 case ' ':
                     return expect(onSpace).toHaveBeenCalled();
+                case '+':
+                    return expect(onPlus).toHaveBeenCalled();
+                case '-':
+                    return expect(onMinus).toHaveBeenCalled();
                 case 'ArrowDown':
                     return expect(onArrowDown).toHaveBeenCalled();
                 case 'ArrowLeft':
@@ -198,7 +208,7 @@ describe('Focuser', () => {
             }
         });
 
-        expect.assertions(8);
+        expect.assertions(10);
     });
 
     test('no non navigation key down events can bouble from the focuser', () => {
@@ -230,6 +240,8 @@ describe('Focuser', () => {
                     onDelete={handler}
                     onEnter={handler}
                     onEscape={handler}
+                    onMinus={handler}
+                    onPlus={handler}
                     onSpace={handler}
                 />
             </TabBoundary>,
