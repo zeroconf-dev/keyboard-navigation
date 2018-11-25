@@ -119,7 +119,7 @@ describe('Blur handler', () => {
         const renderEditor = (isEditing: boolean) => {
             return (
                 <div data-testid="inside">
-                    {isEditing ? <input autoFocus data-testid="editor" defaultValue="edit" /> : 'read'}
+                    {isEditing ? <input autoFocus={true} data-testid="editor" defaultValue="edit" /> : 'read'}
                 </div>
             );
         };
@@ -146,7 +146,7 @@ describe('Blur handler', () => {
         const renderEditor = (isEditing: boolean) => {
             return (
                 <div data-testid="inside">
-                    {isEditing ? <input autoFocus data-testid="editor" defaultValue="edit" /> : 'read'}
+                    {isEditing ? <input autoFocus={true} data-testid="editor" defaultValue="edit" /> : 'read'}
                 </div>
             );
         };

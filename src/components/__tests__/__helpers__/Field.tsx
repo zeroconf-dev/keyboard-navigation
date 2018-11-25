@@ -1,6 +1,6 @@
-import { Props, Field } from '../../Field';
-import { render, fireEvent } from 'react-testing-library';
 import * as React from 'react';
+import { fireEvent, render } from 'react-testing-library';
+import { Field, Props } from '../../Field';
 
 export const onSubmitStopEditing = () => jest.fn((stopEditing: () => void) => stopEditing());
 

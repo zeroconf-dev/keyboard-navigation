@@ -1,37 +1,108 @@
 import * as React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
-import { ArrowKey, Focuser, NavigationKey } from './Focuser';
+import { ArrowKeyHandler, Focuser, NavigationKeyHandler } from './Focuser';
 import { NavigationContext } from './TabBoundary';
 
+export type SubmitHandler = (
+    stopEditing: (preventFocus?: boolean) => void,
+    submittedOn: 'blur' | 'click-outside' | 'enter-key',
+) => void;
+export type EditorRenderer = (isEditing: boolean, stopEditing: () => void) => JSX.Element | null | false;
+export type EditStartHandler = (stopEditing: () => void) => void;
+
 export interface Props {
+    /**
+     * Set the classname of the container element,
+     * this makes the component compatible with most css-in-js libraries
+     * like styled-components, glamor and emotion etc.
+     */
     className?: string;
+
+    /**
+     * Whether or not the field is disabled; cannot be focused, start editing,
+     * no navigation key events will be triggered/propagated.
+     */
     disabled?: boolean;
+
+    /**
+     * The label of the editor, must be unique amoung siblings
+     * withing a TabBoundary/TabRegistry.
+     */
     label: string;
-    onArrowKeys?: (label: string, arrowKey: ArrowKey) => void;
+
+    /**
+     * Called when the underlying focuser has focus and
+     * the user presses down any arrow key of the keyboard.
+     * @deprecated use [onNavigationKeys].
+     */
+    onArrowKeys?: ArrowKeyHandler;
+
+    /**
+     * Called when the underlying focuser has focus
+     * and the user presses the delete key of the keyboard.
+     */
     onDelete?: () => void;
-    onEditStart?: (stopEditing: () => void) => void;
+
+    /**
+     * Called just before the fields switches to edit mode.
+     * This is a great place to set internal state of any input field
+     * before going into edit mode.
+     */
+    onEditStart?: EditStartHandler;
+
+    /**
+     * Called just after the stopEditing is called, and switches back
+     * to read mode.
+     * This is a great place to clean up after edit more, or reset any state
+     * before going back into read mode.
+     */
     onEditStop?: () => void;
-    onNavigationKeys?: (label: string, navKey: NavigationKey) => void;
-    onSubmit: (
-        stopEditing: (preventFocus?: boolean) => void,
-        submittedOn: 'blur' | 'click-outside' | 'enter-key',
-    ) => void;
-    renderEditor: (isEditing: boolean, stopEditing: () => void) => JSX.Element | null | false;
-    submitOnBlur?: true;
-    submitOnClickOutside?: true;
+
+    /**
+     * The preferred handler to use for handling all keyboard navigation in read mode.
+     * Navigation in edit mode should be implemented in the editor.
+     */
+    onNavigationKeys?: NavigationKeyHandler;
+
+    /**
+     * Called when submitting the field. The submit handler is responsible
+     * for invoking stop editing, and put the field back into read mode.
+     * The handler gets passed info about how the field is submitted.
+     */
+    onSubmit: SubmitHandler;
+
+    /**
+     * Render prop responsible for rendering the actual editor both in read and edit mode.
+     */
+    renderEditor: EditorRenderer;
+
+    /**
+     * Whether or not a blur event caught on the inside the field component
+     * should trigger submit.
+     */
+    submitOnBlur?: boolean;
+
+    /**
+     * Whether or not click-outside of the field and/or its descendant components
+     * should trigger submit.
+     */
+    submitOnClickOutside?: boolean;
 }
+
 interface State {
     isEditing: boolean;
 }
 
 export class Field extends React.Component<Props, State> {
+    public static defaultProps = {
+        disabled: false,
+        submitOnBlur: false,
+        submitOnClickOutside: false,
+    };
+
     private refContainer: HTMLDivElement | null = null;
     private refFocuser: Focuser | null = null;
     private tabRegistry: TabRegistry<string> | null = null;
-
-    public static defaultProps = {
-        disabled: false,
-    };
 
     public constructor(props: Props) {
         super(props);
@@ -127,6 +198,34 @@ export class Field extends React.Component<Props, State> {
             focusOrigin: 'mouse',
         });
     };
+
+    private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
+        this.tabRegistry = tabRegistry;
+        return (
+            <div
+                className={this.props.className || 'field-container'}
+                onClick={this.onContainerClick}
+                ref={this.setContainerRef}
+            >
+                <Focuser
+                    disabled={this.props.disabled}
+                    focusKey={this.props.label}
+                    key="focuser"
+                    onArrowKeys={this.props.onArrowKeys}
+                    onDelete={this.props.onDelete}
+                    onEnter={this.startEditing}
+                    onEscape={this.onEscape}
+                    onNavigationKeys={this.props.onNavigationKeys}
+                    onSpace={this.startEditing}
+                    ref={this.setFocuserRef}
+                />
+                <div className="field" onBlur={this.onBlur} onClick={this.onClick} onKeyDown={this.onFieldKeyDown}>
+                    <label onClick={this.onLabelClick}>{this.props.label}</label>
+                    {this.props.renderEditor(this.state.isEditing, this.stopEditing)}
+                </div>
+            </div>
+        );
+    };
     private setContainerRef = (ref: HTMLDivElement | null) => {
         this.refContainer = ref;
     };
@@ -171,34 +270,6 @@ export class Field extends React.Component<Props, State> {
         if (this.props.onEditStop != null) {
             this.props.onEditStop();
         }
-    };
-
-    private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
-        this.tabRegistry = tabRegistry;
-        return (
-            <div
-                className={this.props.className || 'field-container'}
-                onClick={this.onContainerClick}
-                ref={this.setContainerRef}
-            >
-                <Focuser
-                    disabled={this.props.disabled}
-                    focusKey={this.props.label}
-                    key="focuser"
-                    onArrowKeys={this.props.onArrowKeys}
-                    onDelete={this.props.onDelete}
-                    onEnter={this.startEditing}
-                    onEscape={this.onEscape}
-                    onNavigationKeys={this.props.onNavigationKeys}
-                    onSpace={this.startEditing}
-                    ref={this.setFocuserRef}
-                />
-                <div className="field" onBlur={this.onBlur} onClick={this.onClick} onKeyDown={this.onFieldKeyDown}>
-                    <label onClick={this.onLabelClick}>{this.props.label}</label>
-                    {this.props.renderEditor(this.state.isEditing, this.stopEditing)}
-                </div>
-            </div>
-        );
     };
 
     public render() {
