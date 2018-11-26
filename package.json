@@ -14,6 +14,7 @@
         "@types/react": "16.7.7",
         "@types/react-dom": "16.0.10",
         "docz": "0.12.13",
+        "docz-plugin-css": "^0.11.0",
         "docz-theme-default": "0.12.13",
         "jest": "23.6.0",
         "prettier": "1.15.2",

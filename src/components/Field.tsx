@@ -25,6 +25,12 @@ export interface Props {
     disabled?: boolean;
 
     /**
+     * If provided, the field get the className .has-error
+     * added, and render the error message adjecent to editor.
+     */
+    errorMessage?: string | null;
+
+    /**
      * The label of the editor, must be unique amoung siblings
      * withing a TabBoundary/TabRegistry.
      */
@@ -199,6 +205,13 @@ export class Field extends React.Component<Props, State> {
         });
     };
 
+    private renderErrorMessage() {
+        if (this.props.errorMessage == null) {
+            return null;
+        }
+        return <div className="error-message">{this.props.errorMessage}</div>;
+    }
+
     private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
         this.tabRegistry = tabRegistry;
         return (
@@ -219,9 +232,15 @@ export class Field extends React.Component<Props, State> {
                     onSpace={this.startEditing}
                     ref={this.setFocuserRef}
                 />
-                <div className="field" onBlur={this.onBlur} onClick={this.onClick} onKeyDown={this.onFieldKeyDown}>
+                <div
+                    className={'field' + (this.props.errorMessage == null ? '' : ' has-error')}
+                    onBlur={this.onBlur}
+                    onClick={this.onClick}
+                    onKeyDown={this.onFieldKeyDown}
+                >
                     <label onClick={this.onLabelClick}>{this.props.label}</label>
                     {this.props.renderEditor(this.state.isEditing, this.stopEditing)}
+                    {this.renderErrorMessage()}
                 </div>
             </div>
         );

@@ -4,7 +4,25 @@ menu: Util
 route: /tab-registry
 ---
 
-import { Playground } from 'docz';
+import { Playground, PropsTable } from 'docz';
+import { TabRegistry } from './TabRegistry';
+import { Component } from 'react';
 
 # Tab registry
 
+The core of this project lives inside this utility class and data structure.
+A registry is basically just a glorified map, from an identifier to a focus function.
+The registry keeps track of identifiers and their corresponding focus function, every focus
+function has a two jobs, number is to focus its component it represents, and report back to
+if it was successful. Their can be any number of reason why a focus call wasn't successful,
+the most common one is if the component / input fields is in some kind disabled state.
+
+## Data structure
+
+The registry itself is powered by a doubly linked ordered set of identifiers and a map from an identifier
+and its corresponding focus function, this means that an identifier can only be used once per registry,
+hower it is possible to nest registries, so the identifiers only needs to be unique among its siblings.
+
+### API
+
+<PropsTable of={{ __docgenInfo: { props: TabRegistry } }} />

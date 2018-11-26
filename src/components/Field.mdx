@@ -4,26 +4,121 @@ menu: Component
 route: /field
 ---
 
+import '../docz.less';
 import { Playground, PropsTable } from 'docz';
+import { useCallback, useMemo, useReducer, useState } from 'react';
 import { Field } from './Field';
+import { Focuser } from './Focuser';
+import { NavigationContext } from './TabBoundary';
+import { TabRegistry } from '../TabRegistry';
+import { createNavigationHandler } from '../FieldNavigation';
 
 # Field
 
-Super nice intro to the field component, what is doing and what its purpose is.
+This component helps creating field-by-field editing components,
+so components that have life-cycles that looks something like this:
+
+1. read mode
+2. user activates edit mode
+3. user changes a value
+4. user submits/persists the new value
+5. read mode
+
+And you would like to be able to focus the component in read mode,
+navigate to next field or focusable component, without having an editable field.
 
 ## Basic usage
 
 <Playground>
-    <Field label="E-mail" onSubmit={(stopEditing, submittedOn) => stopEditing()} renderEditor={(isEditing, stopEditing) => {
-        const editor = isEditing ? (
-            <input autoFocus={true} defaultValue="user@domain.tld" type="email" onBlur={stopEditing} />
-        ) : <div className="value">user@domain.tld</div>;
+    {() => {
+        const onSubmit = stopEditing => stopEditing();
+        const renderEditor = isEditing => {
+            return isEditing ? (
+                <div className="editor active">
+                    Edit
+                    <Focuser autoFocus={true} focusKey="field-focuser" />
+                </div>
+            ) : (
+                <div className="editor">Read</div>
+            );
+        };
+        return <Field label="Field" onSubmit={onSubmit} renderEditor={renderEditor} />;
+    }}
+</Playground>
+
+## Tab navigation between fields
+
+<Playground>
+    {() => {
+        const [tabRegistry, setTabRegistry] = useState(() => new TabRegistry);
+        const registryFetcher = useCallback(() => tabRegistry, []);
+        const onArrowKeys = useMemo(() => createNavigationHandler([
+            ['Field1','Field2'],
+            ['Field3','Field4'],
+        ], registryFetcher), []);
+        const onSubmit = stopEditing => stopEditing();
+        const renderEditor = () => <div className="editor">Value</div>;
         return (
-            <div className={'editor' + isEditing ? ' active': ''}>
-                {editor}
-            </div>
+            <NavigationContext.Provider value={tabRegistry}>
+                <div className="flex-container">
+                    <Field label="Field1" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
+                    <Field label="Field2" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
+                </div>
+                <div className="flex-container">
+                    <Field label="Field3" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
+                    <Field label="Field4" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
+                </div>
+            </NavigationContext.Provider>
         );
-    }} />
+    }}
+
+</Playground>
+
+## Setting up custom field
+
+<Playground>
+    {() => {
+        const [state, setState] = useReducer((oldState, newState) => ({
+            ...oldState,
+            ...newState,
+        }), {
+            editorValue: '',
+            errorMessage: null,
+            value: 'user@domain.tld',
+        });
+        const onEditStart = useCallback(() => setState({editorValue: state.value}), [state.value]);
+        const onEditStop = useCallback(() => setState({errorMessage: null}), []);
+        const onChange = useCallback(e => setState({editorValue: e.target.value}), []);
+        const onSubmit = useCallback((stopEditing, submittedOn) => {
+            if (!/^.+@.+\\..+$/.test(state.editorValue)) {
+                setState({errorMessage: 'Invalid email address'});
+                return;
+            }
+            setState({value: state.editorValue});
+            stopEditing();
+        }, [state.editorValue]);
+        const renderEditor = useCallback((isEditing) => {
+            const editor = isEditing ? (
+                <input autoFocus={true} onChange={onChange} spellCheck={false} type="email" value={state.editorValue} />
+            ) : (
+                <div className="value">{state.value}</div>
+            );
+            return <div className={'editor' + (isEditing ? ' active' : '')}>{editor}</div>;
+        }, [state.value, state.editorValue]);
+
+        return (
+            <Field
+                errorMessage={state.errorMessage}
+                label="E-mail"
+                onSubmit={onSubmit}
+                onEditStart={onEditStart}
+                onEditStop={onEditStop}
+                renderEditor={renderEditor}
+                submitOnBlur={true}
+            />
+        );
+    }}
+
 </Playground>
 
 ## Props
