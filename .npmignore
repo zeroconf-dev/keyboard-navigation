@@ -1,6 +1,7 @@
 /.docz/
 /.rpt2_cache/
 /.vscode/
+/docs/
 /src/**/__tests__/
 /src/**/__mocks__/
 
