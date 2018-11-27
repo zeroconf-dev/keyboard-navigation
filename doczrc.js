@@ -1,6 +1,7 @@
 import { css } from 'docz-plugin-css';
 
 export default {
+    base: '/tab-navigation.ts',
     dest: 'docs',
     htmlContext: {
         head: {
