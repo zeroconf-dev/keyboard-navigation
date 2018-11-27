@@ -2,12 +2,16 @@
 /.rpt2_cache/
 /.vscode/
 /docs/
+/examples/
 /src/**/__tests__/
 /src/**/__mocks__/
 
 *.log
 *.tgz
+*.mdx
+*.less
 
+/.doczrc.js
 /.gitignore
 /.npmignore
 /.prettierrc
