@@ -1,22 +1,22 @@
-# <FormTabNavigation />
+# TabNavigation.ts
+
+[![Build Status](https://travis-ci.org/thetrompf/tab-navigation.ts.svg?branch=master)](https://travis-ci.org/thetrompf/tab-navigation.ts)
 
 This library ships with an implementation that works with react, but it is not limited to react. Maybe later the react
 part will be moved to separate library.
 
-## Table of contents
+[Read the docs](https://thetrompf.github.io/tab-navigation.ts)
 
--   [Getting Started](#getting-started)
--   [Examples](#examples)
-    -   [Simple Example](#simple-example)
-    -   [Advanced Example](#advanced-example)
--   [Extending Boundaries](#extending-boundaries)
-
-## Getting Started
+## Getting started
 
 First add the tab-navigation.ts to your project
 
 ```shell
 npm install @secoya/tab-navigation.ts
+```
+or
+```shell
+yarn add @secoya/tab-navigation.ts
 ```
 
 ```html
@@ -57,10 +57,3 @@ npm install @secoya/tab-navigation.ts
 import { TabRegistry } from '@secoya/tab-navigation.ts';
 ```
 
-## Examples
-
-### Simple Example
-
-### Advanced Example
-
-## Extending Boundaries
