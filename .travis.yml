@@ -1,0 +1,32 @@
+language: node_js
+node_js:
+  - "node"
+  - "lts/*"
+
+sudo: false
+
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
+stages:
+  - lint
+  - test
+  - build
+  - docs
+
+jobs:
+  include:
+    - stage: lint
+      script: "yarn lint"
+    - stage: test
+      script: "yarn test"
+    - stage: build
+      script: "yarn build"
+    - stage: docs
+      script: "yarn docz build"
