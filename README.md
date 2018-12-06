@@ -1,5 +1,6 @@
 # TabNavigation.ts
 
+[![npm version](https://badge.fury.io/js/%40secoya%2Ftab-navigation.ts.svg)](https://badge.fury.io/js/%40secoya%2Ftab-navigation.ts)
 [![Build Status](https://travis-ci.org/thetrompf/tab-navigation.ts.svg?branch=master)](https://travis-ci.org/thetrompf/tab-navigation.ts)
 
 This library ships with an implementation that works with react, but it is not limited to react. Maybe later the react
@@ -22,7 +23,7 @@ yarn add @secoya/tab-navigation.ts
 ```html
 <html>
 <head>
-    <script type="application/javascript" src="//github.com/secoya/tab-navigation.ts/blob/latest/dist/umd.js">
+    <script type="application/javascript" src="//github.com/thetrompf/tab-navigation.ts/blob/latest/dist/umd.js">
 </head>
 <body>
 
@@ -51,9 +52,5 @@ yarn add @secoya/tab-navigation.ts
 
 </body>
 </html>
-```
-
-```js
-import { TabRegistry } from '@secoya/tab-navigation.ts';
 ```
 
