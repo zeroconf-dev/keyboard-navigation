@@ -60,9 +60,10 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
     }
 
     public componentWillUnmount() {
-        if (this.parentRegistry != null) {
+        const tabRegistry = this.parentRegistry;
+        if (tabRegistry != null) {
             if (this.props.boundaryKey != null) {
-                this.parentRegistry.delete(this.props.boundaryKey);
+                tabRegistry.delete(this.props.boundaryKey);
             }
             this.parentRegistry = null;
         }
@@ -102,23 +103,24 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
         }
     };
 
-    private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
+    private renderWithTabRegistry = (newParentTabRegistry: TabRegistry<string> | null) => {
         const props = filterPropKeys<ComponentProps<TComp>, TComp, TabBoundaryProps<TComp>>(
             this.props,
             this.filterPropKeys,
         );
 
         const comp = this.props.as == null ? 'div' : this.props.as;
+        const oldParentRegistry = this.parentRegistry;
 
         const children = React.createElement(comp, { ...props, onKeyDown: this.onKeyDown }, this.props.children);
-        if (this.parentRegistry != null && this.props.boundaryKey != null && tabRegistry !== tabRegistry) {
-            this.parentRegistry.delete(this.props.boundaryKey);
+        if (oldParentRegistry != null && this.props.boundaryKey != null && oldParentRegistry !== newParentTabRegistry) {
+            oldParentRegistry.delete(this.props.boundaryKey);
         }
-        if (tabRegistry != null && this.props.boundaryKey != null) {
-            tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
+        if (newParentTabRegistry != null && this.props.boundaryKey != null) {
+            newParentTabRegistry.add(this.props.boundaryKey, this.tabRegistry);
         }
 
-        this.parentRegistry = tabRegistry || null;
+        this.parentRegistry = newParentTabRegistry || null;
 
         return <NavigationContext.Provider value={this.tabRegistry}>{children}</NavigationContext.Provider>;
     };
