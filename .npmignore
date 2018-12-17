@@ -16,6 +16,7 @@
 /.npmignore
 /.prettierrc
 /.prettierignore
+/.travis.yml
 /jest.config.js
 
 /tslint.json
