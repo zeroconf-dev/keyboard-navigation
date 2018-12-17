@@ -38,35 +38,33 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
     }
 
     public componentWillReceiveProps(nextProps: TabBoundaryProps<TComp>) {
-        const tabRegistry = this.parentRegistry;
-        if (tabRegistry != null) {
-            if (this.props.cycle !== nextProps.cycle) {
-                nextProps.cycle ? tabRegistry.enableCycle() : tabRegistry.disableCycle();
-            }
+        if (this.props.cycle !== nextProps.cycle) {
+            nextProps.cycle ? this.tabRegistry.enableCycle() : this.tabRegistry.disableCycle();
+        }
 
-            if (this.props.focusParentOnChildOrigin !== nextProps.focusParentOnChildOrigin) {
-                tabRegistry.focusParentOnChildOrigin = nextProps.focusParentOnChildOrigin === true;
-            }
+        if (this.props.focusParentOnChildOrigin !== nextProps.focusParentOnChildOrigin) {
+            this.tabRegistry.focusParentOnChildOrigin = nextProps.focusParentOnChildOrigin === true;
+        }
 
+        const parentRegistry = this.parentRegistry;
+        if (parentRegistry != null) {
             if (this.props.boundaryKey !== nextProps.boundaryKey) {
                 if (this.props.boundaryKey != null) {
-                    tabRegistry.delete(this.props.boundaryKey);
+                    parentRegistry.delete(this.props.boundaryKey);
                 }
                 if (nextProps.boundaryKey != null) {
-                    tabRegistry.add(nextProps.boundaryKey, this.tabRegistry);
+                    parentRegistry.add(nextProps.boundaryKey, this.tabRegistry);
                 }
             }
         }
     }
 
     public componentWillUnmount() {
-        const tabRegistry = this.parentRegistry;
-        if (tabRegistry != null) {
-            if (this.props.boundaryKey != null) {
-                tabRegistry.delete(this.props.boundaryKey);
-            }
-            this.parentRegistry = null;
+        const parentRegistry = this.parentRegistry;
+        if (parentRegistry != null && this.props.boundaryKey != null) {
+            parentRegistry.delete(this.props.boundaryKey);
         }
+        this.parentRegistry = null;
     }
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp>) => {
@@ -103,7 +101,7 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
         }
     };
 
-    private renderWithTabRegistry = (newParentTabRegistry: TabRegistry<string> | null) => {
+    private renderWithTabRegistry = (newParentRegistry: TabRegistry<string> | null) => {
         const props = filterPropKeys<ComponentProps<TComp>, TComp, TabBoundaryProps<TComp>>(
             this.props,
             this.filterPropKeys,
@@ -113,14 +111,16 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
         const oldParentRegistry = this.parentRegistry;
 
         const children = React.createElement(comp, { ...props, onKeyDown: this.onKeyDown }, this.props.children);
-        if (oldParentRegistry != null && this.props.boundaryKey != null && oldParentRegistry !== newParentTabRegistry) {
-            oldParentRegistry.delete(this.props.boundaryKey);
-        }
-        if (newParentTabRegistry != null && this.props.boundaryKey != null) {
-            newParentTabRegistry.add(this.props.boundaryKey, this.tabRegistry);
+        if (this.props.boundaryKey != null && oldParentRegistry !== newParentRegistry) {
+            if (oldParentRegistry != null) {
+                oldParentRegistry.delete(this.props.boundaryKey);
+            }
+            if (newParentRegistry != null) {
+                newParentRegistry.add(this.props.boundaryKey, this.tabRegistry);
+            }
         }
 
-        this.parentRegistry = newParentTabRegistry || null;
+        this.parentRegistry = newParentRegistry || null;
 
         return <NavigationContext.Provider value={this.tabRegistry}>{children}</NavigationContext.Provider>;
     };
