@@ -2,7 +2,7 @@ import { css } from 'docz-plugin-css';
 
 export default {
     base: '/tab-navigation.ts',
-    dest: 'docs',
+    dest: './docs',
     htmlContext: {
         head: {
             links: [
@@ -13,6 +13,7 @@ export default {
             ],
         },
     },
+    indexHtml: './src/docs/index.html',
     plugins: [
         css({
             preprocessor: 'less',
@@ -26,6 +27,6 @@ export default {
         },
         showPlaygroundEditor: true,
     },
-    title: 'TabNavigation.ts',
+    title: 'TabNavigation.ts - Docs',
     typescript: true,
 };
