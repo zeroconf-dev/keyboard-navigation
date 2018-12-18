@@ -1,12 +1,14 @@
 import { NavigationKey, NavigationKeyHandler } from './components/Focuser';
 import { FocuserOptions, TabRegistry } from './TabRegistry';
 
+type Maybe<T> = T | null;
+
 export type FieldMap =
-    | [string][]
-    | [string, string][]
-    | [string, string, string][]
-    | [string, string, string, string][]
-    | [string, string, string, string, string][];
+    | [Maybe<string>][]
+    | [Maybe<string>, Maybe<string>][]
+    | [Maybe<string>, Maybe<string>, Maybe<string>][]
+    | [Maybe<string>, Maybe<string>, Maybe<string>, Maybe<string>][]
+    | [Maybe<string>, Maybe<string>, Maybe<string>, Maybe<string>, Maybe<string>][];
 
 type TabRegistryFetcher = () => TabRegistry<string> | null;
 

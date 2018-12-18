@@ -1,4 +1,4 @@
-import { ArrowKey } from '../components/Focuser';
+import { ModifierKeys, NavigationKeyHandler } from '../components/Focuser';
 import { createNavigationHandler, FieldMap } from '../FieldNavigation';
 import { TabRegistry } from '../TabRegistry';
 
@@ -9,11 +9,16 @@ function getSuccessFocuser() {
     return jest.fn(() => true);
 }
 
+const noModifierKeys: ModifierKeys = {
+    altKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+};
+
 describe('FieldNavigation', () => {
     describe('simple arrow nav', () => {
-        const createFocusersFromMap = (
-            navMap: FieldMap<string>,
-        ): [Map<string, () => void>, (label: string, arrowKey: ArrowKey) => void] => {
+        const createFocusersFromMap = (navMap: FieldMap): [Map<string, () => void>, NavigationKeyHandler] => {
             const tabRegistry = new TabRegistry<string>();
             const registryFetcher = () => tabRegistry;
             const focuserMap = new Map<string, () => void>();
@@ -44,7 +49,7 @@ describe('FieldNavigation', () => {
                 ['left', 'right'],
             ]);
 
-            handler('left', 'ArrowRight');
+            handler('left', 'ArrowRight', noModifierKeys);
 
             expect(focuserMap.get('left')).not.toHaveBeenCalled();
             expect(focuserMap.get('right')).toHaveBeenCalled();
@@ -56,7 +61,7 @@ describe('FieldNavigation', () => {
                 ['left', 'right'],
             ]);
 
-            handler('right', 'ArrowLeft');
+            handler('right', 'ArrowLeft', noModifierKeys);
 
             expect(focuserMap.get('left')).toHaveBeenCalled();
             expect(focuserMap.get('right')).not.toHaveBeenCalled();
@@ -68,7 +73,7 @@ describe('FieldNavigation', () => {
                 ['top'], ['bottom'],
             ]);
 
-            handler('bottom', 'ArrowUp');
+            handler('bottom', 'ArrowUp', noModifierKeys);
 
             expect(focuserMap.get('top')).toHaveBeenCalled();
             expect(focuserMap.get('bottom')).not.toHaveBeenCalled();
@@ -80,7 +85,7 @@ describe('FieldNavigation', () => {
                 ['top'], ['bottom'],
             ]);
 
-            handler('top', 'ArrowDown');
+            handler('top', 'ArrowDown', noModifierKeys);
 
             expect(focuserMap.get('top')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom')).toHaveBeenCalled();
@@ -92,7 +97,7 @@ describe('FieldNavigation', () => {
                 ['left', 'right'],
             ]);
 
-            handler('left', 'ArrowRight');
+            handler('left', 'ArrowRight', noModifierKeys);
 
             expect(focuserMap.get('left')).not.toHaveBeenCalled();
             expect(focuserMap.get('right')).toHaveBeenCalled();
@@ -104,7 +109,7 @@ describe('FieldNavigation', () => {
                 ['left', 'right'],
             ]);
 
-            handler('right', 'ArrowLeft');
+            handler('right', 'ArrowLeft', noModifierKeys);
 
             expect(focuserMap.get('left')).toHaveBeenCalled();
             expect(focuserMap.get('right')).not.toHaveBeenCalled();
@@ -116,7 +121,7 @@ describe('FieldNavigation', () => {
                 ['left', null, 'right'],
             ]);
 
-            handler('left', 'ArrowRight');
+            handler('left', 'ArrowRight', noModifierKeys);
 
             expect(focuserMap.get('left')).not.toHaveBeenCalled();
             expect(focuserMap.get('right')).toHaveBeenCalled();
@@ -130,7 +135,7 @@ describe('FieldNavigation', () => {
                 ['bottom'],
             ]);
 
-            handler('bottom', 'ArrowUp');
+            handler('bottom', 'ArrowUp', noModifierKeys);
 
             expect(focuserMap.get('top')).toHaveBeenCalled();
             expect(focuserMap.get('bottom')).not.toHaveBeenCalled();
@@ -144,7 +149,7 @@ describe('FieldNavigation', () => {
                 ['bottom'],
             ]);
 
-            handler('top', 'ArrowDown');
+            handler('top', 'ArrowDown', noModifierKeys);
 
             expect(focuserMap.get('top')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom')).toHaveBeenCalled();
@@ -156,7 +161,7 @@ describe('FieldNavigation', () => {
                 ['left', null, 'right'],
             ]);
 
-            handler('right', 'ArrowLeft');
+            handler('right', 'ArrowLeft', noModifierKeys);
 
             expect(focuserMap.get('left')).toHaveBeenCalled();
             expect(focuserMap.get('right')).not.toHaveBeenCalled();
@@ -169,14 +174,14 @@ describe('FieldNavigation', () => {
                 ['bottom-left', 'bottom-right'],
             ]);
 
-            handler('bottom-left', 'ArrowLeft');
+            handler('bottom-left', 'ArrowLeft', noModifierKeys);
 
             expect(focuserMap.get('top-left')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom-left')).not.toHaveBeenCalled();
             expect(focuserMap.get('top-right')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom-right')).not.toHaveBeenCalled();
 
-            handler('top-left', 'ArrowLeft');
+            handler('top-left', 'ArrowLeft', noModifierKeys);
 
             expect(focuserMap.get('top-left')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom-left')).not.toHaveBeenCalled();
@@ -191,14 +196,14 @@ describe('FieldNavigation', () => {
                 ['bottom-left', 'bottom-right'],
             ]);
 
-            handler('bottom-right', 'ArrowRight');
+            handler('bottom-right', 'ArrowRight', noModifierKeys);
 
             expect(focuserMap.get('top-left')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom-left')).not.toHaveBeenCalled();
             expect(focuserMap.get('top-right')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom-right')).not.toHaveBeenCalled();
 
-            handler('top-right', 'ArrowRight');
+            handler('top-right', 'ArrowRight', noModifierKeys);
 
             expect(focuserMap.get('top-left')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom-left')).not.toHaveBeenCalled();
@@ -213,14 +218,14 @@ describe('FieldNavigation', () => {
                 ['bottom-left', 'bottom-right'],
             ]);
 
-            handler('top-left', 'ArrowUp');
+            handler('top-left', 'ArrowUp', noModifierKeys);
 
             expect(focuserMap.get('top-left')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom-left')).not.toHaveBeenCalled();
             expect(focuserMap.get('top-right')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom-right')).not.toHaveBeenCalled();
 
-            handler('top-right', 'ArrowUp');
+            handler('top-right', 'ArrowUp', noModifierKeys);
 
             expect(focuserMap.get('top-left')).not.toHaveBeenCalled();
             expect(focuserMap.get('bottom-left')).not.toHaveBeenCalled();
@@ -235,12 +240,12 @@ describe('FieldNavigation', () => {
                 ['bottom-left', 'bottom-right'],
             ]);
 
-            handler('bottom-left', 'ArrowDown');
+            handler('bottom-left', 'ArrowDown', noModifierKeys);
 
             focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(4);
 
-            handler('bottom-right', 'ArrowDown');
+            handler('bottom-right', 'ArrowDown', noModifierKeys);
 
             focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(8);
@@ -254,13 +259,10 @@ describe('FieldNavigation', () => {
                 ['bottom-left', null, 'bottom-right'],
             ]);
 
-            handler('middle-left', 'ArrowRight');
+            handler('middle-left', 'ArrowRight', noModifierKeys);
 
-            focuserMap.forEach(
-                (focuser, key) =>
-                    key === 'middle-right'
-                        ? expect(focuser).toHaveBeenCalled()
-                        : expect(focuser).not.toHaveBeenCalled(),
+            focuserMap.forEach((focuser, key) =>
+                key === 'middle-right' ? expect(focuser).toHaveBeenCalled() : expect(focuser).not.toHaveBeenCalled(),
             );
 
             expect.assertions(6);
@@ -274,11 +276,10 @@ describe('FieldNavigation', () => {
                 ['bottom-left', null, 'bottom-right'],
             ]);
 
-            handler('middle-right', 'ArrowLeft');
+            handler('middle-right', 'ArrowLeft', noModifierKeys);
 
-            focuserMap.forEach(
-                (focuser, key) =>
-                    key === 'middle-left' ? expect(focuser).toHaveBeenCalled() : expect(focuser).not.toHaveBeenCalled(),
+            focuserMap.forEach((focuser, key) =>
+                key === 'middle-left' ? expect(focuser).toHaveBeenCalled() : expect(focuser).not.toHaveBeenCalled(),
             );
 
             expect.assertions(6);
@@ -291,7 +292,7 @@ describe('FieldNavigation', () => {
                 [null, 'middle-right'],
                 ['bottom-left', 'bottom-right'],
             ]);
-            handler1('bottom-left', 'ArrowUp');
+            handler1('bottom-left', 'ArrowUp', noModifierKeys);
             focuserMap1.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(4);
 
@@ -301,7 +302,7 @@ describe('FieldNavigation', () => {
                 ['middle-left', null],
                 ['bottom-left', 'bottom-right'],
             ]);
-            handler2('bottom-right', 'ArrowUp');
+            handler2('bottom-right', 'ArrowUp', noModifierKeys);
             focuserMap2.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(8);
         });
@@ -313,10 +314,9 @@ describe('FieldNavigation', () => {
                 [null, 'middle-right'],
                 ['bottom-left', 'bottom-right'],
             ]);
-            handler1('middle-right', 'ArrowLeft');
-            focuserMap1.forEach(
-                (focuser, key) =>
-                    key === 'top-left' ? expect(focuser).toHaveBeenCalled() : expect(focuser).not.toHaveBeenCalled(),
+            handler1('middle-right', 'ArrowLeft', noModifierKeys);
+            focuserMap1.forEach((focuser, key) =>
+                key === 'top-left' ? expect(focuser).toHaveBeenCalled() : expect(focuser).not.toHaveBeenCalled(),
             );
             expect.assertions(5);
 
@@ -326,12 +326,11 @@ describe('FieldNavigation', () => {
                 ['no-focus-middle-left', 'middle-right'],
                 ['bottom-left', 'bottom-right'],
             ]);
-            handler2('middle-right', 'ArrowLeft');
-            focuserMap2.forEach(
-                (focuser, key) =>
-                    key === 'top-left' || key === 'no-focus-middle-left'
-                        ? expect(focuser).toHaveBeenCalled()
-                        : expect(focuser).not.toHaveBeenCalled(),
+            handler2('middle-right', 'ArrowLeft', noModifierKeys);
+            focuserMap2.forEach((focuser, key) =>
+                key === 'top-left' || key === 'no-focus-middle-left'
+                    ? expect(focuser).toHaveBeenCalled()
+                    : expect(focuser).not.toHaveBeenCalled(),
             );
             expect.assertions(11);
         });
@@ -343,10 +342,9 @@ describe('FieldNavigation', () => {
                 ['middle-left', null],
                 ['bottom-left', 'bottom-right'],
             ]);
-            handler1('middle-left', 'ArrowRight');
-            focuserMap1.forEach(
-                (focuser, key) =>
-                    key === 'top-right' ? expect(focuser).toHaveBeenCalled() : expect(focuser).not.toHaveBeenCalled(),
+            handler1('middle-left', 'ArrowRight', noModifierKeys);
+            focuserMap1.forEach((focuser, key) =>
+                key === 'top-right' ? expect(focuser).toHaveBeenCalled() : expect(focuser).not.toHaveBeenCalled(),
             );
             expect.assertions(5);
 
@@ -356,12 +354,11 @@ describe('FieldNavigation', () => {
                 ['middle-left', 'no-focus-middle-right'],
                 ['bottom-left', 'bottom-right'],
             ]);
-            handler2('middle-left', 'ArrowRight');
-            focuserMap2.forEach(
-                (focuser, key) =>
-                    key === 'top-right' || key === 'no-focus-middle-right'
-                        ? expect(focuser).toHaveBeenCalled()
-                        : expect(focuser).not.toHaveBeenCalled(),
+            handler2('middle-left', 'ArrowRight', noModifierKeys);
+            focuserMap2.forEach((focuser, key) =>
+                key === 'top-right' || key === 'no-focus-middle-right'
+                    ? expect(focuser).toHaveBeenCalled()
+                    : expect(focuser).not.toHaveBeenCalled(),
             );
             expect.assertions(11);
         });
