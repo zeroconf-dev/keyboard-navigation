@@ -9,7 +9,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     // tslint:disable-next-line:no-reserved-keywords
     as?: TComp;
     children: (fn: (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void) => JSX.Element;
-    fieldMap: FieldMap<string>;
+    fieldMap: FieldMap;
     focusKey: string;
 }
 

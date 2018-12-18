@@ -33,7 +33,7 @@ describe('<Grid />', () => {
                 />
             </>
         );
-        const fieldMap: FieldMap<string> = [['section1'], ['section2']];
+        const fieldMap: FieldMap = [['section1'], ['section2']];
         const { container } = render(
             <TabBoundary>
                 <Grid fieldMap={fieldMap} focusKey="grid">

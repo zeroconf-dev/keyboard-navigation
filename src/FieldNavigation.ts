@@ -1,19 +1,14 @@
-import { ArrowKey } from './components/Focuser';
+import { NavigationKey, NavigationKeyHandler } from './components/Focuser';
 import { FocuserOptions, TabRegistry } from './TabRegistry';
 
-type Maybe<T> = T | null;
-function assertNever(_: never, msg: string): never {
-    throw new Error(msg);
-}
+export type FieldMap =
+    | [string][]
+    | [string, string][]
+    | [string, string, string][]
+    | [string, string, string, string][]
+    | [string, string, string, string, string][];
 
-export type FieldMap<T extends string | number> =
-    | [Maybe<T>][]
-    | [Maybe<T>, Maybe<T>][]
-    | [Maybe<T>, Maybe<T>, Maybe<T>][]
-    | [Maybe<T>, Maybe<T>, Maybe<T>, Maybe<T>][]
-    | [Maybe<T>, Maybe<T>, Maybe<T>, Maybe<T>, Maybe<T>][];
-
-type TabRegistryFetcher<T extends string | number> = () => TabRegistry<T> | null;
+type TabRegistryFetcher = () => TabRegistry<string> | null;
 
 const originUp: FocuserOptions = {
     focusOrigin: 'up',
@@ -31,15 +26,15 @@ const originRight: FocuserOptions = {
     focusOrigin: 'right',
 };
 
-function findFieldCoordinates<T extends string | number>(
-    fieldMap: FieldMap<T>,
-    label: T,
+function findFieldCoordinates(
+    fieldMap: FieldMap,
+    focusKey: string,
     maxX: number,
     maxY: number,
 ): [number, number] | null {
     for (let y = 0; y <= maxY; y++) {
         for (let x = 0; x <= maxX; x++) {
-            if (label === fieldMap[y][x]) {
+            if (focusKey === fieldMap[y][x]) {
                 return [x, y];
             }
         }
@@ -47,9 +42,9 @@ function findFieldCoordinates<T extends string | number>(
     return null;
 }
 
-function focusDown<T extends string | number>(
-    fieldMap: FieldMap<T>,
-    getTabRegistry: TabRegistryFetcher<T>,
+function focusDown(
+    fieldMap: FieldMap,
+    getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
     maxX: number,
@@ -70,9 +65,9 @@ function focusDown<T extends string | number>(
     );
 }
 
-function focusLeft<T extends string | number>(
-    fieldMap: FieldMap<T>,
-    getTabRegistry: TabRegistryFetcher<T>,
+function focusLeft(
+    fieldMap: FieldMap,
+    getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
     maxX: number,
@@ -95,9 +90,9 @@ function focusLeft<T extends string | number>(
     );
 }
 
-function focusRight<T extends string | number>(
-    fieldMap: FieldMap<T>,
-    getTabRegistry: TabRegistryFetcher<T>,
+function focusRight(
+    fieldMap: FieldMap,
+    getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
     maxX: number,
@@ -120,9 +115,9 @@ function focusRight<T extends string | number>(
     );
 }
 
-function focusUp<T extends string | number>(
-    fieldMap: FieldMap<T>,
-    getTabRegistry: TabRegistryFetcher<T>,
+function focusUp(
+    fieldMap: FieldMap,
+    getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
     maxX: number,
@@ -143,14 +138,11 @@ function focusUp<T extends string | number>(
     );
 }
 
-export function createNavigationHandler<T extends string | number>(
-    fieldMap: FieldMap<T>,
-    getTabRegistry: TabRegistryFetcher<T>,
-): (label: T, arrowKey: ArrowKey) => void {
+export function createNavigationHandler(fieldMap: FieldMap, getTabRegistry: TabRegistryFetcher): NavigationKeyHandler {
     const maxY = fieldMap.length - 1;
     const maxX = fieldMap[0].length - 1;
-    return (label: T, arrowKey: ArrowKey) => {
-        const coordinates = findFieldCoordinates(fieldMap, label, maxX, maxY);
+    return (focusKey: string, navigationKey: NavigationKey) => {
+        const coordinates = findFieldCoordinates(fieldMap, focusKey, maxX, maxY);
         if (coordinates == null) {
             return;
         }
@@ -158,7 +150,7 @@ export function createNavigationHandler<T extends string | number>(
         const x = coordinates[0];
         const y = coordinates[1];
 
-        switch (arrowKey) {
+        switch (navigationKey) {
             case 'ArrowUp':
                 return focusUp(fieldMap, getTabRegistry, x, y, maxX, maxY, originDown);
             case 'ArrowDown':
@@ -168,7 +160,7 @@ export function createNavigationHandler<T extends string | number>(
             case 'ArrowRight':
                 return focusRight(fieldMap, getTabRegistry, x, y, maxX, maxY, originLeft);
             default:
-                return assertNever(arrowKey, `Unknown arrowKey: ${arrowKey}`);
+                return false;
         }
     };
 }

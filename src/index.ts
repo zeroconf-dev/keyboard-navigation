@@ -1,3 +1,4 @@
+export * from './FieldNavigation';
 export * from './TabRegistry';
 export * from './components/Field';
 export * from './components/Focuser';
