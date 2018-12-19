@@ -127,6 +127,24 @@ describe('TabBoundary', () => {
             ),
         ).not.toThrowError();
     });
+
+    test('remount tab boundary should not throw', () => {
+        const { rerender } = render(
+            <>
+                <TabBoundary key="boundary1" />
+                <TabBoundary key="boundary2" />
+            </>,
+        );
+
+        expect(() => {
+            rerender(
+                <>
+                    <TabBoundary key="boundary1-remount" />
+                    <TabBoundary key="boundary2" />
+                </>,
+            );
+        }).not.toThrowError();
+    });
 });
 
 class FocusParentOnSpace extends React.Component<{ focusKey: string; onFocus?: () => void }> {

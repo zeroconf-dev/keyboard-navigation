@@ -259,4 +259,22 @@ describe('Focuser', () => {
 
         expect(onKeyDown).not.toHaveBeenCalled();
     });
+
+    test('remount focuser should not throw', () => {
+        const { rerender } = render(
+            <>
+                <Focuser focusKey="focuser-1" key="focuser-1" />
+                <Focuser focusKey="focuser-2" key="focuser-2" />
+            </>,
+        );
+
+        expect(() => {
+            rerender(
+                <>
+                    <Focuser focusKey="focuser-1" key="focuser-1-remount" />
+                    <Focuser focusKey="focuser-2" key="focuser-2" />
+                </>,
+            );
+        }).not.toThrowError();
+    });
 });

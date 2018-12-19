@@ -1,5 +1,5 @@
 import { ModifierKeys, NavigationKeyHandler } from '../components/Focuser';
-import { createNavigationHandler, FieldMap } from '../FieldNavigation';
+import { createNavigationHandler, NavigationMap } from '../FieldNavigation';
 import { TabRegistry } from '../TabRegistry';
 
 function getFailureFocuser() {
@@ -18,7 +18,7 @@ const noModifierKeys: ModifierKeys = {
 
 describe('FieldNavigation', () => {
     describe('simple arrow nav', () => {
-        const createFocusersFromMap = (navMap: FieldMap): [Map<string, () => void>, NavigationKeyHandler] => {
+        const createFocusersFromMap = (navMap: NavigationMap): [Map<string, () => void>, NavigationKeyHandler] => {
             const tabRegistry = new TabRegistry<string>();
             const registryFetcher = () => tabRegistry;
             const focuserMap = new Map<string, () => void>();

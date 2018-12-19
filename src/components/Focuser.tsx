@@ -161,19 +161,42 @@ const styles: React.CSSProperties = {
     width: 0,
 };
 
-export class Focuser extends React.Component<Props, State> {
+type PropsWithTabRegistry = Props & { tabRegistry: TabRegistry | null };
+
+class FocuserWithTabRegistry extends React.Component<PropsWithTabRegistry, State> {
     public static defaultProps = {
         autoFocus: false,
         disabled: false,
     };
+    public static displayName = 'Focuser';
 
     private refFocuser: HTMLInputElement | null = null;
-    private tabRegistry: TabRegistry<string> | null = null;
+
+    public componentDidMount() {
+        if (this.props.tabRegistry != null) {
+            this.props.tabRegistry.add(this.props.focusKey, this.focus);
+        }
+    }
+
+    public componentWillReceiveProps(nextProps: PropsWithTabRegistry) {
+        if (
+            this.props.focusKey !== nextProps.focusKey &&
+            this.props.tabRegistry != null &&
+            this.props.tabRegistry.has(this.props.focusKey)
+        ) {
+            this.props.tabRegistry.delete(this.props.focusKey);
+        }
+    }
+
+    public componentDidUpdate(prevProps: PropsWithTabRegistry) {
+        if (this.props.focusKey !== prevProps.focusKey && this.props.tabRegistry != null) {
+            this.props.tabRegistry.add(this.props.focusKey, this.focus);
+        }
+    }
 
     public componentWillUnmount() {
-        if (this.tabRegistry != null) {
-            this.tabRegistry.delete(this.props.focusKey);
-            this.tabRegistry = null;
+        if (this.props.tabRegistry != null) {
+            this.props.tabRegistry.delete(this.props.focusKey);
         }
     }
 
@@ -313,14 +336,14 @@ export class Focuser extends React.Component<Props, State> {
             }
         } else if (e.key === 'Tab') {
             if (e.shiftKey) {
-                if (this.tabRegistry != null) {
+                if (this.props.tabRegistry != null) {
                     shouldPrevent = true;
-                    this.tabRegistry.focusPrev(this.props.focusKey);
+                    this.props.tabRegistry.focusPrev(this.props.focusKey);
                 }
             } else {
-                if (this.tabRegistry != null) {
+                if (this.props.tabRegistry != null) {
                     shouldPrevent = true;
-                    this.tabRegistry.focusNext(this.props.focusKey);
+                    this.props.tabRegistry.focusNext(this.props.focusKey);
                 }
             }
             if (this.props.onNavigationKeys != null) {
@@ -335,33 +358,6 @@ export class Focuser extends React.Component<Props, State> {
             e.preventDefault();
             e.stopPropagation();
         }
-    };
-
-    private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
-        if (this.tabRegistry != null && this.tabRegistry !== tabRegistry) {
-            this.tabRegistry.delete(this.props.focusKey);
-        }
-        if (tabRegistry != null && this.tabRegistry !== tabRegistry) {
-            tabRegistry.add(this.props.focusKey, this.focus);
-        }
-        this.tabRegistry = tabRegistry;
-        return (
-            <input
-                autoComplete="off"
-                autoFocus={this.props.autoFocus}
-                className={this.props.className || 'focuser'}
-                disabled={this.props.disabled}
-                key="focuser"
-                name={String(this.props.focusKey)}
-                onBlur={this.onBlur}
-                onChange={emptyOnChange}
-                onKeyDown={this.onKeyDown}
-                ref={this.setFocuserRef}
-                style={styles}
-                tabIndex={-1}
-                value=""
-            />
-        );
     };
 
     private setFocuserRef = (ref: HTMLInputElement | null) => {
@@ -380,6 +376,41 @@ export class Focuser extends React.Component<Props, State> {
     };
 
     public render() {
-        return <NavigationContext.Consumer>{this.renderWithTabRegistry}</NavigationContext.Consumer>;
+        return (
+            <input
+                autoComplete="off"
+                autoFocus={this.props.autoFocus}
+                className={this.props.className || 'focuser'}
+                disabled={this.props.disabled}
+                key="focuser"
+                name={String(this.props.focusKey)}
+                onBlur={this.onBlur}
+                onChange={emptyOnChange}
+                onKeyDown={this.onKeyDown}
+                ref={this.setFocuserRef}
+                style={styles}
+                tabIndex={-1}
+                value=""
+            />
+        );
     }
 }
+
+type PropsWithForwardRef = Props & { forwardedRef?: React.Ref<FocuserWithTabRegistry> };
+class FocuserWithForwardRef extends React.Component<PropsWithForwardRef> {
+    public static displayName = 'TabRegistry(Focuser)';
+
+    private renderChildren = (tabRegistry: TabRegistry | null) => {
+        const { forwardedRef, ...props } = this.props;
+        return <FocuserWithTabRegistry {...props} ref={forwardedRef} tabRegistry={tabRegistry} />;
+    };
+
+    public render() {
+        return <NavigationContext.Consumer children={this.renderChildren} />;
+    }
+}
+
+export type Focuser = FocuserWithTabRegistry;
+export const Focuser = React.forwardRef<FocuserWithTabRegistry, Props>((props, ref) => (
+    <FocuserWithForwardRef {...props} forwardedRef={ref} />
+));

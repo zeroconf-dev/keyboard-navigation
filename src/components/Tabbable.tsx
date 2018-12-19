@@ -53,11 +53,10 @@ export function Tabbable<TComp extends Component>(
                 tabRegistry.add(this.props.name, this.focusTabbable);
             }
             this.tabRegistry = tabRegistry;
-            return (
-                <Comp {...this.props} {...this.state} ref={this.setComponentRef}>
-                    {this.props.children}
-                </Comp>
-            );
+
+            const WrappedComponent = Comp as React.ComponentClass<ComponentPropTypes<TComp>>;
+
+            return <WrappedComponent {...this.props} {...this.state} ref={this.setComponentRef} />;
         };
 
         private setComponentRef = (ref: any): void => {

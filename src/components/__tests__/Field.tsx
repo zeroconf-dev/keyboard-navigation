@@ -163,3 +163,18 @@ describe('Blur handler', () => {
         expect(onSubmit).not.toHaveBeenCalled();
     });
 });
+
+describe('Basic component properties', () => {
+    afterEach(cleanup);
+    test('remount should not throw', () => {
+        const onSubmit = jest.fn();
+        const renderEditor = () => <div />;
+        const { rerender } = render(
+            <Field key="field" label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
+        );
+
+        expect(() => {
+            rerender(<Field key="field-remount" label="field" onSubmit={onSubmit} renderEditor={renderEditor} />);
+        }).not.toThrowError();
+    });
+});

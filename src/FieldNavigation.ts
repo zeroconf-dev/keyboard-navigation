@@ -3,7 +3,7 @@ import { FocuserOptions, TabRegistry } from './TabRegistry';
 
 type Maybe<T> = T | null;
 
-export type FieldMap =
+export type NavigationMap =
     | [Maybe<string>][]
     | [Maybe<string>, Maybe<string>][]
     | [Maybe<string>, Maybe<string>, Maybe<string>][]
@@ -29,7 +29,7 @@ const originRight: FocuserOptions = {
 };
 
 function findFieldCoordinates(
-    fieldMap: FieldMap,
+    fieldMap: NavigationMap,
     focusKey: string,
     maxX: number,
     maxY: number,
@@ -45,7 +45,7 @@ function findFieldCoordinates(
 }
 
 function focusDown(
-    fieldMap: FieldMap,
+    fieldMap: NavigationMap,
     getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
@@ -68,7 +68,7 @@ function focusDown(
 }
 
 function focusLeft(
-    fieldMap: FieldMap,
+    fieldMap: NavigationMap,
     getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
@@ -93,7 +93,7 @@ function focusLeft(
 }
 
 function focusRight(
-    fieldMap: FieldMap,
+    fieldMap: NavigationMap,
     getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
@@ -118,7 +118,7 @@ function focusRight(
 }
 
 function focusUp(
-    fieldMap: FieldMap,
+    fieldMap: NavigationMap,
     getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
@@ -140,7 +140,10 @@ function focusUp(
     );
 }
 
-export function createNavigationHandler(fieldMap: FieldMap, getTabRegistry: TabRegistryFetcher): NavigationKeyHandler {
+export function createNavigationHandler(
+    fieldMap: NavigationMap,
+    getTabRegistry: TabRegistryFetcher,
+): NavigationKeyHandler {
     const maxY = fieldMap.length - 1;
     const maxX = fieldMap[0].length - 1;
     return (focusKey: string, navigationKey: NavigationKey) => {

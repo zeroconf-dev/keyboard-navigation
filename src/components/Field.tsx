@@ -99,7 +99,9 @@ interface State {
     isEditing: boolean;
 }
 
-export class Field extends React.Component<Props, State> {
+type PropsTabRegistry = Props & { tabRegistry: TabRegistry | null };
+
+class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
     public static defaultProps = {
         disabled: false,
         submitOnBlur: false,
@@ -108,9 +110,8 @@ export class Field extends React.Component<Props, State> {
 
     private refContainer: HTMLDivElement | null = null;
     private refFocuser: Focuser | null = null;
-    private tabRegistry: TabRegistry<string> | null = null;
 
-    public constructor(props: Props) {
+    public constructor(props: PropsTabRegistry) {
         super(props);
         this.state = {
             isEditing: false,
@@ -121,7 +122,7 @@ export class Field extends React.Component<Props, State> {
         document.addEventListener('click', this.clickOutside, false);
     }
 
-    public componentWillReceiveProps(nextProps: Props) {
+    public componentWillReceiveProps(nextProps: PropsTabRegistry) {
         if (!this.props.disabled && nextProps.disabled) {
             this.stopEditing(true);
         }
@@ -173,8 +174,8 @@ export class Field extends React.Component<Props, State> {
         if (this.state.isEditing) {
             this.stopEditing();
         } else {
-            if (this.tabRegistry != null) {
-                this.tabRegistry.focusParent();
+            if (this.props.tabRegistry != null) {
+                this.props.tabRegistry.focusParent();
             }
         }
     };
@@ -212,39 +213,6 @@ export class Field extends React.Component<Props, State> {
         return <div className="error-message">{this.props.errorMessage}</div>;
     }
 
-    private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
-        this.tabRegistry = tabRegistry;
-        return (
-            <div
-                className={this.props.className || 'field-container'}
-                onClick={this.onContainerClick}
-                ref={this.setContainerRef}
-            >
-                <Focuser
-                    disabled={this.props.disabled}
-                    focusKey={this.props.label}
-                    key="focuser"
-                    onArrowKeys={this.props.onArrowKeys}
-                    onDelete={this.props.onDelete}
-                    onEnter={this.startEditing}
-                    onEscape={this.onEscape}
-                    onNavigationKeys={this.props.onNavigationKeys}
-                    onSpace={this.startEditing}
-                    ref={this.setFocuserRef}
-                />
-                <div
-                    className={'field' + (this.props.errorMessage == null ? '' : ' has-error')}
-                    onBlur={this.onBlur}
-                    onClick={this.onClick}
-                    onKeyDown={this.onFieldKeyDown}
-                >
-                    <label onClick={this.onLabelClick}>{this.props.label}</label>
-                    {this.props.renderEditor(this.state.isEditing, this.stopEditing)}
-                    {this.renderErrorMessage()}
-                </div>
-            </div>
-        );
-    };
     private setContainerRef = (ref: HTMLDivElement | null) => {
         this.refContainer = ref;
     };
@@ -292,6 +260,54 @@ export class Field extends React.Component<Props, State> {
     };
 
     public render() {
-        return <NavigationContext.Consumer>{this.renderWithTabRegistry}</NavigationContext.Consumer>;
+        return (
+            <div
+                className={this.props.className || 'field-container'}
+                onClick={this.onContainerClick}
+                ref={this.setContainerRef}
+            >
+                <Focuser
+                    disabled={this.props.disabled}
+                    focusKey={this.props.label}
+                    key="focuser"
+                    onArrowKeys={this.props.onArrowKeys}
+                    onDelete={this.props.onDelete}
+                    onEnter={this.startEditing}
+                    onEscape={this.onEscape}
+                    onNavigationKeys={this.props.onNavigationKeys}
+                    onSpace={this.startEditing}
+                    ref={this.setFocuserRef}
+                />
+                <div
+                    className={'field' + (this.props.errorMessage == null ? '' : ' has-error')}
+                    onBlur={this.onBlur}
+                    onClick={this.onClick}
+                    onKeyDown={this.onFieldKeyDown}
+                >
+                    <label onClick={this.onLabelClick}>{this.props.label}</label>
+                    {this.props.renderEditor(this.state.isEditing, this.stopEditing)}
+                    {this.renderErrorMessage()}
+                </div>
+            </div>
+        );
     }
 }
+
+type PropsWithForwardRef = Props & { forwardedRef?: React.Ref<FieldWithTabRegistry> };
+class FieldWithForwardRef extends React.Component<PropsWithForwardRef> {
+    public static displayName = 'TabRegistry(Field)';
+
+    private renderChildren = (tabRegistry: TabRegistry | null) => {
+        const { forwardedRef, ...props } = this.props;
+        return <FieldWithTabRegistry {...props} ref={forwardedRef} tabRegistry={tabRegistry} />;
+    };
+
+    public render() {
+        return <NavigationContext.Consumer children={this.renderChildren} />;
+    }
+}
+
+export type Field = FieldWithTabRegistry;
+export const Field = React.forwardRef<FieldWithTabRegistry, Props>((props, ref) => (
+    <FieldWithForwardRef {...props} forwardedRef={ref} />
+));

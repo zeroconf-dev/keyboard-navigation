@@ -25,4 +25,22 @@ describe('Section', () => {
 
         expect(onFocus).toHaveBeenCalled();
     });
+
+    test('remount section should not throw', () => {
+        const { rerender } = render(
+            <>
+                <Section focusKey="section1" key="section1" />
+                <Section focusKey="section2" key="section2" />
+            </>,
+        );
+
+        expect(() => {
+            rerender(
+                <>
+                    <Section focusKey="section1" key="section1-remount" />
+                    <Section focusKey="section2" key="section2" />
+                </>,
+            );
+        }).not.toThrowError();
+    });
 });

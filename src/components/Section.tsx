@@ -18,13 +18,19 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
 
 type Props<TComp extends keyof JSX.IntrinsicElements> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
 
+type PropsWithTabRegistry<TComp extends keyof JSX.IntrinsicElements> = Props<TComp> & {
+    tabRegistry: TabRegistry | null;
+};
+
 interface State {}
 
-export class Section<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<Props<TComp>, State> {
+class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
+    PropsWithTabRegistry<TComp>,
+    State
+> {
     private refFocuser: Focuser | null = null;
-    private tabRegistry: TabRegistry<string> | null = null;
 
-    private filterPropKeys = (propKey: keyof ComponentProps<TComp>) => {
+    private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'tabRegistry') => {
         switch (propKey) {
             case 'as':
             case 'autoFocus':
@@ -34,6 +40,7 @@ export class Section<TComp extends keyof JSX.IntrinsicElements = 'div'> extends 
             case 'focusKey':
             case 'navigationHandler':
             case 'onFocus':
+            case 'tabRegistry':
                 return false;
             default:
                 assertNeverNonThrow(propKey);
@@ -58,16 +65,16 @@ export class Section<TComp extends keyof JSX.IntrinsicElements = 'div'> extends 
     };
 
     private onEnterKey = () => {
-        if (this.tabRegistry != null) {
-            this.tabRegistry.focusIn([this.props.focusKey, 'section'], {
+        if (this.props.tabRegistry != null) {
+            this.props.tabRegistry.focusIn([this.props.focusKey, 'section'], {
                 focusOrigin: 'parent',
             });
         }
     };
 
     private onEscapeKey = () => {
-        if (this.tabRegistry != null) {
-            const reg = this.tabRegistry.get(this.props.focusKey);
+        if (this.props.tabRegistry != null) {
+            const reg = this.props.tabRegistry.get(this.props.focusKey);
             if (reg instanceof TabRegistry) {
                 reg.focusParent();
             }
@@ -80,45 +87,64 @@ export class Section<TComp extends keyof JSX.IntrinsicElements = 'div'> extends 
 
     public render() {
         const navigationHandler = this.props.navigationHandler == null ? undefined : this.navigationHandler;
-        const boundaryProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(
+        const boundaryProps = filterPropKeys<ComponentProps<TComp>, TComp, PropsWithTabRegistry<TComp>>(
             this.props,
             this.filterPropKeys,
         );
         return (
-            <NavigationContext.Consumer>
-                {tabRegistry => {
-                    this.tabRegistry = tabRegistry;
-                    return (
-                        <TabBoundary
-                            className={this.props.className || 'section-container'}
-                            {...boundaryProps}
-                            as={this.props.as}
-                            boundaryKey={this.props.focusKey}
-                            onClick={this.onClick}
-                        >
-                            <Focuser
-                                autoFocus={this.props.autoFocus}
-                                disabled={this.props.disabled}
-                                focusKey="section-focuser"
-                                onArrowKeys={navigationHandler}
-                                onEnter={this.onEnterKey}
-                                onEscape={this.onEscapeKey}
-                                onFocus={this.props.onFocus}
-                                ref={this.setFocuserRef}
-                            />
-                            <TabBoundary
-                                boundaryKey="section"
-                                className="section"
-                                cycle={this.props.cycle}
-                                focusParentOnChildOrigin={true}
-                                focusParentOnEscape={true}
-                            >
-                                {this.props.children}
-                            </TabBoundary>
-                        </TabBoundary>
-                    );
-                }}
-            </NavigationContext.Consumer>
+            <TabBoundary
+                className={this.props.className || 'section-container'}
+                {...boundaryProps}
+                as={this.props.as}
+                boundaryKey={this.props.focusKey}
+                onClick={this.onClick}
+            >
+                <Focuser
+                    autoFocus={this.props.autoFocus}
+                    disabled={this.props.disabled}
+                    focusKey="section-focuser"
+                    onArrowKeys={navigationHandler}
+                    onEnter={this.onEnterKey}
+                    onEscape={this.onEscapeKey}
+                    onFocus={this.props.onFocus}
+                    ref={this.setFocuserRef}
+                />
+                <TabBoundary
+                    boundaryKey="section"
+                    className="section"
+                    cycle={this.props.cycle}
+                    focusParentOnChildOrigin={true}
+                    focusParentOnEscape={true}
+                >
+                    {this.props.children}
+                </TabBoundary>
+            </TabBoundary>
         );
     }
 }
+
+type PropsWithForwardRef<TComp extends keyof JSX.IntrinsicElements> = Props<TComp> & {
+    forwardedRef?: React.Ref<SectionWithTabRegistry<TComp>>;
+};
+class SectionWithForwardRef<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
+    PropsWithForwardRef<TComp>
+> {
+    public static displayName = 'TabRegistry(Section)';
+
+    private renderChildren = (tabRegistry: TabRegistry | null) => {
+        const { forwardedRef, ...props } = this.props;
+        return <SectionWithTabRegistry {...props} ref={forwardedRef} tabRegistry={tabRegistry} />;
+    };
+
+    public render() {
+        return <NavigationContext.Consumer children={this.renderChildren} />;
+    }
+}
+
+const forwardRef = <TComp extends keyof JSX.IntrinsicElements = 'div'>() =>
+    React.forwardRef<SectionWithTabRegistry<TComp>, Props<TComp>>((props, ref) => (
+        <SectionWithForwardRef {...props} forwardedRef={ref} />
+    ));
+
+export type Section = SectionWithTabRegistry;
+export const Section = forwardRef<keyof JSX.IntrinsicElements>();

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cleanup, render } from 'react-testing-library';
-import { FieldMap } from '../../FieldNavigation';
+import { NavigationMap } from '../../FieldNavigation';
 import { ArrowKey, ModifierKeys } from '../Focuser';
 import { Grid } from '../Grid';
 import { Section } from '../Section';
@@ -33,10 +33,10 @@ describe('<Grid />', () => {
                 />
             </>
         );
-        const fieldMap: FieldMap = [['section1'], ['section2']];
+        const navigationMap: NavigationMap = [['section1'], ['section2']];
         const { container } = render(
             <TabBoundary>
-                <Grid fieldMap={fieldMap} focusKey="grid">
+                <Grid focusKey="grid" navigationMap={navigationMap}>
                     {renderGrid}
                 </Grid>
             </TabBoundary>,
@@ -49,5 +49,23 @@ describe('<Grid />', () => {
         expect(onFocus2).toHaveBeenCalled();
         arrowUp(section2);
         expect(onFocus1).toHaveBeenCalled();
+    });
+
+    test('remount section should not throw', () => {
+        const navigationMap: NavigationMap = [['section1', 'section2']];
+        const renderGrid = () => (
+            <>
+                <Section focusKey="section1" />
+                <Section focusKey="section2" />
+            </>
+        );
+
+        const { rerender } = render(
+            <Grid children={renderGrid} focusKey="grid" key="grid" navigationMap={navigationMap} />,
+        );
+
+        expect(() => {
+            rerender(<Grid children={renderGrid} focusKey="grid" key="grid-remount" navigationMap={navigationMap} />);
+        }).not.toThrowError();
     });
 });
