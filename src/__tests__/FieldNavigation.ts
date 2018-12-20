@@ -16,9 +16,17 @@ const noModifierKeys: ModifierKeys = {
     shiftKey: false,
 };
 
+const shiftModiferKey: ModifierKeys = {
+    ...noModifierKeys,
+    shiftKey: true,
+};
+
 describe('FieldNavigation', () => {
     describe('simple arrow nav', () => {
-        const createFocusersFromMap = (navMap: NavigationMap): [Map<string, () => void>, NavigationKeyHandler] => {
+        const createFocusersFromMap = (
+            navMap: NavigationMap,
+            tabDirectionAxis: 'x' | 'y' = 'x',
+        ): [Map<string, () => void>, NavigationKeyHandler] => {
             const tabRegistry = new TabRegistry<string>();
             const registryFetcher = () => tabRegistry;
             const focuserMap = new Map<string, () => void>();
@@ -39,7 +47,7 @@ describe('FieldNavigation', () => {
             // prettier-ignore
             return [
                 focuserMap,
-                createNavigationHandler(navMap, registryFetcher),
+                createNavigationHandler(navMap, registryFetcher, tabDirectionAxis),
             ];
         };
 
@@ -361,6 +369,65 @@ describe('FieldNavigation', () => {
                     : expect(focuser).not.toHaveBeenCalled(),
             );
             expect.assertions(11);
+        });
+
+        test('navigate with tab use x-axis as direction focus to the right', () => {
+            const [focuserMap, handler] = createFocusersFromMap([
+                ['top-left', 'top-right'],
+                ['bottom-left', 'bottom-right'],
+            ]);
+            handler('top-left', 'Tab', noModifierKeys);
+            focuserMap.forEach((focuser, key) =>
+                key === 'top-right'
+                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'left' })
+                    : expect(focuser).not.toHaveBeenCalled(),
+            );
+            expect.assertions(4);
+        });
+
+        test('navigate with shift-tab use x-axis as direction focus to the right', () => {
+            const [focuserMap, handler] = createFocusersFromMap([
+                ['top-left', 'top-right'],
+                ['bottom-left', 'bottom-right'],
+            ]);
+            handler('top-right', 'Tab', shiftModiferKey);
+            focuserMap.forEach((focuser, key) =>
+                key === 'top-left'
+                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'right' })
+                    : expect(focuser).not.toHaveBeenCalled(),
+            );
+            expect.assertions(4);
+        });
+
+        test('navigate with tab use y-axis as direction focus to the right', () => {
+            // prettier-ignore
+            const [focuserMap, handler] = createFocusersFromMap([
+                ['top-left', 'top-right'],
+                ['bottom-left', 'bottom-right'],
+            ], 'y');
+
+            handler('top-left', 'Tab', noModifierKeys);
+            focuserMap.forEach((focuser, key) =>
+                key === 'bottom-left'
+                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'up' })
+                    : expect(focuser).not.toHaveBeenCalled(),
+            );
+            expect.assertions(4);
+        });
+
+        test('navigate with shift-tab use y-axis as direction focus to the right', () => {
+            // prettier-ignore
+            const [focuserMap, handler] = createFocusersFromMap([
+                ['top-left', 'top-right'],
+                ['bottom-left', 'bottom-right'],
+            ], 'y');
+            handler('bottom-right', 'Tab', shiftModiferKey);
+            focuserMap.forEach((focuser, key) =>
+                key === 'top-right'
+                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'down' })
+                    : expect(focuser).not.toHaveBeenCalled(),
+            );
+            expect.assertions(4);
         });
     });
 });

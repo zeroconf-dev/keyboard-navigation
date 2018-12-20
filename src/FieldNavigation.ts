@@ -1,4 +1,4 @@
-import { NavigationKey, NavigationKeyHandler } from './components/Focuser';
+import { ModifierKeys, NavigationKey, NavigationKeyHandler } from './components/Focuser';
 import { FocuserOptions, TabRegistry } from './TabRegistry';
 
 type Maybe<T> = T | null;
@@ -141,16 +141,26 @@ function focusUp(
 }
 
 export function createNavigationHandler(
-    fieldMap: NavigationMap,
+    navigationMap: NavigationMap,
     getTabRegistry: TabRegistryFetcher | React.RefObject<TabRegistry | null>,
+    tabDirectionAxis: 'x' | 'y' = 'x',
 ): NavigationKeyHandler {
-    const maxY = fieldMap.length - 1;
-    const maxX = fieldMap[0].length - 1;
+    const maxY = navigationMap.length - 1;
+    const maxX = navigationMap[0].length - 1;
 
     const fetcher = typeof getTabRegistry === 'function' ? getTabRegistry : () => getTabRegistry.current;
 
-    return (focusKey: string, navigationKey: NavigationKey) => {
-        const coordinates = findFieldCoordinates(fieldMap, focusKey, maxX, maxY);
+    return (focusKey: string, navigationKey: NavigationKey, modifierKeys: ModifierKeys) => {
+        if (
+            modifierKeys.altKey ||
+            modifierKeys.ctrlKey ||
+            modifierKeys.metaKey ||
+            (navigationKey !== 'Tab' && modifierKeys.shiftKey)
+        ) {
+            return; // don't act on modifier keys except when tabbing.
+        }
+
+        const coordinates = findFieldCoordinates(navigationMap, focusKey, maxX, maxY);
         if (coordinates == null) {
             return;
         }
@@ -160,13 +170,23 @@ export function createNavigationHandler(
 
         switch (navigationKey) {
             case 'ArrowUp':
-                return focusUp(fieldMap, fetcher, x, y, maxX, maxY, originDown);
+                return focusUp(navigationMap, fetcher, x, y, maxX, maxY, originDown);
             case 'ArrowDown':
-                return focusDown(fieldMap, fetcher, x, y, maxX, maxY, originUp);
+                return focusDown(navigationMap, fetcher, x, y, maxX, maxY, originUp);
             case 'ArrowLeft':
-                return focusLeft(fieldMap, fetcher, x, y, maxX, maxY, originRight);
+                return focusLeft(navigationMap, fetcher, x, y, maxX, maxY, originRight);
             case 'ArrowRight':
-                return focusRight(fieldMap, fetcher, x, y, maxX, maxY, originLeft);
+                return focusRight(navigationMap, fetcher, x, y, maxX, maxY, originLeft);
+            case 'Tab':
+                if (modifierKeys.shiftKey) {
+                    return tabDirectionAxis === 'y'
+                        ? focusUp(navigationMap, fetcher, x, y, maxX, maxY, originDown)
+                        : focusLeft(navigationMap, fetcher, x, y, maxX, maxY, originRight);
+                } else {
+                    return tabDirectionAxis === 'y'
+                        ? focusDown(navigationMap, fetcher, x, y, maxX, maxY, originUp)
+                        : focusRight(navigationMap, fetcher, x, y, maxX, maxY, originLeft);
+                }
             default:
                 return false;
         }

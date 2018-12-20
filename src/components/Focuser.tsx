@@ -27,7 +27,7 @@ export type FocusEventHandler = (opts: FocuserOptions | undefined, focusKey: str
 export type KeyboardEventHandler = (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
 export type NavigationKeyHandler = (focusKey: string, navKey: NavigationKey, modifierKyes: ModifierKeys) => void;
 
-const emptyOnChange = () => {
+const emptyChangeHandler = () => {
     return;
 };
 
@@ -385,7 +385,7 @@ class FocuserWithTabRegistry extends React.Component<PropsWithTabRegistry, State
                 key="focuser"
                 name={this.props.focusKey}
                 onBlur={this.onBlur}
-                onChange={emptyOnChange}
+                onChange={emptyChangeHandler}
                 onKeyDown={this.onKeyDown}
                 ref={this.setFocuserRef}
                 style={styles}

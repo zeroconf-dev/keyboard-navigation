@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
-import { ArrowKey, Focuser, ModifierKeys } from './Focuser';
+import { Focuser, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Focuser';
 import { NavigationContext, TabBoundary } from './TabBoundary';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
@@ -12,7 +12,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     cycle?: boolean;
     disabled?: boolean;
     focusKey: string;
-    navigationHandler?: (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void;
+    navigationHandler?: NavigationKeyHandler;
     onFocus?: (opts?: FocuserOptions) => void;
     tabRegistryRef?: React.MutableRefObject<TabRegistry | null>;
 }
@@ -51,9 +51,9 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
         }
     };
 
-    private navigationHandler = (_: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => {
+    private navigationHandler = (_: string, navKey: NavigationKey, modifierKeys: ModifierKeys) => {
         if (this.props.navigationHandler != null) {
-            this.props.navigationHandler(this.props.focusKey, arrowKey, modifierKeys);
+            this.props.navigationHandler(this.props.focusKey, navKey, modifierKeys);
         }
     };
 
@@ -109,10 +109,10 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
                     autoFocus={this.props.autoFocus}
                     disabled={this.props.disabled}
                     focusKey="section-focuser"
-                    onArrowKeys={navigationHandler}
                     onEnter={this.onEnterKey}
                     onEscape={this.onEscapeKey}
                     onFocus={this.props.onFocus}
+                    onNavigationKeys={navigationHandler}
                     ref={this.setFocuserRef}
                 />
                 <TabBoundary
