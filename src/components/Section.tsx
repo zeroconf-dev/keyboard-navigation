@@ -65,6 +65,9 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
                 focusOrigin: 'mouse',
             });
         }
+        if (this.props.onClick != null) {
+            this.props.onClick(e);
+        }
     };
 
     private onEnterKey = () => {
