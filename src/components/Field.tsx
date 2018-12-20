@@ -7,7 +7,16 @@ export type SubmitHandler = (
     stopEditing: (preventFocus?: boolean) => void,
     submittedOn: 'blur' | 'click-outside' | 'enter-key',
 ) => void;
+
+/**
+ * Render prop responsible for rendering the editor / interactive part
+ * when activating the field (`isEditing`).
+ */
 export type EditorRenderer = (isEditing: boolean, stopEditing: () => void) => JSX.Element | null | false;
+
+/**
+ * Handler when entering editor mode / activating the field.
+ */
 export type EditStartHandler = (stopEditing: () => void) => void;
 
 export interface Props {
@@ -308,6 +317,9 @@ class FieldWithForwardRef extends React.Component<PropsWithForwardRef> {
     }
 }
 
+/**
+ * Field component.
+ */
 export type Field = FieldWithTabRegistry;
 export const Field = React.forwardRef<FieldWithTabRegistry, Props>((props, ref) => (
     <FieldWithForwardRef {...props} forwardedRef={ref} />

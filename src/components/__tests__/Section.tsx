@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { cleanup, render } from 'react-testing-library';
+import { cleanup, fireEvent, render } from 'react-testing-library';
 import { TabRegistry } from '../../TabRegistry';
 import { Focuser } from '../Focuser';
 import { Section } from '../Section';
 import { TabBoundary } from '../TabBoundary';
+import { expectInstanceOf } from './__helpers__/assert';
 import { enter } from './__helpers__/event';
 
 describe('Section', () => {
@@ -49,5 +50,38 @@ describe('Section', () => {
         const tabRegistryRef = React.createRef<TabRegistry | null>() as React.MutableRefObject<TabRegistry | null>;
         render(<Section focusKey="section" tabRegistryRef={tabRegistryRef} />);
         expect(tabRegistryRef.current).toBeInstanceOf(TabRegistry);
+    });
+
+    test('clicking on section focuses the section focuser on default configuration', () => {
+        const { container } = render(<Section focusKey="section" />);
+        fireEvent.click(container.firstElementChild as HTMLElement);
+        const focusedElement = container.querySelector(':focus') as HTMLElement;
+        expect(focusedElement).toBeDefined();
+        expect(focusedElement.getAttribute('name')).toBe('section-focuser');
+    });
+
+    test('clicking on section focuses first focuser, when focusOnClick is set to first-child', () => {
+        const { container } = render(
+            <Section focusKey="section" focusOnClick="first-child">
+                <Focuser focusKey="field1" />
+                <Focuser focusKey="field2" />
+            </Section>,
+        );
+        fireEvent.click(container.firstElementChild as HTMLElement);
+        const focusedElement = container.querySelector(':focus') as HTMLElement;
+        expect(focusedElement).toBeDefined();
+        expect(focusedElement.getAttribute('name')).toBe('field1');
+    });
+
+    test('clicking on section focuses first focuser, when focusOnClick is set to last-child', () => {
+        const { container } = render(
+            <Section focusKey="section" focusOnClick="last-child">
+                <Focuser focusKey="field1" />
+                <Focuser focusKey="field2" />
+            </Section>,
+        );
+        fireEvent.click(container.firstElementChild as HTMLElement);
+        const focusedElement = expectInstanceOf(container.querySelector(':focus'), HTMLInputElement);
+        expect(focusedElement.name).toBe('field2');
     });
 });

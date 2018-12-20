@@ -28,6 +28,14 @@ const originRight: FocuserOptions = {
     focusOrigin: 'right',
 };
 
+const originPrev: FocuserOptions = {
+    focusOrigin: 'prev',
+};
+
+const originNext: FocuserOptions = {
+    focusOrigin: 'next',
+};
+
 function findFieldCoordinates(
     fieldMap: NavigationMap,
     focusKey: string,
@@ -54,16 +62,19 @@ function focusDown(
     origin: FocuserOptions,
 ): boolean {
     const tabRegistry = getTabRegistry();
-    if (y === maxY || tabRegistry == null) {
+    const nextOverflow = y === maxY && origin === originPrev;
+
+    if (tabRegistry == null || (!nextOverflow && y === maxY)) {
         return false;
     }
 
-    const yCandidate = y + 1;
-    const nextField = fieldMap[yCandidate][x];
+    const yCandidate = nextOverflow ? 0 : y + 1;
+    const xCandidate = nextOverflow ? Math.min(maxX, x + 1) : x;
+    const nextField = fieldMap[yCandidate][xCandidate];
 
     return (
         (nextField != null && tabRegistry.focus(nextField, origin)) ||
-        focusDown(fieldMap, getTabRegistry, x, yCandidate, maxX, maxY, origin)
+        focusDown(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin)
     );
 }
 
@@ -77,18 +88,21 @@ function focusLeft(
     origin: FocuserOptions,
 ): boolean {
     const tabRegistry = getTabRegistry();
-    if (x === 0 || tabRegistry == null) {
+    const prevOverflow = x === 0 && origin === originNext;
+
+    if (tabRegistry == null || (!prevOverflow && x === 0)) {
         return false;
     }
 
-    const xCandidate = x - 1;
-    const nextField = fieldMap[y][xCandidate];
+    const xCandidate = prevOverflow ? maxX : x - 1;
+    const yCandidate = prevOverflow ? Math.max(0, y - 1) : y;
+    const nextField = fieldMap[yCandidate][xCandidate];
 
     return (
         (nextField != null && tabRegistry.focus(nextField, origin)) ||
-        focusUp(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
-        focusDown(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
-        focusLeft(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin)
+        focusUp(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin) ||
+        focusDown(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin) ||
+        focusLeft(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin)
     );
 }
 
@@ -102,18 +116,21 @@ function focusRight(
     origin: FocuserOptions,
 ): boolean {
     const tabRegistry = getTabRegistry();
-    if (x === maxX || tabRegistry == null) {
+    const nextOverflow = x === maxX && origin === originPrev;
+
+    if (tabRegistry == null || (!nextOverflow && x === maxX)) {
         return false;
     }
 
-    const xCandidate = x + 1;
-    const nextField = fieldMap[y][xCandidate];
+    const xCandidate = nextOverflow ? 0 : x + 1;
+    const yCandidate = nextOverflow ? Math.min(maxY, y + 1) : y;
+    const nextField = fieldMap[yCandidate][xCandidate];
 
     return (
         (nextField != null && tabRegistry.focus(nextField, origin)) ||
-        focusUp(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
-        focusDown(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin) ||
-        focusRight(fieldMap, getTabRegistry, xCandidate, y, maxX, maxY, origin)
+        focusUp(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin) ||
+        focusDown(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin) ||
+        focusRight(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin)
     );
 }
 
@@ -127,16 +144,19 @@ function focusUp(
     origin: FocuserOptions,
 ): boolean {
     const tabRegistry = getTabRegistry();
-    if (y === 0 || tabRegistry == null) {
+    const prevOverflow = y === 0 && origin === originNext;
+
+    if (tabRegistry == null || (!prevOverflow && y === 0)) {
         return false;
     }
 
-    const yCandidate = y - 1;
-    const nextField = fieldMap[yCandidate][x];
+    const yCandidate = prevOverflow ? maxY : y - 1;
+    const xCandidate = prevOverflow ? Math.max(0, x - 1) : x;
+    const nextField = fieldMap[yCandidate][xCandidate];
 
     return (
         (nextField != null && tabRegistry.focus(nextField, origin)) ||
-        focusUp(fieldMap, getTabRegistry, x, yCandidate, maxX, maxY, origin)
+        focusUp(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin)
     );
 }
 
@@ -180,12 +200,12 @@ export function createNavigationHandler(
             case 'Tab':
                 if (modifierKeys.shiftKey) {
                     return tabDirectionAxis === 'y'
-                        ? focusUp(navigationMap, fetcher, x, y, maxX, maxY, originDown)
-                        : focusLeft(navigationMap, fetcher, x, y, maxX, maxY, originRight);
+                        ? focusUp(navigationMap, fetcher, x, y, maxX, maxY, originNext)
+                        : focusLeft(navigationMap, fetcher, x, y, maxX, maxY, originNext);
                 } else {
                     return tabDirectionAxis === 'y'
-                        ? focusDown(navigationMap, fetcher, x, y, maxX, maxY, originUp)
-                        : focusRight(navigationMap, fetcher, x, y, maxX, maxY, originLeft);
+                        ? focusDown(navigationMap, fetcher, x, y, maxX, maxY, originPrev)
+                        : focusRight(navigationMap, fetcher, x, y, maxX, maxY, originPrev);
                 }
             default:
                 return false;

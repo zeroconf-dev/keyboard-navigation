@@ -12,6 +12,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     cycle?: boolean;
     disabled?: boolean;
     focusKey: string;
+    focusOnClick?: 'section' | 'first-child' | 'last-child' | string;
     navigationHandler?: NavigationKeyHandler;
     onFocus?: (opts?: FocuserOptions) => void;
     tabRegistryRef?: React.MutableRefObject<TabRegistry | null>;
@@ -29,8 +30,19 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
     PropsWithTabRegistry<TComp>,
     State
 > {
+    public static defaultProps = {
+        focusOnClick: 'section',
+    };
+
     public static displayName = 'Section';
+
     private refFocuser: Focuser | null = null;
+    private tabRegistryRef: React.MutableRefObject<TabRegistry | null>;
+
+    public constructor(props: PropsWithTabRegistry<TComp>) {
+        super(props);
+        this.tabRegistryRef = props.tabRegistryRef || (React.createRef() as React.MutableRefObject<TabRegistry | null>);
+    }
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'tabRegistry') => {
         switch (propKey) {
@@ -40,6 +52,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
             case 'cycle':
             case 'disabled':
             case 'focusKey':
+            case 'focusOnClick':
             case 'navigationHandler':
             case 'onFocus':
             case 'tabRegistry':
@@ -60,10 +73,37 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
     private onClick = (e: React.MouseEvent<any>) => {
         e.preventDefault();
         e.stopPropagation();
-        if (this.refFocuser != null) {
-            this.refFocuser.focus({
-                focusOrigin: 'mouse',
-            });
+
+        // prettier-ignore
+        const tabRegistry = (
+            this.props.focusOnClick !== 'section' &&
+            this.tabRegistryRef != null &&
+            this.tabRegistryRef.current
+        ) || null;
+
+        switch (this.props.focusOnClick) {
+            case 'section':
+                if (this.refFocuser != null) {
+                    this.refFocuser.focus({
+                        focusOrigin: 'mouse',
+                    });
+                }
+                break;
+            case 'first-child':
+                if (tabRegistry != null) {
+                    tabRegistry.focusFirst();
+                }
+                break;
+            case 'last-child':
+                if (tabRegistry != null) {
+                    tabRegistry.focusLast();
+                }
+                break;
+            default:
+                if (tabRegistry != null) {
+                    tabRegistry.focus(this.props.focusOnClick);
+                }
+                break;
         }
         if (this.props.onClick != null) {
             this.props.onClick(e);
@@ -121,7 +161,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
                     cycle={this.props.cycle}
                     focusParentOnChildOrigin={true}
                     focusParentOnEscape={true}
-                    tabRegistryRef={this.props.tabRegistryRef}
+                    tabRegistryRef={this.tabRegistryRef}
                 >
                     {this.props.children}
                 </TabBoundary>

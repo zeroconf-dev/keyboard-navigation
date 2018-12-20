@@ -2,13 +2,13 @@ import * as React from 'react';
 import { createNavigationHandler, NavigationMap } from '../FieldNavigation';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
-import { ArrowKey, ModifierKeys } from './Focuser';
+import { NavigationKeyHandler } from './Focuser';
 import { TabBoundary } from './TabBoundary';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
     // tslint:disable-next-line:no-reserved-keywords
     as?: TComp;
-    children: (fn: (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void) => JSX.Element;
+    children: (navigationHandler: NavigationKeyHandler) => JSX.Element;
     focusKey: string;
     navigationMap: NavigationMap;
 }
@@ -16,7 +16,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
 type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
 
 interface State {
-    navigationHandler: (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void;
+    navigationHandler: NavigationKeyHandler;
 }
 
 export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<Props<TComp>, State> {

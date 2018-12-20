@@ -379,13 +379,13 @@ describe('FieldNavigation', () => {
             handler('top-left', 'Tab', noModifierKeys);
             focuserMap.forEach((focuser, key) =>
                 key === 'top-right'
-                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'left' })
+                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'prev' })
                     : expect(focuser).not.toHaveBeenCalled(),
             );
             expect.assertions(4);
         });
 
-        test('navigate with shift-tab use x-axis as direction focus to the right', () => {
+        test('navigate with shift-tab use x-axis as direction focus to the left', () => {
             const [focuserMap, handler] = createFocusersFromMap([
                 ['top-left', 'top-right'],
                 ['bottom-left', 'bottom-right'],
@@ -393,7 +393,7 @@ describe('FieldNavigation', () => {
             handler('top-right', 'Tab', shiftModiferKey);
             focuserMap.forEach((focuser, key) =>
                 key === 'top-left'
-                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'right' })
+                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'next' })
                     : expect(focuser).not.toHaveBeenCalled(),
             );
             expect.assertions(4);
@@ -409,13 +409,13 @@ describe('FieldNavigation', () => {
             handler('top-left', 'Tab', noModifierKeys);
             focuserMap.forEach((focuser, key) =>
                 key === 'bottom-left'
-                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'up' })
+                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'prev' })
                     : expect(focuser).not.toHaveBeenCalled(),
             );
             expect.assertions(4);
         });
 
-        test('navigate with shift-tab use y-axis as direction focus to the right', () => {
+        test('navigate with shift-tab use y-axis as direction focus up', () => {
             // prettier-ignore
             const [focuserMap, handler] = createFocusersFromMap([
                 ['top-left', 'top-right'],
@@ -424,7 +424,7 @@ describe('FieldNavigation', () => {
             handler('bottom-right', 'Tab', shiftModiferKey);
             focuserMap.forEach((focuser, key) =>
                 key === 'top-right'
-                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'down' })
+                    ? expect(focuser).toHaveBeenCalledWith({ focusOrigin: 'next' })
                     : expect(focuser).not.toHaveBeenCalled(),
             );
             expect.assertions(4);
