@@ -142,10 +142,13 @@ function focusUp(
 
 export function createNavigationHandler(
     fieldMap: NavigationMap,
-    getTabRegistry: TabRegistryFetcher,
+    getTabRegistry: TabRegistryFetcher | React.RefObject<TabRegistry | null>,
 ): NavigationKeyHandler {
     const maxY = fieldMap.length - 1;
     const maxX = fieldMap[0].length - 1;
+
+    const fetcher = typeof getTabRegistry === 'function' ? getTabRegistry : () => getTabRegistry.current;
+
     return (focusKey: string, navigationKey: NavigationKey) => {
         const coordinates = findFieldCoordinates(fieldMap, focusKey, maxX, maxY);
         if (coordinates == null) {
@@ -157,13 +160,13 @@ export function createNavigationHandler(
 
         switch (navigationKey) {
             case 'ArrowUp':
-                return focusUp(fieldMap, getTabRegistry, x, y, maxX, maxY, originDown);
+                return focusUp(fieldMap, fetcher, x, y, maxX, maxY, originDown);
             case 'ArrowDown':
-                return focusDown(fieldMap, getTabRegistry, x, y, maxX, maxY, originUp);
+                return focusDown(fieldMap, fetcher, x, y, maxX, maxY, originUp);
             case 'ArrowLeft':
-                return focusLeft(fieldMap, getTabRegistry, x, y, maxX, maxY, originRight);
+                return focusLeft(fieldMap, fetcher, x, y, maxX, maxY, originRight);
             case 'ArrowRight':
-                return focusRight(fieldMap, getTabRegistry, x, y, maxX, maxY, originLeft);
+                return focusRight(fieldMap, fetcher, x, y, maxX, maxY, originLeft);
             default:
                 return false;
         }

@@ -15,6 +15,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     cycle?: boolean;
     focusParentOnChildOrigin?: boolean;
     focusParentOnEscape?: boolean;
+    tabRegistryRef?: React.MutableRefObject<TabRegistry | null>;
 }
 
 type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = React.HTMLAttributes<
@@ -43,6 +44,10 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
             cycle: props.cycle,
             focusParentOnChildOrigin: props.focusParentOnChildOrigin,
         });
+
+        if (props.tabRegistryRef != null) {
+            props.tabRegistryRef.current = this.tabRegistry;
+        }
     }
 
     public componentDidMount() {
@@ -93,6 +98,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
             case 'focusParentOnEscape':
             case 'focusParentOnChildOrigin':
             case 'parentRegistry':
+            case 'tabRegistryRef':
                 return false;
             default:
                 assertNeverNonThrow(propKey);

@@ -145,6 +145,12 @@ describe('TabBoundary', () => {
             );
         }).not.toThrowError();
     });
+
+    test('fetching tab registry through mutable ref object', () => {
+        const tabRegistryRef = React.createRef<TabRegistry | null>() as React.MutableRefObject<TabRegistry | null>;
+        render(<TabBoundary tabRegistryRef={tabRegistryRef} />);
+        expect(tabRegistryRef.current).toBeInstanceOf(TabRegistry);
+    });
 });
 
 class FocusParentOnSpace extends React.Component<{ focusKey: string; onFocus?: () => void }> {

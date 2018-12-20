@@ -3,7 +3,7 @@ import { createNavigationHandler, NavigationMap } from '../FieldNavigation';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
 import { ArrowKey, ModifierKeys } from './Focuser';
-import { NavigationContext, TabBoundary } from './TabBoundary';
+import { TabBoundary } from './TabBoundary';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
     // tslint:disable-next-line:no-reserved-keywords
@@ -15,29 +15,24 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
 
 type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
 
-type PropsWithTabRegistry<TComp extends keyof JSX.IntrinsicElements> = Props<TComp> & {
-    tabRegistry: TabRegistry | null;
-};
-
 interface State {
     navigationHandler: (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void;
 }
 
-export class GridWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
-    PropsWithTabRegistry<TComp>,
-    State
-> {
-    public constructor(props: PropsWithTabRegistry<TComp>) {
+export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<Props<TComp>, State> {
+    private tabRegistryRef: React.MutableRefObject<TabRegistry | null>;
+    public constructor(props: Props<TComp>) {
         super(props);
+        this.tabRegistryRef = React.createRef();
         this.state = {
-            navigationHandler: createNavigationHandler(props.navigationMap, this.getTabRegistry),
+            navigationHandler: createNavigationHandler(props.navigationMap, this.tabRegistryRef),
         };
     }
 
-    public componentWillReceiveProps(nextProps: PropsWithTabRegistry<TComp>) {
+    public componentWillReceiveProps(nextProps: Props<TComp>) {
         if (this.props.navigationMap !== nextProps.navigationMap) {
             this.setState(_ => ({
-                navigationHandler: createNavigationHandler(nextProps.navigationMap, this.getTabRegistry),
+                navigationHandler: createNavigationHandler(nextProps.navigationMap, this.tabRegistryRef),
             }));
         }
     }
@@ -56,54 +51,18 @@ export class GridWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
         }
     };
 
-    private getTabRegistry = () => {
-        if (this.props.tabRegistry == null) {
-            throw new Error(`tabRegistry was not found on context of ${this.props.focusKey}`);
-        }
-        const tabRegistry = this.props.tabRegistry.get(this.props.focusKey);
-        if (!(tabRegistry instanceof TabRegistry)) {
-            throw new Error(`tabRegistry of ${this.props.focusKey} was not found`);
-        }
-        return tabRegistry;
-    };
-
     public render() {
-        const props = filterPropKeys<ComponentProps<TComp>, TComp, PropsWithTabRegistry<TComp>>(
-            this.props,
-            this.filterPropKeys,
-        );
+        const props = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(this.props, this.filterPropKeys);
 
         return (
-            <TabBoundary {...props} as={this.props.as} boundaryKey={this.props.focusKey}>
+            <TabBoundary
+                {...props}
+                as={this.props.as}
+                boundaryKey={this.props.focusKey}
+                tabRegistryRef={this.tabRegistryRef}
+            >
                 {this.props.children(this.state.navigationHandler)}
             </TabBoundary>
         );
     }
 }
-
-type PropsWithForwardRef<TComp extends keyof JSX.IntrinsicElements> = Props<TComp> & {
-    forwardedRef?: React.Ref<GridWithTabRegistry<TComp>>;
-};
-
-class GridWithForwardRef<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
-    PropsWithForwardRef<TComp>
-> {
-    public static displayName = 'TabRegistry(Grid)';
-
-    private renderChildren = (tabRegistry: TabRegistry | null) => {
-        const { forwardedRef, ...props } = this.props;
-        return <GridWithTabRegistry {...props} tabRegistry={tabRegistry} />;
-    };
-
-    public render() {
-        return <NavigationContext.Consumer children={this.renderChildren} />;
-    }
-}
-
-const forwardRef = <TComp extends keyof JSX.IntrinsicElements = 'div'>() =>
-    React.forwardRef<GridWithTabRegistry<TComp>, Props<TComp>>((props, ref) => (
-        <GridWithForwardRef {...props} forwardedRef={ref} />
-    ));
-
-export type Grid = GridWithTabRegistry;
-export const Grid = forwardRef<keyof JSX.IntrinsicElements>();

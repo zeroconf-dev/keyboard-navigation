@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cleanup, render } from 'react-testing-library';
+import { TabRegistry } from '../../TabRegistry';
 import { Focuser } from '../Focuser';
 import { Section } from '../Section';
 import { TabBoundary } from '../TabBoundary';
@@ -42,5 +43,11 @@ describe('Section', () => {
                 </>,
             );
         }).not.toThrowError();
+    });
+
+    test('fetching tab registry through mutable ref object', () => {
+        const tabRegistryRef = React.createRef<TabRegistry | null>() as React.MutableRefObject<TabRegistry | null>;
+        render(<Section focusKey="section" tabRegistryRef={tabRegistryRef} />);
+        expect(tabRegistryRef.current).toBeInstanceOf(TabRegistry);
     });
 });

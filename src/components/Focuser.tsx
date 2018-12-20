@@ -383,7 +383,7 @@ class FocuserWithTabRegistry extends React.Component<PropsWithTabRegistry, State
                 className={this.props.className || 'focuser'}
                 disabled={this.props.disabled}
                 key="focuser"
-                name={String(this.props.focusKey)}
+                name={this.props.focusKey}
                 onBlur={this.onBlur}
                 onChange={emptyOnChange}
                 onKeyDown={this.onKeyDown}

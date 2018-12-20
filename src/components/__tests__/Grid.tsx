@@ -4,7 +4,6 @@ import { NavigationMap } from '../../FieldNavigation';
 import { ArrowKey, ModifierKeys } from '../Focuser';
 import { Grid } from '../Grid';
 import { Section } from '../Section';
-import { TabBoundary } from '../TabBoundary';
 import { arrowDown, arrowUp } from './__helpers__/event';
 
 describe('<Grid />', () => {
@@ -35,11 +34,9 @@ describe('<Grid />', () => {
         );
         const navigationMap: NavigationMap = [['section1'], ['section2']];
         const { container } = render(
-            <TabBoundary>
-                <Grid focusKey="grid" navigationMap={navigationMap}>
-                    {renderGrid}
-                </Grid>
-            </TabBoundary>,
+            <Grid focusKey="grid" navigationMap={navigationMap}>
+                {renderGrid}
+            </Grid>,
         );
 
         const section1 = container.querySelector('.section1 [name=section-focuser]') as HTMLElement;

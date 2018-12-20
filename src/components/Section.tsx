@@ -14,6 +14,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     focusKey: string;
     navigationHandler?: (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void;
     onFocus?: (opts?: FocuserOptions) => void;
+    tabRegistryRef?: React.MutableRefObject<TabRegistry | null>;
 }
 
 type Props<TComp extends keyof JSX.IntrinsicElements> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
@@ -41,6 +42,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
             case 'navigationHandler':
             case 'onFocus':
             case 'tabRegistry':
+            case 'tabRegistryRef':
                 return false;
             default:
                 assertNeverNonThrow(propKey);
@@ -115,6 +117,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
                     cycle={this.props.cycle}
                     focusParentOnChildOrigin={true}
                     focusParentOnEscape={true}
+                    tabRegistryRef={this.props.tabRegistryRef}
                 >
                     {this.props.children}
                 </TabBoundary>
