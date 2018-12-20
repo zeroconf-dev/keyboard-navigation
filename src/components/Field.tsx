@@ -107,6 +107,7 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
         submitOnBlur: false,
         submitOnClickOutside: false,
     };
+    public static displayName = 'Field';
 
     private refContainer: HTMLDivElement | null = null;
     private refFocuser: Focuser | null = null;

@@ -20,6 +20,7 @@ interface State {
 }
 
 export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<Props<TComp>, State> {
+    public static displayName = 'Grid';
     private tabRegistryRef: React.MutableRefObject<TabRegistry | null>;
     public constructor(props: Props<TComp>) {
         super(props);

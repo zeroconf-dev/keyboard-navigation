@@ -29,6 +29,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
     PropsWithTabRegistry<TComp>,
     State
 > {
+    public static displayName = 'Section';
     private refFocuser: Focuser | null = null;
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'tabRegistry') => {
