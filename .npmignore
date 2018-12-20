@@ -1,6 +1,7 @@
 /.docz/
 /.rpt2_cache/
 /.vscode/
+/coverage/
 /docs/
 /examples/
 /src/**/__tests__/
@@ -11,13 +12,13 @@
 *.mdx
 *.less
 
-/.doczrc.js
 /.gitignore
 /.npmignore
 /.prettierrc
 /.prettierignore
 /.travis.yml
 /jest.config.js
+/doczrc.js
 
 /tslint.json
 /rollup.*.js
