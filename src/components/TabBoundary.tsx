@@ -9,12 +9,60 @@ function hasNameProperty<T>(obj: T): obj is T & { name: string } {
 export const NavigationContext = React.createContext<TabRegistry | null>(null);
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
+    /**
+     * Specify which intrinsic / host component the section should be rendered as.
+     */
     // tslint:disable-next-line:no-reserved-keywords
     as?: TComp;
+
+    /**
+     * Key of the boundary, similar to the `focusKey` of the `Focuser`, `Grid` and `Section`
+     * **Note**: it most be unique within its enclosing boundary.
+     */
     boundaryKey?: string;
+
+    /**
+     * Whether or not the tab boundary should cycle when attempting
+     * to tab boyond the boundary.
+     */
     cycle?: boolean;
+
+    /**
+     * When set to `true` and a child focuses the boundary,
+     * the boundary will delegate focusing up the tree.
+     *
+     * This is useful when having a boundary that only
+     * encloses other boundaries, then escaping an inner boundary
+     * will cause the first child of the outer boundary to be focused
+     * and thus cannot escape the outer boundary, enable this to mitigate that behavior.
+     *
+     * @example
+     * <TabBoundary boundaryKey="outer" focusParentOnChildOrigin={true}>
+     *   <Section focusKey="inner1" />
+     *   <Section focusKey="inner2" />
+     *   <Section focusKey="inner3" />
+     * </TabBoundary>
+     */
     focusParentOnChildOrigin?: boolean;
+
+    /**
+     * Set this to `true` to focus the parent of the boundary if exists
+     * when hitting the escape key.
+     *
+     * @example
+     * <TabBoundary boundaryKey="outer">
+     *   <Focuser focusKey="editor-focuser" />
+     *   <TabBoundary boundaryKey="editor" focusParentOnEscape={true}>
+     *     <Focuser focusKey="editor-input1" />
+     *     <Focuser focusKey="editor-input2" />
+     *   </TabBoundary>
+     * </TabBoundary>
+     */
     focusParentOnEscape?: boolean;
+
+    /**
+     * Take a ref to the tab registry this boundary creates.
+     */
     tabRegistryRef?: React.MutableRefObject<TabRegistry | null>;
 }
 
@@ -106,7 +154,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
         }
     };
 
-    private onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    private onKeyDown = (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
         if (e.key === 'Tab' && hasNameProperty(e.target)) {
             e.preventDefault();
             e.stopPropagation();
@@ -122,7 +170,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
         }
 
         if (this.props.onKeyDown != null) {
-            (this.props as any).onKeyDown(e);
+            this.props.onKeyDown(e);
         }
     };
 
@@ -162,5 +210,26 @@ const forwardRef = <TComp extends keyof JSX.IntrinsicElements = 'div'>() =>
         <TabBoundaryWithForwardRef {...props} forwardedRef={ref} />
     ));
 
-export type TabBoundary = TabBoundaryWithTabRegistry;
+/**
+ * Define a tab/navigation boundary of focusable elements.
+ * This is a primitive way of grouping focusables.
+ *
+ * @example Simple
+ * <TabBoundary>
+ *   <Focuser focusKey="field1" />
+ * </TabBoundary>
+ *
+ * @example Nested boundary
+ * <TabBoundary>
+ *   <TabBoundary focusKey="sidebar">
+ *     <Focuser focusKey="menu-link1" />
+ *     <Focuser focusKey="menu-link2" />
+ *   </TabBoundary>
+ *   <TabBoundary focusKey="main-content">
+ *      <Focuser focusKey="search-bar" />
+ *      <Focuser focusKey="some-other-element" />
+ *   </TabBoundary>
+ * </TabBoundary>
+ */
+export type TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> = TabBoundaryWithTabRegistry<TComp>;
 export const TabBoundary = forwardRef<keyof JSX.IntrinsicElements>();

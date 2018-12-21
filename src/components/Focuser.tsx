@@ -23,7 +23,7 @@ export interface ModifierKeys {
 
 export type ArrowKeyHandler = (focusKey: string, arrowKey: ArrowKey, modifierKeys: ModifierKeys) => void;
 export type BlurEventHandler = (e: React.FocusEvent<HTMLInputElement>, focusKey: string) => void;
-export type FocusEventHandler = (opts: FocuserOptions | undefined, focusKey: string) => void;
+export type FocusEventHandler = (opts: FocuserOptions, focusKey: string) => void;
 export type KeyboardEventHandler = (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
 export type NavigationKeyHandler = (focusKey: string, navKey: NavigationKey, modifierKyes: ModifierKeys) => void;
 
@@ -364,7 +364,7 @@ class FocuserWithTabRegistry extends React.Component<PropsWithTabRegistry, State
         this.refFocuser = ref;
     };
 
-    public focus = (opts?: FocuserOptions) => {
+    public focus = (opts: FocuserOptions) => {
         if (this.props.disabled || this.refFocuser == null) {
             return false;
         }
@@ -410,6 +410,11 @@ class FocuserWithForwardRef extends React.Component<PropsWithForwardRef> {
     }
 }
 
+/**
+ * Base component which is the heart of this library, a component that simply can
+ * have focus and listen to key strokes. Common navigation handlers are made available
+ * to minimize the boilable about designing keyboard interactive interfaces.
+ */
 export type Focuser = FocuserWithTabRegistry;
 export const Focuser = React.forwardRef<FocuserWithTabRegistry, Props>((props, ref) => (
     <FocuserWithForwardRef {...props} forwardedRef={ref} />

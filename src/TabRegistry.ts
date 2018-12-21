@@ -19,7 +19,7 @@ export interface FocuserOptions {
     focusOrigin: FocusOrigin;
 }
 
-export type FocuserFn = (foucuserOpts?: FocuserOptions) => boolean;
+export type FocuserFn = (foucuserOpts: FocuserOptions) => boolean;
 export type FocuserType<E = any> = TabRegistry<E> | FocuserFn;
 
 export interface TabRegistryOptions {

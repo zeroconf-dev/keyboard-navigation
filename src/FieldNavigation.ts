@@ -68,7 +68,7 @@ function focusDown(
         return false;
     }
 
-    const yCandidate = nextOverflow ? 0 : y + 1;
+    const yCandidate = nextOverflow && y !== maxY ? 0 : Math.min(maxY, y + 1);
     const xCandidate = nextOverflow ? Math.min(maxX, x + 1) : x;
     const nextField = fieldMap[yCandidate][xCandidate];
 
@@ -122,7 +122,7 @@ function focusRight(
         return false;
     }
 
-    const xCandidate = nextOverflow ? 0 : x + 1;
+    const xCandidate = nextOverflow && x !== maxX ? 0 : Math.min(maxX, x + 1);
     const yCandidate = nextOverflow ? Math.min(maxY, y + 1) : y;
     const nextField = fieldMap[yCandidate][xCandidate];
 
@@ -160,6 +160,12 @@ function focusUp(
     );
 }
 
+/**
+ * Create a keyboard event handler from map of focusable elements
+ * you can pass to the `Focuser` to alter the "default" behavior of
+ * tabs direction to support multiple column layouts, and
+ * adds arrow key navigation.
+ */
 export function createNavigationHandler(
     navigationMap: NavigationMap,
     getTabRegistry: TabRegistryFetcher | React.RefObject<TabRegistry | null>,

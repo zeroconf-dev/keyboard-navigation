@@ -1,8 +1,18 @@
+/**
+ * Helper for type-wise asserting that passing an object of type never
+ * if however anything is passed to the function it will throw
+ * with the message of `msg`.
+ */
 // tslint:disable-next-line:variable-name
 export function assertNever(_obj: never, msg: string): never {
     throw new Error(msg);
 }
 
+/**
+ * Helper for type-wise asserting that passing an object
+ * of type never, this is useful for exhausting union types,
+ * but not throwing an error when called.
+ */
 export function assertNeverNonThrow(obj: never): never {
     return obj;
 }
@@ -15,6 +25,10 @@ export type UnpackedHTMLAttributes<TComp extends keyof JSX.IntrinsicElements> = 
     UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>
 >;
 
+/**
+ * Filtering componet props from DOM compatible props
+ * of type `TComp`.
+ */
 export function filterPropKeys<
     U extends {},
     TComp extends keyof JSX.IntrinsicElements,

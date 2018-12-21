@@ -150,7 +150,7 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
         }
     };
 
-    private focus(opts?: FocuserOptions) {
+    private focus(opts: FocuserOptions) {
         if (this.props.disabled || this.refFocuser == null) {
             return false;
         }
@@ -318,7 +318,14 @@ class FieldWithForwardRef extends React.Component<PropsWithForwardRef> {
 }
 
 /**
- * Field component.
+ * Helper for creating UI which have read / edit modes
+ * and helps making "fields" which can be navigated to even
+ * when the UI is not built upon elements which
+ * natively can be have focus.
+ *
+ * Focus handling, and switching between read/edit mode
+ * and submitting values to persistence or cancel edit of value
+ * is made easier.
  */
 export type Field = FieldWithTabRegistry;
 export const Field = React.forwardRef<FieldWithTabRegistry, Props>((props, ref) => (

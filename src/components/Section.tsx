@@ -5,16 +5,69 @@ import { Focuser, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Fo
 import { NavigationContext, TabBoundary } from './TabBoundary';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
+    /**
+     * Specify which intrinsic / host component the section should be rendered as.
+     */
     // tslint:disable-next-line:no-reserved-keywords
     as?: TComp;
+
+    /**
+     * Auto focus the section when the component is mounted.
+     * It has the same behavior as the `autoFocus` prop of the
+     * native input component.
+     */
     autoFocus?: boolean;
+
+    /**
+     * Setting the `className` on the container component specified by
+     * the `as` prop or `div` if nothing is defined.
+     * This makes the component compatible with most of the CSS-in-JS libraries.
+     */
     className?: string;
+
+    /**
+     * Whether or not the tab boundary should [cycle](TabBoundary#cycle) when attempting
+     * to "tab over" the boundary.
+     */
     cycle?: boolean;
+
+    /**
+     * Disables the section if set to true, so the section itself cannot take
+     * focus. However it does not mean that the "children" of the section
+     * cannot be focused.
+     */
     disabled?: boolean;
+
+    /**
+     * The focus key to identify the section inside the closed ancestor boundary.
+     * **Note**: it should be unique amongst its siblings of the bonudary it lives in.
+     */
     focusKey: string;
-    focusOnClick?: 'section' | 'first-child' | 'last-child' | string;
+
+    /**
+     * Defined the behavior of clicking on the section.
+     * The deafult is give focus to the entire `section`.
+     * You can configure it to focus `first-child`, `last-child` or a specifc
+     * focus key of a child.
+     *
+     * To disable the behavior pass `false`.
+     */
+    focusOnClick?: 'section' | 'first-child' | 'last-child' | string | false;
+
+    /**
+     * Optionally pass a {@link createNavigationHandler | navigation key handler},
+     * for very fine-grained tab/arrow key control.
+     */
     navigationHandler?: NavigationKeyHandler;
-    onFocus?: (opts?: FocuserOptions) => void;
+
+    /**
+     * Callback for when the section is been focused.
+     */
+    onFocus?: (opts: FocuserOptions) => void;
+
+    /**
+     * A
+     */
     tabRegistryRef?: React.MutableRefObject<TabRegistry | null>;
 }
 
@@ -74,37 +127,40 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
         e.preventDefault();
         e.stopPropagation();
 
-        // prettier-ignore
-        const tabRegistry = (
-            this.props.focusOnClick !== 'section' &&
-            this.tabRegistryRef != null &&
-            this.tabRegistryRef.current
-        ) || null;
+        if (this.props.focusOnClick !== false) {
+            // prettier-ignore
+            const tabRegistry = (
+                this.props.focusOnClick !== 'section' &&
+                this.tabRegistryRef != null &&
+                this.tabRegistryRef.current
+            ) || null;
 
-        switch (this.props.focusOnClick) {
-            case 'section':
-                if (this.refFocuser != null) {
-                    this.refFocuser.focus({
-                        focusOrigin: 'mouse',
-                    });
-                }
-                break;
-            case 'first-child':
-                if (tabRegistry != null) {
-                    tabRegistry.focusFirst();
-                }
-                break;
-            case 'last-child':
-                if (tabRegistry != null) {
-                    tabRegistry.focusLast();
-                }
-                break;
-            default:
-                if (tabRegistry != null) {
-                    tabRegistry.focus(this.props.focusOnClick);
-                }
-                break;
+            switch (this.props.focusOnClick) {
+                case 'section':
+                    if (this.refFocuser != null) {
+                        this.refFocuser.focus({
+                            focusOrigin: 'mouse',
+                        });
+                    }
+                    break;
+                case 'first-child':
+                    if (tabRegistry != null) {
+                        tabRegistry.focusFirst();
+                    }
+                    break;
+                case 'last-child':
+                    if (tabRegistry != null) {
+                        tabRegistry.focusLast();
+                    }
+                    break;
+                default:
+                    if (tabRegistry != null) {
+                        tabRegistry.focus(this.props.focusOnClick);
+                    }
+                    break;
+            }
         }
+
         if (this.props.onClick != null) {
             this.props.onClick(e);
         }
@@ -193,5 +249,9 @@ const forwardRef = <TComp extends keyof JSX.IntrinsicElements = 'div'>() =>
         <SectionWithForwardRef {...props} forwardedRef={ref} />
     ));
 
-export type Section = SectionWithTabRegistry;
+/**
+ * Container component, where you can group focusable elements
+ * and make it easy to navigate between other groups (`Section`).
+ */
+export type Section<TComp extends keyof JSX.IntrinsicElements = 'div'> = SectionWithTabRegistry<TComp>;
 export const Section = forwardRef<keyof JSX.IntrinsicElements>();
