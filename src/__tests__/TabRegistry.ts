@@ -1223,6 +1223,33 @@ describe('TabRegistry', () => {
         });
     });
 
+    describe('.rootRegistry', () => {
+        test('return self, when no parent', () => {
+            const tr = new TabRegistry<number>();
+            expect(tr).toBe(tr.rootRegistry);
+        });
+
+        test('return parent if parent is root', () => {
+            const parentTr = new TabRegistry<number>();
+            const tr = new TabRegistry<number>();
+
+            parentTr.add(0, tr);
+
+            expect(tr.rootRegistry).toBe(parentTr);
+        });
+
+        test('return top level when more than one level of registries', () => {
+            const tr = new TabRegistry<number>();
+            const parentTr = new TabRegistry<number>();
+            const rootTr = new TabRegistry<number>();
+
+            rootTr.add(0, parentTr);
+            parentTr.add(0, tr);
+
+            expect(tr.rootRegistry).toBe(rootTr);
+        });
+    });
+
     describe('Nested registries', () => {
         test('iterating through', () => {
             const focuser1 = getSuccessFocuser();

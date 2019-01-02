@@ -96,8 +96,23 @@ export class TabRegistry<E = any> {
         return this.registry.last;
     }
 
+    /**
+     * Get the parent registry if exists.
+     */
     public get parentRegistry(): TabRegistry<E> | null {
         return this.internalParentRegistry;
+    }
+
+    /**
+     * Get the root registry, recurse to toplevel.
+     * If `this` registry has no parent return itself.
+     */
+    public get rootRegistry(): TabRegistry<E> | this {
+        let registry: TabRegistry<E> = this;
+        while (registry.parentRegistry != null) {
+            registry = registry.parentRegistry;
+        }
+        return registry;
     }
 
     /**
