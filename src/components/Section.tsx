@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { FocuserOptions, TabRegistry } from '../TabRegistry';
-import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
-import { Focuser, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Focuser';
+import { TabRegistry } from '../TabRegistry';
+import { assertNeverNonThrow, filterPropKeys, spreadControlProps, UnpackedHTMLAttributes } from '../util';
+import { ControlProps, Focuser, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Focuser';
 import { NavigationContext, TabBoundary } from './TabBoundary';
 
-interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
+interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends ControlProps {
     /**
      * Specify which intrinsic / host component the section should be rendered as.
      */
@@ -61,11 +61,6 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     navigationHandler?: NavigationKeyHandler;
 
     /**
-     * Callback for when the section is been focused.
-     */
-    onFocus?: (opts: FocuserOptions) => void;
-
-    /**
      * A
      */
     tabRegistryRef?: React.MutableRefObject<TabRegistry | null>;
@@ -107,7 +102,21 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
             case 'focusKey':
             case 'focusOnClick':
             case 'navigationHandler':
+            case 'onArrowDown':
+            case 'onArrowKeys':
+            case 'onArrowLeft':
+            case 'onArrowRight':
+            case 'onArrowUp':
+            case 'onBlur':
+            case 'onDelete':
+            case 'onEnter':
+            case 'onEscape':
             case 'onFocus':
+            case 'onMinus':
+            case 'onNavigationKeys':
+            case 'onPlus':
+            case 'onQuestionMark':
+            case 'onSpace':
             case 'tabRegistry':
             case 'tabRegistryRef':
                 return false;
@@ -202,12 +211,10 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
                 onClick={this.onClick}
             >
                 <Focuser
-                    autoFocus={this.props.autoFocus}
-                    disabled={this.props.disabled}
+                    {...spreadControlProps(this.props)}
                     focusKey="section-focuser"
                     onEnter={this.onEnterKey}
                     onEscape={this.onEscapeKey}
-                    onFocus={this.props.onFocus}
                     onNavigationKeys={navigationHandler}
                     ref={this.setFocuserRef}
                 />

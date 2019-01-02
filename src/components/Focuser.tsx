@@ -31,18 +31,11 @@ const emptyChangeHandler = () => {
     return;
 };
 
-interface Props {
+export interface ControlProps {
     /**
      * Focus the underlaying input field upon mount.
      */
     autoFocus?: boolean;
-
-    /**
-     * Set the classname of the underlaying input field,
-     * this makes the component compatible with most css-in-js libraries
-     * like styled-components, glamor and emotion etc.
-     */
-    className?: string;
 
     /**
      * Whether or not the focuser is disabled; cannot be focused,
@@ -51,11 +44,6 @@ interface Props {
      * focus it via focusNext/focusPrev and friends.
      */
     disabled?: boolean;
-
-    /**
-     * Unique identifier among siblings within a TabBoundary or TabRegistry.
-     */
-    focusKey: string;
 
     /**
      * Called when the underlying input field has focus and the user,
@@ -146,6 +134,21 @@ interface Props {
      */
     onSpace?: KeyboardEventHandler;
 }
+
+interface Props extends ControlProps {
+    /**
+     * Set the classname of the underlaying input field,
+     * this makes the component compatible with most css-in-js libraries
+     * like styled-components, glamor and emotion etc.
+     */
+    className?: string;
+
+    /**
+     * Unique identifier among siblings within a TabBoundary or TabRegistry.
+     */
+    focusKey: string;
+}
+
 interface State {}
 
 const styles: React.CSSProperties = {

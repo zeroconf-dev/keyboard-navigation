@@ -1,3 +1,5 @@
+import { ControlProps } from './components/Focuser';
+
 /**
  * Helper for type-wise asserting that passing an object of type never
  * if however anything is passed to the function it will throw
@@ -46,5 +48,44 @@ export function filterPropKeys<
                 return carry;
             },
             {} as UnpackedHTMLAttributes<TComp>,
+        );
+}
+
+/**
+ * Capture the control props, and return an object only containing those.
+ */
+export function spreadControlProps<Props extends ControlProps>(props: Props): ControlProps {
+    return (Object.keys(props) as (keyof ControlProps)[])
+        .filter(key => {
+            switch (key) {
+                case 'autoFocus':
+                case 'disabled':
+                case 'onArrowDown':
+                case 'onArrowKeys':
+                case 'onArrowLeft':
+                case 'onArrowRight':
+                case 'onArrowUp':
+                case 'onBlur':
+                case 'onDelete':
+                case 'onEnter':
+                case 'onEscape':
+                case 'onFocus':
+                case 'onMinus':
+                case 'onNavigationKeys':
+                case 'onPlus':
+                case 'onQuestionMark':
+                case 'onSpace':
+                    return true;
+                default:
+                    assertNeverNonThrow(key);
+                    return false;
+            }
+        })
+        .reduce(
+            (carry, item) => {
+                carry[item] = props[item];
+                return carry;
+            },
+            {} as ControlProps,
         );
 }

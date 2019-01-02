@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
-import { ArrowKeyHandler, Focuser, NavigationKeyHandler } from './Focuser';
+import { spreadControlProps } from '../util';
+import { ArrowKeyHandler, ControlProps, Focuser, NavigationKeyHandler } from './Focuser';
 import { NavigationContext } from './TabBoundary';
 
 export type SubmitHandler = (
@@ -19,7 +20,7 @@ export type EditorRenderer = (isEditing: boolean, stopEditing: () => void) => JS
  */
 export type EditStartHandler = (stopEditing: () => void) => void;
 
-export interface Props {
+export interface Props extends ControlProps {
     /**
      * Set the classname of the container element,
      * this makes the component compatible with most css-in-js libraries
@@ -180,7 +181,17 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
         e.preventDefault();
     };
 
-    private onEscape = () => {
+    private onEnter = (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => {
+        this.startEditing();
+        if (this.props.onEnter != null) {
+            this.props.onEnter(e, focusKey);
+        }
+    };
+
+    private onEscape = (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => {
+        if (this.props.onEscape != null) {
+            this.props.onEscape(e, focusKey);
+        }
         if (this.state.isEditing) {
             this.stopEditing();
         } else {
@@ -214,6 +225,13 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
         this.focus({
             focusOrigin: 'mouse',
         });
+    };
+
+    private onSpace = (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => {
+        this.startEditing();
+        if (this.props.onSpace != null) {
+            this.props.onSpace(e, focusKey);
+        }
     };
 
     private renderErrorMessage() {
@@ -277,15 +295,12 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
                 ref={this.setContainerRef}
             >
                 <Focuser
-                    disabled={this.props.disabled}
                     focusKey={this.props.label}
                     key="focuser"
-                    onArrowKeys={this.props.onArrowKeys}
-                    onDelete={this.props.onDelete}
-                    onEnter={this.startEditing}
+                    {...spreadControlProps(this.props)}
+                    onEnter={this.onEnter}
                     onEscape={this.onEscape}
-                    onNavigationKeys={this.props.onNavigationKeys}
-                    onSpace={this.startEditing}
+                    onSpace={this.onSpace}
                     ref={this.setFocuserRef}
                 />
                 <div

@@ -71,6 +71,8 @@ type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = React.HTMLAttrib
 > &
     ComponentProps<TComp>;
 
+export type TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements = 'div'> = Props<TComp>;
+
 interface State {}
 
 type PropsWithTabRegistry<TComp extends keyof JSX.IntrinsicElements> = Props<TComp> & {
