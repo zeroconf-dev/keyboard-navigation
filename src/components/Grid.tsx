@@ -60,7 +60,7 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
     };
 
     public static displayName = 'Grid';
-    private tabRegistryRef: React.MutableRefObject<TabRegistry | null>;
+    private tabRegistryRef: React.RefObject<TabRegistry>;
     public constructor(props: Props<TComp>) {
         super(props);
         this.tabRegistryRef = React.createRef();

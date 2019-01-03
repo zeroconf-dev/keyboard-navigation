@@ -63,7 +63,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends Cont
     /**
      * A
      */
-    tabRegistryRef?: React.MutableRefObject<TabRegistry | null>;
+    tabRegistryRef?: React.RefObject<TabRegistry>;
 }
 
 type Props<TComp extends keyof JSX.IntrinsicElements> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
@@ -85,11 +85,11 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
     public static displayName = 'Section';
 
     private refFocuser: Focuser | null = null;
-    private tabRegistryRef: React.MutableRefObject<TabRegistry | null>;
+    private tabRegistryRef: React.RefObject<TabRegistry>;
 
     public constructor(props: PropsWithTabRegistry<TComp>) {
         super(props);
-        this.tabRegistryRef = props.tabRegistryRef || (React.createRef() as React.MutableRefObject<TabRegistry | null>);
+        this.tabRegistryRef = props.tabRegistryRef || React.createRef();
     }
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'tabRegistry') => {

@@ -47,7 +47,7 @@ describe('Section', () => {
     });
 
     test('fetching tab registry through mutable ref object', () => {
-        const tabRegistryRef = React.createRef<TabRegistry | null>() as React.MutableRefObject<TabRegistry | null>;
+        const tabRegistryRef = React.createRef<TabRegistry>();
         render(<Section focusKey="section" tabRegistryRef={tabRegistryRef} />);
         expect(tabRegistryRef.current).toBeInstanceOf(TabRegistry);
     });

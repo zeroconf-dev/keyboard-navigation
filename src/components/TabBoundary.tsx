@@ -69,7 +69,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**
      * Take a ref to the tab registry this boundary creates.
      */
-    tabRegistryRef?: React.MutableRefObject<TabRegistry | null>;
+    tabRegistryRef?: React.RefObject<TabRegistry>;
 }
 
 type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = React.HTMLAttributes<
@@ -103,7 +103,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
         });
 
         if (props.tabRegistryRef != null) {
-            props.tabRegistryRef.current = this.tabRegistry;
+            (props.tabRegistryRef as React.MutableRefObject<TabRegistry>).current = this.tabRegistry;
         }
     }
 
