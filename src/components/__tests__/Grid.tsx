@@ -38,8 +38,8 @@ describe('<Grid />', () => {
             </Grid>,
         );
 
-        const section1 = container.querySelector('.section1 [name=section-focuser]') as HTMLElement;
-        const section2 = container.querySelector('.section2 [name=section-focuser]') as HTMLElement;
+        const section1 = container.querySelector('.section1 [name=section1]') as HTMLElement;
+        const section2 = container.querySelector('.section2 [name=section2]') as HTMLElement;
 
         arrowDown(section1);
         expect(onFocus2).toHaveBeenCalled();

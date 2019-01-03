@@ -20,7 +20,7 @@ describe('Section', () => {
             </TabBoundary>,
         );
 
-        const sectionFocuser = container.querySelector('[name=section-focuser]') as HTMLElement;
+        const sectionFocuser = container.querySelector('[name=section]') as HTMLElement;
         expect(sectionFocuser).toBeInstanceOf(HTMLElement);
 
         enter(sectionFocuser);
@@ -57,7 +57,7 @@ describe('Section', () => {
         fireEvent.click(container.firstElementChild as HTMLElement);
         const focusedElement = container.querySelector(':focus') as HTMLElement;
         expect(focusedElement).toBeDefined();
-        expect(focusedElement.getAttribute('name')).toBe('section-focuser');
+        expect(focusedElement.getAttribute('name')).toBe('section');
     });
 
     test('clicking on section focuses first focuser, when focusOnClick is set to first-child', () => {

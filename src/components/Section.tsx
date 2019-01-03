@@ -177,7 +177,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
 
     private onEnterKey = () => {
         if (this.props.tabRegistry != null) {
-            this.props.tabRegistry.focusIn([this.props.focusKey, 'section'], {
+            this.props.tabRegistry.focusIn([this.props.focusKey, this.props.focusKey + '-section'], {
                 focusOrigin: 'parent',
             });
         }
@@ -213,14 +213,14 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
             >
                 <Focuser
                     {...spreadControlProps(this.props)}
-                    focusKey="section-focuser"
+                    focusKey={this.props.focusKey}
                     onEnter={this.onEnterKey}
                     onEscape={this.onEscapeKey}
                     onNavigationKeys={navigationHandler}
                     ref={this.setFocuserRef}
                 />
                 <TabBoundary
-                    boundaryKey="section"
+                    boundaryKey={this.props.focusKey + '-section'}
                     className="section"
                     cycle={this.props.cycle}
                     focusParentOnChildOrigin={true}
