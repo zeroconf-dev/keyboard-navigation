@@ -5,7 +5,7 @@ import { Focuser, NavigationKeyHandler } from '../Focuser';
 import { Grid } from '../Grid';
 import { Section } from '../Section';
 import { expectInstanceOf } from './__helpers__/assert';
-import { arrowDown, arrowLeft, arrowRight, arrowUp, tab } from './__helpers__/event';
+import { arrowDown, arrowLeft, arrowRight, arrowUp, shiftTab, tab } from './__helpers__/event';
 
 describe('<Grid />', () => {
     afterEach(cleanup);
@@ -280,5 +280,129 @@ describe('<Grid />', () => {
         tab(focuser9);
         expect(onFocus.focuser1).not.toHaveBeenCalled();
         expect(container.querySelector(':focus')).toBe(focuser9);
+    });
+
+    test('navigate backwards using shift tab in x-axis grid', () => {
+        // prettier-ignore
+        const navigationMap: NavigationMap = [
+            ['section1', 'section2'],
+            ['section3', 'section4'],
+        ];
+
+        // prettier-ignore
+        const onFocus = {
+            section1: jest.fn(), section2: jest.fn(),
+            section3: jest.fn(), section4: jest.fn(),
+        };
+
+        const renderGrid = (navigationHandler: NavigationKeyHandler) => (
+            <div className="grid-content">
+                <div className="row">
+                    <Section focusKey="section1" navigationHandler={navigationHandler} onFocus={onFocus.section1}>
+                        <Section focusKey="inner-section1" />
+                    </Section>
+                    <Section focusKey="section2" navigationHandler={navigationHandler} onFocus={onFocus.section2}>
+                        <div />
+                    </Section>
+                </div>
+                <div className="row">
+                    <Section focusKey="section3" navigationHandler={navigationHandler} onFocus={onFocus.section3}>
+                        <div />
+                    </Section>
+                    <Section focusKey="section4" navigationHandler={navigationHandler} onFocus={onFocus.section4}>
+                        <div />
+                    </Section>
+                </div>
+            </div>
+        );
+
+        const { container } = render(
+            <Grid children={renderGrid} focusKey="grid" navigationMap={navigationMap} tabDirectionAxis="x" />,
+        );
+
+        const section1 = expectInstanceOf(container.querySelector('input[name=section1]'), HTMLInputElement);
+        const section2 = expectInstanceOf(container.querySelector('input[name=section2]'), HTMLInputElement);
+        const section3 = expectInstanceOf(container.querySelector('input[name=section3]'), HTMLInputElement);
+        const section4 = expectInstanceOf(container.querySelector('input[name=section4]'), HTMLInputElement);
+
+        shiftTab(section4);
+        expect(onFocus.section3).toHaveBeenCalledWith(
+            { focusOrigin: 'next', focusFirstOnNextOrigin: true },
+            'section3',
+        );
+        shiftTab(section3);
+        expect(onFocus.section2).toHaveBeenCalledWith({ focusOrigin: 'next' }, 'section2');
+
+        shiftTab(section2);
+        expect(onFocus.section1).toHaveBeenCalledWith(
+            { focusOrigin: 'next', focusFirstOnNextOrigin: true },
+            'section1',
+        );
+        shiftTab(section1);
+
+        expect(onFocus.section4).not.toHaveBeenCalled();
+        expect(container.querySelector(':focus')).toBe(section1);
+    });
+
+    test('navigate backwards using shift tab in y-axis grid', () => {
+        // prettier-ignore
+        const navigationMap: NavigationMap = [
+            ['section1', 'section2'],
+            ['section3', 'section4'],
+        ];
+
+        // prettier-ignore
+        const onFocus = {
+            section1: jest.fn(), section2: jest.fn(),
+            section3: jest.fn(), section4: jest.fn(),
+        };
+
+        const renderGrid = (navigationHandler: NavigationKeyHandler) => (
+            <div className="grid-content">
+                <div className="row">
+                    <Section focusKey="section1" navigationHandler={navigationHandler} onFocus={onFocus.section1}>
+                        <Section focusKey="inner-section1" />
+                    </Section>
+                    <Section focusKey="section2" navigationHandler={navigationHandler} onFocus={onFocus.section2}>
+                        <div />
+                    </Section>
+                </div>
+                <div className="row">
+                    <Section focusKey="section3" navigationHandler={navigationHandler} onFocus={onFocus.section3}>
+                        <div />
+                    </Section>
+                    <Section focusKey="section4" navigationHandler={navigationHandler} onFocus={onFocus.section4}>
+                        <div />
+                    </Section>
+                </div>
+            </div>
+        );
+
+        const { container } = render(
+            <Grid children={renderGrid} focusKey="grid" navigationMap={navigationMap} tabDirectionAxis="y" />,
+        );
+
+        const section1 = expectInstanceOf(container.querySelector('input[name=section1]'), HTMLInputElement);
+        const section2 = expectInstanceOf(container.querySelector('input[name=section2]'), HTMLInputElement);
+        const section3 = expectInstanceOf(container.querySelector('input[name=section3]'), HTMLInputElement);
+        const section4 = expectInstanceOf(container.querySelector('input[name=section4]'), HTMLInputElement);
+
+        shiftTab(section4);
+        expect(onFocus.section2).toHaveBeenCalledWith(
+            { focusOrigin: 'next', focusFirstOnNextOrigin: true },
+            'section2',
+        );
+        shiftTab(section2);
+        expect(onFocus.section3).toHaveBeenCalledWith({ focusOrigin: 'next' }, 'section3');
+
+        shiftTab(section3);
+        expect(onFocus.section1).toHaveBeenCalledWith(
+            { focusOrigin: 'next', focusFirstOnNextOrigin: true },
+            'section1',
+        );
+        shiftTab(section1);
+
+        expect(onFocus.section4).not.toHaveBeenCalled();
+        expect(container.querySelector(':focus')).toBe(section1);
     });
 });

@@ -16,6 +16,7 @@ export type FocusOrigin =
     | 'user';
 
 export interface FocuserOptions {
+    focusFirstOnNextOrigin?: boolean;
     focusOrigin: FocusOrigin;
 }
 
@@ -28,6 +29,11 @@ export interface TabRegistryOptions {
      * but just focus the opposite end of the tab registry.
      */
     cycle?: boolean;
+
+    /**
+     * If focus is called with origin next, focus first instead of last.
+     */
+    focusFirstOnNextOrigin?: boolean;
 
     /**
      * If focus is called with origin child focus next parent.
@@ -170,6 +176,11 @@ export class TabRegistry<E = any> {
     private registry: DoublyLinkedOrderedSet<E>;
 
     /**
+     * If focus is called with origin next, focus first instead of last.
+     */
+    public focusFirstOnNextOrigin: boolean;
+
+    /**
      * If focus is called with origin child focus next parent.
      */
     public focusParentOnChildOrigin: boolean;
@@ -183,9 +194,11 @@ export class TabRegistry<E = any> {
         this.internalParentRegistry = null;
         if (options == null) {
             this.cycle = false;
+            this.focusFirstOnNextOrigin = false;
             this.focusParentOnChildOrigin = false;
         } else {
             this.cycle = options.cycle === true;
+            this.focusFirstOnNextOrigin = options.focusFirstOnNextOrigin === true;
             this.focusParentOnChildOrigin = options.focusParentOnChildOrigin === true;
         }
     }
@@ -305,7 +318,7 @@ export class TabRegistry<E = any> {
 
         let internalKey: E | undefined | null = key;
         if (internalKey == null) {
-            if (options != null && options.focusOrigin === 'next') {
+            if (options != null && options.focusOrigin === 'next' && !options.focusFirstOnNextOrigin) {
                 internalKey = this.lastKey;
             } else {
                 internalKey = this.firstKey;
@@ -320,7 +333,9 @@ export class TabRegistry<E = any> {
             return false;
         }
 
-        return focuser instanceof TabRegistry ? focuser.focus(undefined, opts) : focuser(opts);
+        return focuser instanceof TabRegistry
+            ? focuser.focus(undefined, { ...opts, focusFirstOnNextOrigin: focuser.focusFirstOnNextOrigin })
+            : focuser(opts);
     }
 
     /**

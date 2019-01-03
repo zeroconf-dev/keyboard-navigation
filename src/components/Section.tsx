@@ -208,6 +208,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
                 {...boundaryProps}
                 as={this.props.as}
                 boundaryKey={this.props.focusKey}
+                focusFirstOnNextOrigin={true}
                 onClick={this.onClick}
             >
                 <Focuser

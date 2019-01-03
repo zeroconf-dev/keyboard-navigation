@@ -68,7 +68,7 @@ function focusDown(
         return false;
     }
 
-    const yCandidate = nextOverflow && y !== maxY ? 0 : Math.min(maxY, y + 1);
+    const yCandidate = nextOverflow && x !== maxX ? 0 : Math.min(maxY, y + 1);
     const xCandidate = nextOverflow ? Math.min(maxX, x + 1) : x;
     const nextField = fieldMap[yCandidate][xCandidate];
 
@@ -94,7 +94,7 @@ function focusLeft(
         return false;
     }
 
-    const xCandidate = prevOverflow ? maxX : x - 1;
+    const xCandidate = prevOverflow && y !== 0 ? maxX : Math.max(0, x - 1);
     const yCandidate = prevOverflow ? Math.max(0, y - 1) : y;
     const nextField = fieldMap[yCandidate][xCandidate];
 
@@ -122,7 +122,7 @@ function focusRight(
         return false;
     }
 
-    const xCandidate = nextOverflow && x !== maxX ? 0 : Math.min(maxX, x + 1);
+    const xCandidate = nextOverflow && y !== maxY ? 0 : Math.min(maxX, x + 1);
     const yCandidate = nextOverflow ? Math.min(maxY, y + 1) : y;
     const nextField = fieldMap[yCandidate][xCandidate];
 
@@ -150,7 +150,7 @@ function focusUp(
         return false;
     }
 
-    const yCandidate = prevOverflow ? maxY : y - 1;
+    const yCandidate = prevOverflow && x !== 0 ? maxY : Math.max(0, y - 1);
     const xCandidate = prevOverflow ? Math.max(0, x - 1) : x;
     const nextField = fieldMap[yCandidate][xCandidate];
 

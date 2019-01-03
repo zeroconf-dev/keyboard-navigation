@@ -28,6 +28,12 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     cycle?: boolean;
 
     /**
+     * Whether ot not to focus the first element if gaining focus
+     * to the boundary from focus origin `next`.
+     */
+    focusFirstOnNextOrigin?: boolean;
+
+    /**
      * When set to `true` and a child focuses the boundary,
      * the boundary will delegate focusing up the tree.
      *
@@ -92,6 +98,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
 
         this.tabRegistry = new TabRegistry({
             cycle: props.cycle,
+            focusFirstOnNextOrigin: props.focusFirstOnNextOrigin,
             focusParentOnChildOrigin: props.focusParentOnChildOrigin,
         });
 
@@ -113,6 +120,10 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
 
         if (this.props.focusParentOnChildOrigin !== nextProps.focusParentOnChildOrigin) {
             this.tabRegistry.focusParentOnChildOrigin = nextProps.focusParentOnChildOrigin === true;
+        }
+
+        if (this.props.focusFirstOnNextOrigin !== nextProps.focusFirstOnNextOrigin) {
+            this.tabRegistry.focusFirstOnNextOrigin = nextProps.focusFirstOnNextOrigin === true;
         }
 
         if (
@@ -145,6 +156,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
             case 'as':
             case 'boundaryKey':
             case 'cycle':
+            case 'focusFirstOnNextOrigin':
             case 'focusParentOnEscape':
             case 'focusParentOnChildOrigin':
             case 'parentRegistry':
