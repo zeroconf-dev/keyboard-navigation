@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Grid } from '../../../src/components/Grid';
 import { Section, TabBoundary } from '../../../src/index';
 
-const fieldMap: [string, string][] = [['section1', 'section2'], ['section3', 'section4']];
+const navigationMap: [string, string][] = [['section1', 'section2'], ['section3', 'section4']];
 
 class App extends React.Component {
     private renderGrid = navigationHandler => {
@@ -31,7 +31,7 @@ class App extends React.Component {
     public render() {
         return (
             <TabBoundary>
-                <Grid className="grid" fieldMap={fieldMap} focusKey="grid">
+                <Grid className="grid" focusKey="grid" navigationMap={navigationMap}>
                     {this.renderGrid}
                 </Grid>
             </TabBoundary>
@@ -39,4 +39,4 @@ class App extends React.Component {
     }
 }
 
-ReactDOM.render(React.createElement(App), document.querySelector('#root'));
+ReactDOM.render(React.createElement(App) as any, document.querySelector('#root'));
