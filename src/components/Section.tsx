@@ -255,7 +255,10 @@ class SectionWithForwardRef<TComp extends keyof JSX.IntrinsicElements = 'div'> e
 const forwardRef = <TComp extends keyof JSX.IntrinsicElements = 'div'>() =>
     React.forwardRef<SectionWithTabRegistry<TComp>, Props<TComp>>((props, ref) => (
         <SectionWithForwardRef {...props} forwardedRef={ref} />
-    ));
+    )) as React.ComponentClass<Props<TComp>> &
+        React.ForwardRefExoticComponent<
+            React.PropsWithoutRef<Props<TComp>> & React.RefAttributes<SectionWithTabRegistry<TComp>>
+        >;
 
 /**
  * Container component, where you can group focusable elements

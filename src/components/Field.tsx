@@ -345,4 +345,5 @@ class FieldWithForwardRef extends React.Component<PropsWithForwardRef> {
 export type Field = FieldWithTabRegistry;
 export const Field = React.forwardRef<FieldWithTabRegistry, Props>((props, ref) => (
     <FieldWithForwardRef {...props} forwardedRef={ref} />
-));
+)) as React.ComponentClass<Props> &
+    React.ForwardRefExoticComponent<React.PropsWithoutRef<Props> & React.RefAttributes<FieldWithTabRegistry>>;

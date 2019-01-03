@@ -421,4 +421,5 @@ class FocuserWithForwardRef extends React.Component<PropsWithForwardRef> {
 export type Focuser = FocuserWithTabRegistry;
 export const Focuser = React.forwardRef<FocuserWithTabRegistry, Props>((props, ref) => (
     <FocuserWithForwardRef {...props} forwardedRef={ref} />
-));
+)) as React.ComponentClass<Props> &
+    React.ForwardRefExoticComponent<React.PropsWithoutRef<Props> & React.RefAttributes<FocuserWithTabRegistry>>;

@@ -222,7 +222,10 @@ class TabBoundaryWithForwardRef<TComp extends keyof JSX.IntrinsicElements = 'div
 const forwardRef = <TComp extends keyof JSX.IntrinsicElements = 'div'>() =>
     React.forwardRef<TabBoundaryWithTabRegistry<TComp>, Props<TComp>>((props, ref) => (
         <TabBoundaryWithForwardRef {...props} forwardedRef={ref} />
-    ));
+    )) as React.ComponentClass<Props<TComp>> &
+        React.ForwardRefExoticComponent<
+            React.PropsWithoutRef<Props<TComp>> & React.RefAttributes<TabBoundaryWithTabRegistry<TComp>>
+        >;
 
 /**
  * Define a tab/navigation boundary of focusable elements.
