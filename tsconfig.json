@@ -11,22 +11,9 @@
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
         "rootDir": "./src",
-        "lib": [
-            "dom",
-            "es2015"
-        ]
+        "lib": ["dom", "es2015"],
+        "typeRoots": ["./node_modules/@types"]
     },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.tsx"
-    ],
-    "exclude": [
-        ".docz/**/*",
-        "**/__tests__/*",
-        "dist",
-        "lib",
-        "lib2015",
-        "libnext",
-        "node_modules"
-    ]
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "exclude": [".docz/**/*", "**/__tests__/*", "dist", "lib", "lib2015", "libnext", "node_modules"]
 }
