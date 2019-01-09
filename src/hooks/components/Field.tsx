@@ -5,6 +5,8 @@ import { spreadControlProps } from '../../util';
 import { useTabRegistry } from '../useTabRegistry';
 import { ArrowKeyHandler, ControlProps, Focuser, FocuserRef, NavigationKeyHandler } from './Focuser';
 
+// tslint:disable:react-unused-props-and-state
+
 export type SubmitHandler = (
     stopEditing: (preventFocus?: boolean) => void,
     submittedOn: 'blur' | 'click-outside' | 'enter-key',
@@ -106,7 +108,7 @@ export interface Props extends ControlProps {
     submitOnClickOutside?: boolean;
 }
 
-export const Field = (props: Props) => {
+export const Field: React.SFC<Props> = (props: Props) => {
     const disabled = props.disabled || false;
     const submitOnBlur = props.submitOnBlur || false;
     const submitOnClickOutside = props.submitOnClickOutside || false;

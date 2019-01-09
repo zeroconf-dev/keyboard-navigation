@@ -4,6 +4,8 @@ import { FocuserOptions } from '../../TabRegistry';
 import { useFocusable } from '../useFocusable';
 import { useTabRegistry } from '../useTabRegistry';
 
+// tslint:disable:react-unused-props-and-state
+
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
 export type NavigationKey =
     | ArrowKey
@@ -156,13 +158,11 @@ export interface Props extends ControlProps {
      * this makes the component compatible with most css-in-js libraries
      * like styled-components, glamor and emotion etc.
      */
-    // tslint:disable-next-line:react-unused-props-and-state
     className?: string;
 
     /**
      * Unique identifier among siblings within a TabBoundary or TabRegistry.
      */
-    // tslint:disable-next-line:react-unused-props-and-state
     focusKey: string;
 }
 
