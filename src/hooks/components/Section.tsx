@@ -64,10 +64,10 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends Cont
     /**
      * A
      */
-    tabRegistryRef?: React.RefObject<TabRegistry>;
+    tabRegistryRef?: React.RefObject<TabRegistry<string>>;
 }
 
-type Props<TComp extends keyof JSX.IntrinsicElements> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
+export type Props<TComp extends keyof JSX.IntrinsicElements> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
 
 const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof ComponentProps<TComp>) => {
     switch (propKey) {
@@ -105,6 +105,11 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
 export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<TComp>) => {
     const boundaryProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
     const focuserRef = useRef<FocuserRef>(null);
+    const focusOnClick = props.focusOnClick == null ? 'section' : props.focusOnClick;
+    let tabRegistryRef = useRef<TabRegistry<string>>(null);
+    if (props.tabRegistryRef != null) {
+        tabRegistryRef = props.tabRegistryRef;
+    }
 
     const navHandler = useCallback(
         (_: string, navKey: NavigationKey, modifierKeys: ModifierKeys) => {
@@ -114,8 +119,71 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
         },
         [props.navigationHandler, props.focusKey],
     );
-
     const navigationHandler = props.navigationHandler == null ? undefined : navHandler;
+
+    const onClick = useCallback(
+        (e: React.MouseEvent<any>) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (focusOnClick !== false) {
+                const tabRegistry = (focusOnClick !== 'section' && tabRegistryRef.current) || null;
+
+                switch (focusOnClick) {
+                    case 'section':
+                        if (focuserRef.current != null) {
+                            focuserRef.current.focus({
+                                focusOrigin: 'mouse',
+                            });
+                        }
+                        break;
+                    case 'first-child':
+                        if (tabRegistry != null) {
+                            tabRegistry.focusFirst();
+                        }
+                        break;
+                    case 'last-child':
+                        if (tabRegistry != null) {
+                            tabRegistry.focusLast();
+                        }
+                        break;
+                    default:
+                        if (tabRegistry != null) {
+                            tabRegistry.focus(focusOnClick);
+                        }
+                        break;
+                }
+
+                if (props.onClick != null) {
+                    props.onClick(e);
+                }
+            }
+        },
+        [tabRegistryRef, focusOnClick, props.onClick],
+    );
+
+    const onEnterKey = useCallback(
+        () => {
+            if (tabRegistryRef.current != null) {
+                tabRegistryRef.current.focus(undefined, {
+                    focusOrigin: 'parent',
+                });
+            }
+        },
+        [tabRegistryRef],
+    );
+
+    const onEscapeKey = useCallback(
+        () => {
+            if (tabRegistryRef.current != null) {
+                const reg = tabRegistryRef.current.get(props.focusKey);
+                if (reg instanceof TabRegistry) {
+                    reg.focusParent();
+                }
+            }
+        },
+        [tabRegistryRef, props.focusKey],
+    );
 
     return (
         <TabBoundary

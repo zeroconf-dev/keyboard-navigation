@@ -74,7 +74,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     tabRegistryRef?: React.RefObject<TabRegistry>;
 }
 
-type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = React.HTMLAttributes<
+export type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = React.HTMLAttributes<
     UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>
 > &
     ComponentProps<TComp>;

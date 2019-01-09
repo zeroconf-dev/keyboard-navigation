@@ -150,7 +150,7 @@ export interface ControlProps {
     onSpace?: KeyboardEventHandler;
 }
 
-interface Props extends ControlProps {
+export interface Props extends ControlProps {
     /**
      * Set the classname of the underlaying input field,
      * this makes the component compatible with most css-in-js libraries

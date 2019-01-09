@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { cleanup, render } from 'react-testing-library';
 import { NavigationMap } from '../../FieldNavigation';
-import { Focuser, NavigationKeyHandler } from '../Focuser';
-import { Grid } from '../Grid';
-import { Section } from '../Section';
+import { Focuser, NavigationKeyHandler } from '../../hooks/components/Focuser';
+import { Grid } from '../../hooks/components/Grid';
+import { Section } from '../../hooks/components/Section';
 import { expectInstanceOf } from './__helpers__/assert';
 import { arrowDown, arrowLeft, arrowRight, arrowUp, shiftTab, tab } from './__helpers__/event';
 

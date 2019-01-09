@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { fireEvent, render } from 'react-testing-library';
-import { Field, Props } from '../../Field';
+import { Field, Props } from '../../../hooks/components/Field';
+import { expectInstanceOf } from './assert';
 
 export const onSubmitStopEditing = () => jest.fn((stopEditing: () => void) => stopEditing());
 
@@ -11,8 +12,7 @@ export const renderFieldEditMode = (props: Props) => {
         </div>,
     );
 
-    const container = result.container.querySelector('.field') as HTMLElement;
-    expect(container).toBeDefined();
+    const container = expectInstanceOf(result.container.querySelector('.field'), HTMLDivElement);
 
     fireEvent.click(container);
 
