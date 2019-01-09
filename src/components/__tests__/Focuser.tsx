@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { cleanup, fireEvent, render } from 'react-testing-library';
+import { Focuser, ModifierKeys } from '../../hooks/components/Focuser';
 import { assertNever } from '../../util';
-import { Focuser, ModifierKeys } from '../Focuser';
 import { TabBoundary } from '../TabBoundary';
+import { expectInstanceOf } from './__helpers__/assert';
 import { allNavigationEvents, shiftTab, tab } from './__helpers__/event';
 
 const noModifiers: ModifierKeys = {
@@ -35,7 +36,7 @@ describe('Focuser', () => {
             </TabBoundary>,
         );
 
-        const focuser1 = container.querySelector('[name=focuser1]') as HTMLInputElement;
+        const focuser1 = expectInstanceOf(container.querySelector('[name=focuser1]'), HTMLInputElement);
 
         tab(focuser1);
 

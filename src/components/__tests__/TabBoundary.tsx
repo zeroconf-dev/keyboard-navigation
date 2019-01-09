@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { cleanup, render } from 'react-testing-library';
+import { Focuser } from '../../hooks/components/Focuser';
+import { TabBoundary } from '../../hooks/components/TabBoundary';
 import { TabRegistry } from '../../TabRegistry';
-import { Focuser } from '../Focuser';
-import { NavigationContext, TabBoundary } from '../TabBoundary';
+import { NavigationContext } from '../TabBoundary';
+import { expectInstanceOf } from './__helpers__/assert';
 import { escape, shiftTab, space, tab } from './__helpers__/event';
 
 describe('TabBoundary', () => {
@@ -41,8 +43,8 @@ describe('TabBoundary', () => {
             </TabBoundary>,
         );
 
-        const focuser2 = container.querySelector('[name=focuser2]') as HTMLInputElement;
-        const focuser3 = container.querySelector('[name=focuser3]') as HTMLInputElement;
+        const focuser2 = expectInstanceOf(container.querySelector('[name=focuser2]'), HTMLInputElement);
+        const focuser3 = expectInstanceOf(container.querySelector('[name=focuser3]'), HTMLInputElement);
 
         tab(focuser2);
         expect(onFocus3).toHaveBeenCalledWith({ focusOrigin: 'prev' }, 'focuser3');
@@ -50,7 +52,7 @@ describe('TabBoundary', () => {
         expect(onFocus2).toHaveBeenCalledWith({ focusOrigin: 'next' }, 'focuser2');
     });
 
-    test('focus parent on escape focuses first focuser of parent boundary', () => {
+    test.only('focus parent on escape focuses first focuser of parent boundary', () => {
         const onFocusParent = jest.fn();
         const { container } = render(
             <TabBoundary>
@@ -62,7 +64,7 @@ describe('TabBoundary', () => {
             </TabBoundary>,
         );
 
-        const childFocuser2 = container.querySelector('[name=child-focuser2]') as HTMLInputElement;
+        const childFocuser2 = expectInstanceOf(container.querySelector('[name=child-focuser2]'), HTMLInputElement);
         escape(childFocuser2);
 
         expect(onFocusParent).toHaveBeenCalledWith({ focusOrigin: 'child' }, 'parent-focuser');
@@ -81,8 +83,8 @@ describe('TabBoundary', () => {
             </TabBoundary>,
         );
 
-        const focuser1 = container.querySelector('[name=focuser1]') as HTMLInputElement;
-        const focuser3 = container.querySelector('[name=focuser3]') as HTMLInputElement;
+        const focuser1 = expectInstanceOf(container.querySelector('[name=focuser1]'), HTMLInputElement);
+        const focuser3 = expectInstanceOf(container.querySelector('[name=focuser3]'), HTMLInputElement);
 
         tab(focuser3);
         expect(onFocus1).toHaveBeenCalled();
@@ -105,7 +107,7 @@ describe('TabBoundary', () => {
             </TabBoundary>,
         );
 
-        const childFocuser2 = container.querySelector('[name=child-focuser2]') as HTMLInputElement;
+        const childFocuser2 = expectInstanceOf(container.querySelector('[name=child-focuser2]'), HTMLInputElement);
         space(childFocuser2);
 
         expect(onFocusParent).toHaveBeenCalledWith({ focusOrigin: 'child' }, 'parent-focuser');
