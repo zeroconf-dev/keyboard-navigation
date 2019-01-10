@@ -1,180 +1,199 @@
 import * as React from 'react';
 import { cleanup, fireEvent, render } from 'react-testing-library';
-import { Field } from '../../hooks/components/Field';
+import { Field as FieldHooks } from '../../hooks/components/Field';
+import { Field as FieldClassic, Props } from '../Field';
+import { expectInstanceOf } from './__helpers__/assert';
 import { onSubmitStopEditing, renderFieldEditMode } from './__helpers__/Field';
 
-describe('Activate field', () => {
-    afterEach(cleanup);
-    test('click on field enables editing', () => {
-        const onSubmit = jest.fn();
-        const renderEditor = (isEditing: boolean) => {
-            return <div data-testid="editor">{isEditing ? 'edit' : 'read'}</div>;
-        };
-        const { getByTestId, container } = render(
-            <Field label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
-        );
+[
+    {
+        Field: FieldClassic,
+    },
+    {
+        Field: FieldHooks,
+    },
+].forEach(components => {
+    const Field = components.Field as typeof FieldClassic;
 
-        const field = container.querySelector('.field') as HTMLElement;
-        const editor = getByTestId('editor');
+    const suiteName = Field === FieldClassic ? 'Classic' : 'Hooks';
 
-        expect(editor.textContent).toBe('read');
-        fireEvent.click(field);
-        expect(editor.textContent).toBe('edit');
-    });
+    describe(`Field.${suiteName}`, () => {
+        describe('Activate field', () => {
+            afterEach(cleanup);
+            test('click on field enables editing', () => {
+                const onSubmit = jest.fn();
+                const renderEditor = (isEditing: boolean) => {
+                    return <div data-testid="editor">{isEditing ? 'edit' : 'read'}</div>;
+                };
+                const { getByTestId, container } = render(
+                    <Field label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
+                );
 
-    test('click on disabled field not enables editing', () => {
-        const onSubmit = jest.fn();
-        const renderEditor = (isEditing: boolean) => {
-            return <div data-testid="editor">{isEditing ? 'edit' : 'read'}</div>;
-        };
-        const { getByTestId, container } = render(
-            <Field disabled={true} label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
-        );
+                const field = container.querySelector('.field') as HTMLElement;
+                const editor = getByTestId('editor');
 
-        const field = container.querySelector('.field') as HTMLElement;
-        const editor = getByTestId('editor');
+                expect(editor.textContent).toBe('read');
+                fireEvent.click(field);
+                expect(editor.textContent).toBe('edit');
+            });
 
-        expect(editor.textContent).toBe('read');
-        fireEvent.click(field);
-        expect(editor.textContent).toBe('read');
-    });
+            test('click on disabled field not enables editing', () => {
+                const onSubmit = jest.fn();
+                const renderEditor = (isEditing: boolean) => {
+                    return <div data-testid="editor">{isEditing ? 'edit' : 'read'}</div>;
+                };
+                const { getByTestId, container } = render(
+                    <Field disabled={true} label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
+                );
 
-    test('click on label focuses the field', async () => {
-        const onSubmit = jest.fn();
-        const renderEditor = (isEditing: boolean) => {
-            return <div data-testid="editor">{isEditing ? 'edit' : 'read'}</div>;
-        };
-        const { getByTestId, getByText, container } = render(
-            <Field label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
-        );
+                const field = container.querySelector('.field') as HTMLElement;
+                const editor = getByTestId('editor');
 
-        const editor = getByTestId('editor');
-        const label = getByText('field') as HTMLLabelElement;
-        const focuser = container.querySelector('input[name=field]') as HTMLInputElement;
+                expect(editor.textContent).toBe('read');
+                fireEvent.click(field);
+                expect(editor.textContent).toBe('read');
+            });
 
-        expect(label).toBeInstanceOf(HTMLLabelElement);
-        expect(focuser).toBeInstanceOf(HTMLInputElement);
-        expect(editor.textContent).toBe('read');
-        expect(document.activeElement).not.toBe(focuser);
+            test('click on label focuses the field', async () => {
+                const onSubmit = jest.fn();
+                const renderEditor = (isEditing: boolean) => {
+                    return <div data-testid="editor">{isEditing ? 'edit' : 'read'}</div>;
+                };
+                const { getByTestId, getByText, container } = render(
+                    <Field label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
+                );
 
-        fireEvent.click(label);
+                const editor = getByTestId('editor');
+                const label = getByText('field') as HTMLLabelElement;
+                const focuser = container.querySelector('input[name=field]') as HTMLInputElement;
 
-        // test that the field has not switched to edit mode.
-        expect(editor.textContent).toBe('read');
-        // test if the focuser of the field has focus.
-        expect(document.activeElement).toBe(focuser);
-    });
-});
+                expect(label).toBeInstanceOf(HTMLLabelElement);
+                expect(focuser).toBeInstanceOf(HTMLInputElement);
+                expect(editor.textContent).toBe('read');
+                expect(document.activeElement).not.toBe(focuser);
 
-describe('Click outside', () => {
-    afterEach(cleanup);
+                fireEvent.click(label);
 
-    test.skip('click outside editor submits when enabled', () => {
-        const onSubmit = onSubmitStopEditing();
-        const renderEditor = (isEditing: boolean) => {
-            return <div data-testid="inside">{isEditing ? 'edit' : 'read'}</div>;
-        };
-
-        const { getByTestId } = renderFieldEditMode({
-            label: 'field',
-            onSubmit,
-            renderEditor,
-            submitOnClickOutside: true,
+                // test that the field has not switched to edit mode.
+                expect(editor.textContent).toBe('read');
+                // test if the focuser of the field has focus.
+                expect(document.activeElement).toBe(focuser);
+            });
         });
 
-        const inside = getByTestId('inside');
-        const outside = getByTestId('outside');
+        describe('Click outside', () => {
+            afterEach(cleanup);
 
-        // test if clicking inside the field keeps being in edit mode
-        fireEvent.click(inside);
-        expect(onSubmit).not.toHaveBeenCalled();
+            test('click outside editor submits when enabled', () => {
+                const onSubmit = onSubmitStopEditing();
+                const renderEditor = (isEditing: boolean) => {
+                    return <div data-testid="inside">{isEditing ? 'edit' : 'read'}</div>;
+                };
 
-        fireEvent.click(outside);
-        expect(onSubmit).toHaveBeenCalledWith(expect.anything(), 'click-outside');
-    });
+                const { getByTestId } = renderFieldEditMode(Field, {
+                    label: 'field',
+                    onSubmit,
+                    renderEditor,
+                    submitOnClickOutside: true,
+                } as Props);
 
-    test('click outside editor does not submit if not enabled', () => {
-        const onSubmit = onSubmitStopEditing();
-        const renderEditor = (isEditing: boolean) => {
-            return <div data-testid="inside">{isEditing ? 'edit' : 'read'}</div>;
-        };
+                const inside = getByTestId('inside');
+                const outside = getByTestId('outside');
 
-        const { getByTestId } = renderFieldEditMode({
-            label: 'field',
-            onSubmit,
-            renderEditor,
-        });
-        const outside = getByTestId('outside');
+                // test if clicking inside the field keeps being in edit mode
+                fireEvent.click(inside);
+                expect(onSubmit).not.toHaveBeenCalled();
 
-        fireEvent.click(outside);
-        expect(onSubmit).not.toHaveBeenCalled();
-    });
-});
+                fireEvent.click(outside);
+                expect(onSubmit).toHaveBeenCalledWith(expect.anything(), 'click-outside');
+            });
 
-describe('Blur handler', () => {
-    afterEach(cleanup);
+            test('click outside editor does not submit if not enabled', () => {
+                const onSubmit = onSubmitStopEditing();
+                const renderEditor = (isEditing: boolean) => {
+                    return <div data-testid="inside">{isEditing ? 'edit' : 'read'}</div>;
+                };
 
-    test('Submit is called when bluring if submitOnBlur is enabled', () => {
-        const onSubmit = onSubmitStopEditing();
-        const renderEditor = (isEditing: boolean) => {
-            return (
-                <div data-testid="inside">
-                    {isEditing ? <input autoFocus={true} data-testid="editor" defaultValue="edit" /> : 'read'}
-                </div>
-            );
-        };
+                const { getByTestId } = renderFieldEditMode(Field, {
+                    label: 'field',
+                    onSubmit,
+                    renderEditor,
+                } as Props);
+                const outside = getByTestId('outside');
 
-        const { getByTestId } = renderFieldEditMode({
-            label: 'field',
-            onSubmit,
-            renderEditor,
-            submitOnBlur: true,
+                fireEvent.click(outside);
+                expect(onSubmit).not.toHaveBeenCalled();
+            });
         });
 
-        const outside = getByTestId('outside');
-        const editor = getByTestId('editor');
+        describe('Blur handler', () => {
+            afterEach(cleanup);
 
-        fireEvent.blur(outside);
-        expect(onSubmit).not.toHaveBeenCalled();
+            test('Submit is called when bluring if submitOnBlur is enabled', () => {
+                const onSubmit = onSubmitStopEditing();
+                const renderEditor = (isEditing: boolean) => {
+                    return (
+                        <div data-testid="inside">
+                            {isEditing ? <input autoFocus={true} data-testid="editor" defaultValue="edit" /> : 'read'}
+                        </div>
+                    );
+                };
 
-        fireEvent.blur(editor);
-        expect(onSubmit).toHaveBeenCalledWith(expect.anything(), 'blur');
-    });
+                const { container, getByTestId } = renderFieldEditMode(Field, {
+                    label: 'field',
+                    onSubmit,
+                    renderEditor,
+                    submitOnBlur: true,
+                } as Props);
 
-    test("Submit is *not* called when bluring if submitOnBlur isn't enabled", () => {
-        const onSubmit = onSubmitStopEditing();
-        const renderEditor = (isEditing: boolean) => {
-            return (
-                <div data-testid="inside">
-                    {isEditing ? <input autoFocus={true} data-testid="editor" defaultValue="edit" /> : 'read'}
-                </div>
-            );
-        };
+                const outside = getByTestId('outside');
+                const editor = expectInstanceOf(container.querySelector('input[data-testid=editor]'), HTMLInputElement);
 
-        const { getByTestId } = renderFieldEditMode({
-            label: 'field',
-            onSubmit,
-            renderEditor,
+                fireEvent.blur(outside);
+                expect(onSubmit).not.toHaveBeenCalled();
+
+                fireEvent.blur(editor);
+                expect(onSubmit).toHaveBeenCalledWith(expect.anything(), 'blur');
+            });
+
+            test("Submit is *not* called when bluring if submitOnBlur isn't enabled", () => {
+                const onSubmit = onSubmitStopEditing();
+                const renderEditor = (isEditing: boolean) => {
+                    return (
+                        <div data-testid="inside">
+                            {isEditing ? <input autoFocus={true} data-testid="editor" defaultValue="edit" /> : 'read'}
+                        </div>
+                    );
+                };
+
+                const { getByTestId } = renderFieldEditMode(Field, {
+                    label: 'field',
+                    onSubmit,
+                    renderEditor,
+                } as Props);
+
+                const editor = getByTestId('editor');
+
+                fireEvent.blur(editor);
+                expect(onSubmit).not.toHaveBeenCalled();
+            });
         });
 
-        const editor = getByTestId('editor');
+        describe('Basic component properties', () => {
+            afterEach(cleanup);
+            test('remount should not throw', () => {
+                const onSubmit = jest.fn();
+                const renderEditor = () => <div />;
+                const { rerender } = render(
+                    <Field key="field" label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
+                );
 
-        fireEvent.blur(editor);
-        expect(onSubmit).not.toHaveBeenCalled();
-    });
-});
-
-describe('Basic component properties', () => {
-    afterEach(cleanup);
-    test('remount should not throw', () => {
-        const onSubmit = jest.fn();
-        const renderEditor = () => <div />;
-        const { rerender } = render(
-            <Field key="field" label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
-        );
-
-        expect(() => {
-            rerender(<Field key="field-remount" label="field" onSubmit={onSubmit} renderEditor={renderEditor} />);
-        }).not.toThrowError();
+                expect(() => {
+                    rerender(
+                        <Field key="field-remount" label="field" onSubmit={onSubmit} renderEditor={renderEditor} />,
+                    );
+                }).not.toThrowError();
+            });
+        });
     });
 });

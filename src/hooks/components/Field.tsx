@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { FocuserOptions } from '../../TabRegistry';
 import { spreadControlProps } from '../../util';
 import { useTabRegistry } from '../useTabRegistry';
@@ -115,6 +115,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
 
     const containerRef = useRef<HTMLDivElement>(null);
     const focuserRef = useRef<FocuserRef>(null);
+    const focusNextRef = useRef(false);
 
     const tabRegistry = useTabRegistry();
 
@@ -130,6 +131,22 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [disabled],
     );
 
+    useEffect(
+        () => {
+            if (focusNextRef.current) {
+                focus({
+                    focusOrigin: 'user',
+                });
+
+                if (props.onEditStop != null) {
+                    props.onEditStop();
+                }
+                focusNextRef.current = false;
+            }
+        },
+        [focus, props.onEditStop, focusNextRef.current],
+    );
+
     const stopEditing = useCallback(
         (preventFocus?: boolean) => {
             if (!isEditing) {
@@ -141,15 +158,10 @@ export const Field: React.SFC<Props> = (props: Props) => {
                 return;
             }
 
-            focus({
-                focusOrigin: 'user',
-            });
-
-            if (props.onEditStop != null) {
-                props.onEditStop();
-            }
+            focusNextRef.current = true;
         },
-        [isEditing, setIsEditing, focus, props.onEditStop],
+        // undefined as any,
+        [isEditing, focus, props.onEditStop],
     );
 
     const startEditing = useCallback(
@@ -164,7 +176,8 @@ export const Field: React.SFC<Props> = (props: Props) => {
                 props.onEditStart(stopEditing);
             }
         },
-        [disabled, isEditing, setIsEditing, props.onEditStart, stopEditing],
+        // undefined as any,
+        [disabled, isEditing, props.onEditStart, stopEditing],
     );
 
     const clickOutside = useCallback(
@@ -178,10 +191,11 @@ export const Field: React.SFC<Props> = (props: Props) => {
                 props.onSubmit(stopEditing, 'click-outside');
             }
         },
+        // undefined as any,
         [isEditing, submitOnClickOutside, props.onSubmit, stopEditing],
     );
 
-    useEffect(
+    useLayoutEffect(
         () => {
             document.addEventListener('click', clickOutside, false);
             return () => {
