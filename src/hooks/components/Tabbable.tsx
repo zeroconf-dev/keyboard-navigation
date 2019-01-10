@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { forwardRef, useCallback, useRef } from 'react';
 import { useFocusable } from '../useFocusable';
 
 export interface TabbableProps {
@@ -6,7 +6,7 @@ export interface TabbableProps {
 }
 
 type ButtonProps = JSX.IntrinsicElements['button'] & TabbableProps;
-export const Button = React.forwardRef((props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
+export const Button = forwardRef((props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
     const buttonRef = useRef<HTMLButtonElement>(null);
     const disabled = props.disabled || false;
 
@@ -33,7 +33,7 @@ export const Button = React.forwardRef((props: ButtonProps, ref: React.Ref<HTMLB
 });
 
 type InputProps = JSX.IntrinsicElements['input'] & TabbableProps;
-export const Input = React.forwardRef((props: InputProps, ref: React.Ref<HTMLInputElement>) => {
+export const Input = forwardRef((props: InputProps, ref: React.Ref<HTMLInputElement>) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const disabled = props.disabled || false;
 
@@ -60,7 +60,7 @@ export const Input = React.forwardRef((props: InputProps, ref: React.Ref<HTMLInp
 });
 
 type SelectProps = JSX.IntrinsicElements['select'] & TabbableProps;
-export const Select = React.forwardRef((props: SelectProps, ref: React.Ref<HTMLSelectElement>) => {
+export const Select = forwardRef((props: SelectProps, ref: React.Ref<HTMLSelectElement>) => {
     const selectRef = useRef<HTMLSelectElement>(null);
     const disabled = props.disabled || false;
 
@@ -87,7 +87,7 @@ export const Select = React.forwardRef((props: SelectProps, ref: React.Ref<HTMLS
 });
 
 type TextAreaProps = JSX.IntrinsicElements['textarea'] & TabbableProps;
-export const TextArea = React.forwardRef((props: TextAreaProps, ref: React.Ref<HTMLTextAreaElement>) => {
+export const TextArea = forwardRef((props: TextAreaProps, ref: React.Ref<HTMLTextAreaElement>) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const disabled = props.disabled || false;
 
