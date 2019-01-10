@@ -16,5 +16,5 @@
         "typeRoots": ["./node_modules/@types"]
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": [".docz/**/*", "**/__tests__/*", "dist", "lib", "lib2015", "libnext", "node_modules"]
+    "exclude": [".docz/**/*", "docs/**/*", "**/__tests__/*", "dist", "lib", "lib2015", "libnext", "node_modules"]
 }
