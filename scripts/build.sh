@@ -84,6 +84,6 @@ clean
 # buildLib
 buildLib2015
 # buildLibNext
-# buildUmd
+buildUmd
 copySource
 copyStatic
