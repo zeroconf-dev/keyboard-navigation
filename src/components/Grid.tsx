@@ -43,7 +43,8 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
     tabDirectionAxis?: 'x' | 'y';
 }
 
-type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
+export type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = UnpackedHTMLAttributes<TComp> &
+    ComponentProps<TComp>;
 
 interface State {
     navigationHandler: NavigationKeyHandler;

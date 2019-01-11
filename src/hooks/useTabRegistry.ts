@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import * as React from 'react';
 import { NavigationContext } from '../components/TabBoundary';
 
-export const useTabRegistry = () => useContext(NavigationContext);
+export const useTabRegistry = () => React.useContext(NavigationContext);

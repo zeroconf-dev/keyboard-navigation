@@ -1,8 +1,8 @@
 import fs from 'fs';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
-import ts from 'rollup-plugin-ts';
-import typescript from 'typescript';
+import ts from 'rollup-plugin-typescript';
+// import typescript from 'typescript';
 
 const tsconfig = JSON.parse(fs.readFileSync('./tsconfig.json').toString());
 
@@ -12,7 +12,7 @@ export default {
     external: ['react', 'react-dom', 'prop-types'],
     output: [
         {
-            file: 'dist/bundle.amd.js',
+            file: 'package/dist/tab-navigation.amd.js',
             format: 'amd',
             globals: {
                 react: 'React',
@@ -22,7 +22,7 @@ export default {
             name: 'tab-navigation',
         },
         {
-            file: 'dist/bundle.umd.js',
+            file: 'package/dist/tab-navigation.umd.js',
             format: 'umd',
             globals: {
                 react: 'React',
@@ -38,12 +38,12 @@ export default {
             'process.env.NODE_ENV': JSON.stringify('production'),
         }),
         resolve(),
-        ts({
-            typescript: typescript,
-            tsconfig: Object.assign({}, tsconfig.compilerOptions, {
+        ts(
+            Object.assign({}, tsconfig.compilerOptions, {
+                isolatedModules: true,
                 module: 'es2015',
                 target: 'es2015',
             }),
-        }),
+        ),
     ],
 };

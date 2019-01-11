@@ -1,8 +1,7 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "outDir": "build",
-        "sourceMap": true
+        "noEmit": true
     },
-    "exclude": ["build", "dist", "lib", "lib2015", "libnext", "node_modules"]
+    "exclude": ["coverage", "dist", "docs", "examples", "package", "node_modules"]
 }

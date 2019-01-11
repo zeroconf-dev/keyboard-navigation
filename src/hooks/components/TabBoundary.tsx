@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useCallback } from 'react';
 import { NavigationContext } from '../../components/TabBoundary';
 import { TabRegistry } from '../../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '../../util';
@@ -101,7 +100,7 @@ export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(props: Pr
 
     const childProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
 
-    const onKeyDown = useCallback(
+    const onKeyDown = React.useCallback(
         (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
             if (e.key === 'Tab' && hasNameProperty(e.target)) {
                 e.preventDefault();

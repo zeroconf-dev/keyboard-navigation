@@ -1,12 +1,11 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "lib": [
-            "esnext",
-            "dom"
-        ],
-        "outDir": "./libnext",
+        "module": "es2015",
+        "lib": ["esnext", "dom"],
+        "outDir": "./package/build",
         "sourceMap": true,
+        "sourceRoot": "./",
         "target": "esnext"
     }
 }

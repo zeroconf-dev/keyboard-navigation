@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { forwardRef, useCallback, useImperativeMethods, useRef } from 'react';
 import { FocuserOptions } from '../../TabRegistry';
 import { useFocusable } from '../useFocusable';
 import { useTabRegistry } from '../useTabRegistry';
@@ -170,11 +169,11 @@ export interface FocuserRef {
     focus: (opts: FocuserOptions) => boolean;
 }
 
-export const Focuser = forwardRef((props: Props, ref: React.Ref<FocuserRef>) => {
+export const Focuser = React.forwardRef((props: Props, ref: React.Ref<FocuserRef>) => {
     const tabRegistry = useTabRegistry();
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = React.useRef<HTMLInputElement>(null);
 
-    const focus = useCallback(
+    const focus = React.useCallback(
         (opts: FocuserOptions) => {
             if (props.disabled || inputRef.current == null) {
                 return false;
@@ -190,7 +189,7 @@ export const Focuser = forwardRef((props: Props, ref: React.Ref<FocuserRef>) => 
 
     useFocusable(props.focusKey, focus);
 
-    useImperativeMethods(
+    React.useImperativeMethods(
         ref,
         () => ({
             focus: focus,
@@ -198,7 +197,7 @@ export const Focuser = forwardRef((props: Props, ref: React.Ref<FocuserRef>) => 
         [focus],
     );
 
-    const onBlur = useCallback(
+    const onBlur = React.useCallback(
         (e: React.FocusEvent<HTMLInputElement>) => {
             if (props.onBlur != null) {
                 props.onBlur(e, props.focusKey);
@@ -207,7 +206,7 @@ export const Focuser = forwardRef((props: Props, ref: React.Ref<FocuserRef>) => 
         [props.onBlur],
     );
 
-    const onKeyDown = useCallback(
+    const onKeyDown = React.useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>) => {
             if (props.disabled) {
                 return;

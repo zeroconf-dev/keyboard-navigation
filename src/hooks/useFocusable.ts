@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import * as React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { useTabRegistry } from './useTabRegistry';
 
@@ -7,7 +7,7 @@ export const useFocusable = (
     focus: TabRegistry | ((opts: FocuserOptions) => boolean),
 ) => {
     const tabRegistry = useTabRegistry();
-    useLayoutEffect(
+    React.useLayoutEffect(
         () => {
             if (tabRegistry != null && focusKey != null) {
                 tabRegistry.add(focusKey, focus);

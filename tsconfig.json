@@ -4,6 +4,7 @@
         "module": "commonjs",
         "jsx": "react",
         "importHelpers": true,
+        "skipLibCheck": true,
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
@@ -20,12 +21,10 @@
         ".docz/**/*",
         "docs/**/*",
         "**/__tests__/*",
-        "dist",
         "lib",
         "lib2015",
         "libnext",
         "node_modules",
-        "hooks.d.ts",
-        "index.d.ts"
+        "package"
     ]
 }

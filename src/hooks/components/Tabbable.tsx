@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useRef } from 'react';
+import * as React from 'react';
 import { useFocusable } from '../useFocusable';
 
 export interface TabbableProps {
@@ -6,11 +6,11 @@ export interface TabbableProps {
 }
 
 type ButtonProps = JSX.IntrinsicElements['button'] & TabbableProps;
-export const Button = forwardRef((props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
-    const buttonRef = useRef<HTMLButtonElement>(null);
+export const Button = React.forwardRef((props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
+    const buttonRef = React.useRef<HTMLButtonElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = useCallback(
+    const focus = React.useCallback(
         () => {
             if (buttonRef.current == null || disabled) {
                 return false;
@@ -33,11 +33,11 @@ export const Button = forwardRef((props: ButtonProps, ref: React.Ref<HTMLButtonE
 });
 
 type InputProps = JSX.IntrinsicElements['input'] & TabbableProps;
-export const Input = forwardRef((props: InputProps, ref: React.Ref<HTMLInputElement>) => {
-    const inputRef = useRef<HTMLInputElement>(null);
+export const Input = React.forwardRef((props: InputProps, ref: React.Ref<HTMLInputElement>) => {
+    const inputRef = React.useRef<HTMLInputElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = useCallback(
+    const focus = React.useCallback(
         () => {
             if (inputRef.current == null || disabled) {
                 return false;
@@ -60,11 +60,11 @@ export const Input = forwardRef((props: InputProps, ref: React.Ref<HTMLInputElem
 });
 
 type SelectProps = JSX.IntrinsicElements['select'] & TabbableProps;
-export const Select = forwardRef((props: SelectProps, ref: React.Ref<HTMLSelectElement>) => {
-    const selectRef = useRef<HTMLSelectElement>(null);
+export const Select = React.forwardRef((props: SelectProps, ref: React.Ref<HTMLSelectElement>) => {
+    const selectRef = React.useRef<HTMLSelectElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = useCallback(
+    const focus = React.useCallback(
         () => {
             if (selectRef.current == null || disabled) {
                 return false;
@@ -87,11 +87,11 @@ export const Select = forwardRef((props: SelectProps, ref: React.Ref<HTMLSelectE
 });
 
 type TextAreaProps = JSX.IntrinsicElements['textarea'] & TabbableProps;
-export const TextArea = forwardRef((props: TextAreaProps, ref: React.Ref<HTMLTextAreaElement>) => {
-    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+export const TextArea = React.forwardRef((props: TextAreaProps, ref: React.Ref<HTMLTextAreaElement>) => {
+    const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = useCallback(
+    const focus = React.useCallback(
         () => {
             if (textAreaRef.current == null || disabled) {
                 return false;

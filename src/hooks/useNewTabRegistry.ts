@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
 
 interface NewTabRegistryProps {
@@ -9,7 +9,7 @@ interface NewTabRegistryProps {
 }
 
 export function useNewTabRegistry(props: NewTabRegistryProps): TabRegistry {
-    const tabRegistry = useMemo(
+    const tabRegistry = React.useMemo(
         () =>
             new TabRegistry({
                 cycle: props.cycle,

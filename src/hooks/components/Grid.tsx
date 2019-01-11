@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useMemo, useRef } from 'react';
 import { createNavigationHandler, NavigationMap } from '../../FieldNavigation';
 import { TabRegistry } from '../../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../../util';
@@ -63,10 +62,10 @@ function filterProps<TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
 
 export const Grid = <TComp extends keyof JSX.IntrinsicElements>(props: Props<TComp>) => {
     const boundaryProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
-    const tabRegistryRef = useRef<TabRegistry<string>>(null);
+    const tabRegistryRef = React.useRef<TabRegistry<string>>(null);
     const tabDirectionAxis = props.tabDirectionAxis == null ? 'x' : props.tabDirectionAxis;
 
-    const navigationHandler = useMemo(
+    const navigationHandler = React.useMemo(
         () => createNavigationHandler(props.navigationMap, tabRegistryRef, tabDirectionAxis),
         [props.navigationMap, tabRegistryRef, tabDirectionAxis],
     );
