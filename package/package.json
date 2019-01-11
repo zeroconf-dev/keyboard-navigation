@@ -13,8 +13,8 @@
     },
     "esnext": "index.esnext",
     "license": "BSD-3-Clause",
-    "main": "index",
-    "module": "index",
+    "main": "index.js",
+    "module": "index.mjs",
     "name": "@secoya/tab-navigation.ts",
     "peerDependencies": {
         "react": ">=16.0.0",
@@ -25,5 +25,5 @@
         "url": "https://github.com/thetrompf/tab-navigation.ts"
     },
     "types": "index.d.ts",
-    "version": "4.0.0-14"
+    "version": "4.0.0-18"
 }

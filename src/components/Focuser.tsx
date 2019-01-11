@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { NavigationContext } from './NavigationContext';
 

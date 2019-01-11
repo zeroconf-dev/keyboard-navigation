@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { FocuserOptions } from '../../TabRegistry';
 import { spreadControlProps } from '../../util';
 import { useTabRegistry } from '../useTabRegistry';

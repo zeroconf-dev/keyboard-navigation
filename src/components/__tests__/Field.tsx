@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { cleanup, fireEvent, render } from 'react-testing-library';
 import { Field as FieldHooks } from '../../hooks/components/Field';
 import { Field as FieldClassic, Props } from '../Field';

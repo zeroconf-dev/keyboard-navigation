@@ -31,13 +31,14 @@ buildLib2015() {
     (
         cd "$DIR" && \
         yarn tsc -p tsconfig.lib2015.json && \
-        # perl -p -i -e 's|(^//# sourceMappingURL=.*).js.map$|$1.mjs.map|' package/build/*.js package/build/**/*.js && \
-        # for f in $(find package/build -type f -name '*.js'); do
-        #     mv "$f" "$(dirname "$f")/$(basename "$f" .js).mjs"
-        # done && \
-        # for f in $(find package/build -type f -name '*.js.map'); do
-        #     mv "$f" "$(dirname "$f")/$(basename "$f" .js.map).mjs.map"
-        # done && \
+        perl -p -i -e 's|(^//# sourceMappingURL=.*).js.map$|$1.mjs.map|' package/build/*.js package/build/**/*.js && \
+        perl -p -i -e 's|^import \* as tslib|import tslib|' package/build/*.js package/build/**/*.js && \
+        for f in $(find package/build -type f -name '*.js'); do
+            mv "$f" "$(dirname "$f")/$(basename "$f" .js).mjs"
+        done && \
+        for f in $(find package/build -type f -name '*.js.map'); do
+            mv "$f" "$(dirname "$f")/$(basename "$f" .js.map).mjs.map"
+        done && \
         moveBuild
     )
 }
@@ -81,7 +82,7 @@ copyStatic() {
 }
 
 clean
-# buildLib
+buildLib
 buildLib2015
 # buildLibNext
 buildUmd

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { createNavigationHandler, NavigationMap } from '../../FieldNavigation';
 import { TabRegistry } from '../../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../../util';

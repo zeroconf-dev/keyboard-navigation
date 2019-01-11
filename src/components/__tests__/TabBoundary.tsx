@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { cleanup, render } from 'react-testing-library';
 import { Focuser as FocuserHooks } from '../../hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';
