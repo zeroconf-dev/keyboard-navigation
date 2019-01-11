@@ -4,7 +4,8 @@ import { Focuser as FocuserHooks } from '../../hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';
 import { TabRegistry } from '../../TabRegistry';
 import { Focuser as FocuserClassic } from '../Focuser';
-import { NavigationContext, TabBoundary as TabBoundaryClassic } from '../TabBoundary';
+import { NavigationContext } from '../NavigationContext';
+import { TabBoundary as TabBoundaryClassic } from '../TabBoundary';
 import { expectInstanceOf } from './__helpers__/assert';
 import { escape, shiftTab, space, tab } from './__helpers__/event';
 [

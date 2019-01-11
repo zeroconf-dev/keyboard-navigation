@@ -54,6 +54,8 @@ import { NavigationMap } from '../FieldNavigation';
 export { createNavigationHandler } from '../FieldNavigation';
 export type NavigationMap = NavigationMap;
 
+export { NavigationContext } from '../components/NavigationContext';
+
 import { FocuserFn, FocuserOptions, FocuserType, FocusOrigin, TabRegistryOptions } from '../TabRegistry';
 export { TabRegistry } from '../TabRegistry';
 export type FocuserFn = FocuserFn;

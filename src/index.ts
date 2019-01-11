@@ -42,12 +42,14 @@ export { Button, Input, Select, Tabbable, TextArea } from './components/Tabbable
 export type TabbableProps = TabbableProps;
 
 import { Props as TabBoundaryProps } from './components/TabBoundary';
-export { NavigationContext, TabBoundary } from './components/TabBoundary';
+export { TabBoundary } from './components/TabBoundary';
 export type TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements = 'div'> = TabBoundaryProps<TComp>;
 
 import { NavigationMap } from './FieldNavigation';
 export { createNavigationHandler } from './FieldNavigation';
 export type NavigationMap = NavigationMap;
+
+export { NavigationContext } from './components/NavigationContext';
 
 import { FocuserFn, FocuserOptions, FocuserType, FocusOrigin, TabRegistryOptions } from './TabRegistry';
 export { TabRegistry } from './TabRegistry';

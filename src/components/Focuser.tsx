@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
-import { NavigationContext } from './TabBoundary';
+import { NavigationContext } from './NavigationContext';
 
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
 export type NavigationKey =

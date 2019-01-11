@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavigationContext } from '../../components/TabBoundary';
+import { NavigationContext } from '../../components/NavigationContext';
 import { TabRegistry } from '../../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '../../util';
 import { useFocusable } from '../useFocusable';

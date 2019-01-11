@@ -4,7 +4,7 @@ import { useTabRegistry } from './useTabRegistry';
 
 export const useFocusable = (
     focusKey: string | undefined,
-    focus: TabRegistry | ((opts: FocuserOptions) => boolean),
+    focus: TabRegistry<string> | ((opts: FocuserOptions) => boolean),
 ) => {
     const tabRegistry = useTabRegistry();
     React.useLayoutEffect(

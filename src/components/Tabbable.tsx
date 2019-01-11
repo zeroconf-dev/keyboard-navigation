@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
-import { NavigationContext } from './TabBoundary';
+import { NavigationContext } from './NavigationContext';
 
 export interface TabbableProps {
     name: string;

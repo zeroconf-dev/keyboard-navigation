@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '../util';
+import { NavigationContext } from './NavigationContext';
 
 function hasNameProperty<T>(obj: T): obj is T & { name: string } {
     return obj != null && typeof (obj as any).name === 'string';
 }
-
-export const NavigationContext = React.createContext<TabRegistry | null>(null);
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**
