@@ -189,7 +189,7 @@ export const Focuser = React.forwardRef((props: Props, ref: React.Ref<FocuserRef
 
     useFocusable(props.focusKey, focus);
 
-    React.useImperativeMethods(
+    React.useImperativeHandle(
         ref,
         () => ({
             focus: focus,
