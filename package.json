@@ -11,6 +11,7 @@
         "docz-plugin-css": "0.11.0",
         "docz-theme-default": "0.13.7",
         "jest": "24.1.0",
+        "jison": "^0.4.18",
         "prettier": "1.16.4",
         "react": "16.8.0",
         "react-dom": "16.8.0",
