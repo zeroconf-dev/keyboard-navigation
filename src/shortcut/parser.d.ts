@@ -1,8 +1,10 @@
-interface Hotkey {
-    alt: boolean;
-    ctrl: boolean;
-    key: string | null;
-    meta: boolean;
-    shift: boolean;
+interface HotKey {
+    alt?: boolean;
+    cmd?: boolean;
+    ctrl?: boolean;
+    key?: string;
+    meta?: boolean;
+    mod?: boolean;
+    shift?: boolean;
 }
-export function parse(hotkey: string): Hotkey;
+export function parse(hotkey: string): HotKey;
