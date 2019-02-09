@@ -66,9 +66,12 @@ buildUmd() {
 }
 
 copySource() {
+    local d
     (
         cd "$DIR" && \
-        for f in $(find src -type f \( -name '*.ts' -o -name '*.tsx' \) | grep -v __tests__); do
+        for f in $(find src -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' \) | grep -v __tests__); do
+            d="$(dirname "${f/src/package}")"
+            [ ! -d "$d" ] && mkdir -p "$d"
             cp "$f" "${f/src/package}"
         done
     )
