@@ -130,21 +130,24 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [disabled],
     );
 
-    React.useEffect(
-        () => {
-            if (focusNextRef.current) {
-                focus({
-                    focusOrigin: 'user',
-                });
+    React.useLayoutEffect(() => {
+        if (isEditing && disabled) {
+            setIsEditing(false);
+        }
+    }, [isEditing, disabled]);
 
-                if (props.onEditStop != null) {
-                    props.onEditStop();
-                }
-                focusNextRef.current = false;
+    React.useEffect(() => {
+        if (focusNextRef.current) {
+            focus({
+                focusOrigin: 'user',
+            });
+
+            if (props.onEditStop != null) {
+                props.onEditStop();
             }
-        },
-        [focus, props.onEditStop, focusNextRef.current],
-    );
+            focusNextRef.current = false;
+        }
+    }, [focus, props.onEditStop, focusNextRef.current]);
 
     const stopEditing = React.useCallback(
         (preventFocus?: boolean) => {
@@ -163,21 +166,17 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [isEditing, focus, props.onEditStop],
     );
 
-    const startEditing = React.useCallback(
-        () => {
-            if (disabled || isEditing) {
-                return;
-            }
+    const startEditing = React.useCallback(() => {
+        if (disabled || isEditing) {
+            return;
+        }
 
-            setIsEditing(true);
+        setIsEditing(true);
 
-            if (props.onEditStart != null) {
-                props.onEditStart(stopEditing);
-            }
-        },
-        // undefined as any,
-        [disabled, isEditing, props.onEditStart, stopEditing],
-    );
+        if (props.onEditStart != null) {
+            props.onEditStart(stopEditing);
+        }
+    }, [disabled, isEditing, props.onEditStart, stopEditing]); // undefined as any,
 
     const clickOutside = React.useCallback(
         (e: MouseEvent) => {
@@ -194,15 +193,12 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [isEditing, submitOnClickOutside, props.onSubmit, stopEditing],
     );
 
-    React.useLayoutEffect(
-        () => {
-            document.addEventListener('click', clickOutside, false);
-            return () => {
-                document.removeEventListener('click', clickOutside, false);
-            };
-        },
-        [clickOutside],
-    );
+    React.useLayoutEffect(() => {
+        document.addEventListener('click', clickOutside, false);
+        return () => {
+            document.removeEventListener('click', clickOutside, false);
+        };
+    }, [clickOutside]);
 
     const onBlur = React.useCallback(
         (e: React.FocusEvent<HTMLDivElement>) => {

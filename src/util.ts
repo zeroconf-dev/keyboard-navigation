@@ -7,6 +7,7 @@ import { ControlProps } from './components/Focuser';
  */
 // tslint:disable-next-line:variable-name
 export function assertNever(_obj: never, msg: string): never {
+    /* istanbul ignore next */
     throw new Error(msg);
 }
 
@@ -57,6 +58,7 @@ export function filterPropKeys<
 export function spreadControlProps<Props extends ControlProps>(props: Props): ControlProps {
     return (Object.keys(props) as (keyof ControlProps)[])
         .filter(key => {
+            /* istanbul ignore next */
             switch (key) {
                 case 'autoFocus':
                 case 'disabled':

@@ -76,6 +76,7 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
 
     public componentWillReceiveProps(nextProps: Props<TComp>) {
         if (this.props.navigationMap !== nextProps.navigationMap) {
+            /* istanbul ignore next */
             this.setState(_ => ({
                 navigationHandler: createNavigationHandler(nextProps.navigationMap, this.tabRegistryRef),
             }));
@@ -83,6 +84,7 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
     }
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'tabRegistry') => {
+        /* istanbul ignore next */
         switch (propKey) {
             case 'as':
             case 'children':
@@ -92,7 +94,9 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
             case 'tabRegistry':
                 return false;
             default:
+                /* istanbul ignore next */
                 assertNeverNonThrow(propKey);
+                /* istanbul ignore next */
                 return true;
         }
     };

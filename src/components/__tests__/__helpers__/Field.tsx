@@ -15,3 +15,12 @@ export const renderFieldEditMode = <P extends Props, C extends React.ComponentTy
 
     return result;
 };
+
+export const rerenderFieldEditMode = <P extends Props, C extends React.ComponentType<P>>(
+    Field: C,
+    props: P,
+    rerender: (ue: React.ReactElement<any>) => void,
+) => {
+    const field = React.createElement(Field, props, props);
+    rerender(<div data-testid="outside">{field}</div>);
+};

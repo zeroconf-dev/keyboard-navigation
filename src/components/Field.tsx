@@ -202,7 +202,8 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
     };
 
     private onFieldKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (this.props.disabled) {
+        if (this.props.disabled || !this.state.isEditing) {
+            /* istanbul ignore next */
             return;
         }
 

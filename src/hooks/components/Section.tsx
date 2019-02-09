@@ -158,31 +158,25 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
                 }
             }
         },
-        [tabRegistryRef, focusOnClick, props.onClick],
+        [focusOnClick, props.onClick],
     );
 
-    const onEnterKey = React.useCallback(
-        () => {
-            if (tabRegistryRef.current != null) {
-                tabRegistryRef.current.focus(undefined, {
-                    focusOrigin: 'parent',
-                });
-            }
-        },
-        [tabRegistryRef],
-    );
+    const onEnterKey = React.useCallback(() => {
+        if (tabRegistryRef.current != null) {
+            tabRegistryRef.current.focus(undefined, {
+                focusOrigin: 'parent',
+            });
+        }
+    }, []);
 
-    const onEscapeKey = React.useCallback(
-        () => {
-            if (tabRegistryRef.current != null) {
-                const reg = tabRegistryRef.current.get(props.focusKey);
-                if (reg instanceof TabRegistry) {
-                    reg.focusParent();
-                }
+    const onEscapeKey = React.useCallback(() => {
+        if (tabRegistryRef.current != null) {
+            const reg = tabRegistryRef.current.get(props.focusKey);
+            if (reg instanceof TabRegistry) {
+                reg.focusParent();
             }
-        },
-        [tabRegistryRef, props.focusKey],
-    );
+        }
+    }, [props.focusKey]);
 
     return (
         <TabBoundary

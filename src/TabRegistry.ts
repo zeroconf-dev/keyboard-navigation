@@ -124,8 +124,8 @@ export class TabRegistry<E = any> {
     /**
      * Constructs any empty registry with default options.
      */
-    public static empty<EStatic = any>() {
-        return new TabRegistry<EStatic>();
+    public static empty<EStatic = any>(options?: TabRegistryOptions) {
+        return new TabRegistry<EStatic>(options);
     }
     /**
      * Construct registry from nested map structure.
@@ -230,17 +230,24 @@ export class TabRegistry<E = any> {
     /**
      * Enabling iterating through all the focusers.
      */
-    public [Symbol.iterator] = function*(this: TabRegistry<E>): IterableIterator<FocuserType<E>> {
+    public [Symbol.iterator] = function*(
+        this: TabRegistry<E>,
+        includeRegistries: boolean = false,
+    ): IterableIterator<FocuserType<E>> {
         if (this.isEmpty) {
             return;
         }
 
         let key: E | null = this.firstKey;
         while (key) {
-            if (key instanceof TabRegistry) {
-                yield* Array.from(key);
+            const focuser = this.focuserMap.get(key);
+            if (focuser instanceof TabRegistry) {
+                if (includeRegistries) {
+                    yield focuser;
+                }
+                yield* Array.from(focuser[Symbol.iterator](includeRegistries));
             } else {
-                yield this.focuserMap.get(key) as FocuserType<E>;
+                yield focuser as FocuserType<E>;
             }
             key = this.getNextKey(key);
         }
@@ -354,6 +361,7 @@ export class TabRegistry<E = any> {
         const first = this.registry.first;
         const focuser = this.focuserMap.get(first);
         if (focuser == null) {
+            /* istanbul ignore next */
             return false;
         }
 
@@ -378,6 +386,7 @@ export class TabRegistry<E = any> {
         }
         const first = this.registry.first;
         if (first == null) {
+            /* istanbul ignore next */
             return false;
         }
 
@@ -397,6 +406,7 @@ export class TabRegistry<E = any> {
         while (registry.has(key)) {
             const focuser = registry.get(key);
             if (focuser == null) {
+                /* istanbul ignore next */
                 return false;
             }
 
@@ -440,6 +450,7 @@ export class TabRegistry<E = any> {
         const last = this.registry.last;
         const focuser = this.focuserMap.get(last);
         if (focuser == null) {
+            /* istanbul ignore next */
             return false;
         }
 
@@ -465,6 +476,7 @@ export class TabRegistry<E = any> {
         }
         const last = this.registry.last;
         if (last == null) {
+            /* istanbul ignore next */
             return false;
         }
         return this.focusIn([last, ...keys], focusOriginNext);
@@ -497,6 +509,7 @@ export class TabRegistry<E = any> {
             next = this.getNextKey(current);
 
             if (focuser == null) {
+                /* istanbul ignore next */
                 continue;
             }
 
@@ -592,6 +605,7 @@ export class TabRegistry<E = any> {
             prev = this.getPrevKey(prev);
 
             if (focuser == null) {
+                /* istanbul ignore next */
                 continue;
             }
 
@@ -675,6 +689,7 @@ export class TabRegistry<E = any> {
         }
         const focuser = this.focuserMap.get(next);
         if (focuser == null) {
+            /* istanbul ignore next */
             return null;
         }
         return focuser;
@@ -698,6 +713,7 @@ export class TabRegistry<E = any> {
         }
         const focuser = this.focuserMap.get(prev);
         if (focuser == null) {
+            /* istanbul ignore next */
             return null;
         }
         return focuser;
@@ -730,6 +746,7 @@ export class TabRegistry<E = any> {
         while (registry.has(key)) {
             const focuser = registry.get(key);
             if (focuser == null) {
+                /* istanbul ignore next */
                 return false;
             }
 
@@ -788,7 +805,7 @@ export class TabRegistry<E = any> {
      * Returns an iterator of all the `keys` in this
      * and all nested registries.
      */
-    public keysRecursive = function*(this: TabRegistry<E>): IterableIterator<E> {
+    public keysRecursive = function*(this: TabRegistry<E>, includeRegistries: boolean = true): IterableIterator<E> {
         if (this.registry.isEmpty) {
             return;
         }
@@ -797,7 +814,10 @@ export class TabRegistry<E = any> {
         while (key) {
             const focuser = this.focuserMap.get(key);
             if (focuser instanceof TabRegistry) {
-                yield* Array.from(focuser.keysRecursive());
+                if (includeRegistries) {
+                    yield key;
+                }
+                yield* Array.from(focuser.keysRecursive(includeRegistries));
             } else {
                 yield key;
             }

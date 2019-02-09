@@ -94,6 +94,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
     }
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'tabRegistry') => {
+        /* istanbul ignore next */
         switch (propKey) {
             case 'as':
             case 'autoFocus':
@@ -122,7 +123,9 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
             case 'tabRegistryRef':
                 return false;
             default:
+                /* istanbul ignore next */
                 assertNeverNonThrow(propKey);
+                /* istanbul ignore next */
                 return true;
         }
     };

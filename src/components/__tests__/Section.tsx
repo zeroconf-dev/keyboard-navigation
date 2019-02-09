@@ -104,5 +104,49 @@ import { enter } from './__helpers__/event';
             const focusedElement = expectInstanceOf(container.querySelector(':focus'), HTMLInputElement);
             expect(focusedElement.name).toBe('field2');
         });
+
+        test('clicking on section fires onClick handler', () => {
+            const onClick = jest.fn();
+            const { container } = render(<Section focusKey="section" onClick={onClick} />);
+
+            const section = expectInstanceOf(container.firstElementChild, HTMLDivElement);
+            fireEvent.click(section);
+
+            expect(onClick).toHaveBeenCalled();
+        });
+
+        test('clicking on section focuses custom focuser, when focusOnClick is set to its focus key', () => {
+            const { container } = render(
+                <Section focusKey="section" focusOnClick="field2">
+                    <Focuser focusKey="field1" />
+                    <Focuser focusKey="field2" />
+                    <Focuser focusKey="field3" />
+                </Section>,
+            );
+
+            const section = expectInstanceOf(container.firstElementChild, HTMLDivElement);
+            fireEvent.click(section);
+            const focusedElement = expectInstanceOf(container.querySelector(':focus'), HTMLInputElement);
+            expect(focusedElement.name).toBe('field2');
+        });
+
+        test.skip('focus parent on escape', () => {
+            const onFocus = jest.fn();
+            const { container } = render(
+                <TabBoundary>
+                    <Focuser focusKey="field1" onFocus={onFocus} />
+                    <Section focusKey="section">
+                        <Focuser focusKey="field2" />
+                        <Focuser focusKey="field3" />
+                        <Focuser focusKey="field4" />
+                    </Section>
+                </TabBoundary>,
+            );
+
+            const sectionFocuser = expectInstanceOf(container.querySelector('[name=section]'), HTMLInputElement);
+            fireEvent.keyDown(sectionFocuser, { key: 'Escape' });
+
+            expect(onFocus).toHaveBeenCalled();
+        });
     });
 });

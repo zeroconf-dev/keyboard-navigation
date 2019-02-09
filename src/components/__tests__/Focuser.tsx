@@ -2,6 +2,7 @@ import React from 'react';
 import { cleanup, fireEvent, render } from 'react-testing-library';
 import { Focuser as FocuserHooks, ModifierKeys } from '../../hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';
+import { TabRegistry } from '../../TabRegistry';
 import { assertNever } from '../../util';
 import { Focuser as FocuserClassic } from '../Focuser';
 import { TabBoundary as TabBoundaryClassic } from '../TabBoundary';
@@ -294,6 +295,54 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
                     </>,
                 );
             }).not.toThrowError();
+        });
+
+        test('typing content does not change value', () => {
+            const { container } = render(<Focuser focusKey="focuser" />);
+
+            const focuser = expectInstanceOf(container.querySelector('[name=focuser]'), HTMLInputElement);
+            fireEvent.change(focuser, { target: { value: 'a' } });
+
+            expect(focuser.value).toBe('');
+        });
+
+        test('changing focus key removing old key from tab registry', () => {
+            const tabRegistryRef = React.createRef<TabRegistry>();
+            const { rerender } = render(
+                <TabBoundary tabRegistryRef={tabRegistryRef}>
+                    <Focuser focusKey="focuser-old" />
+                </TabBoundary>,
+            );
+
+            const tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+            expect(tabRegistry.has('focuser-old')).toBe(true);
+
+            rerender(
+                <TabBoundary tabRegistryRef={tabRegistryRef}>
+                    <Focuser focusKey="focuser-new" />
+                </TabBoundary>,
+            );
+
+            expect(tabRegistry.has('focuser-old')).toBe(false);
+            expect(tabRegistry.has('focuser-new')).toBe(true);
+        });
+
+        test('blur handler', () => {
+            const onBlur = jest.fn();
+            const { container } = render(<Focuser focusKey="focuser" onBlur={onBlur} />);
+            const focuser = expectInstanceOf(container.querySelector('[name=focuser]'), HTMLInputElement);
+            fireEvent.blur(focuser);
+
+            expect(onBlur).toBeCalledWith(expect.anything(), 'focuser');
+        });
+
+        test('navigation handlers are not called when disabled', () => {
+            const onEnter = jest.fn();
+            const { container } = render(<Focuser disabled={true} focusKey="focuser" onEnter={onEnter} />);
+            const focuser = expectInstanceOf(container.querySelector('[name=focuser]'), HTMLInputElement);
+
+            fireEvent.keyDown(focuser, { key: 'Enter' });
+            expect(onEnter).not.toHaveBeenCalled();
         });
     });
 });
