@@ -239,6 +239,13 @@ describe('modifier and special key combinations', () => {
         });
     });
 
+    test('modifier keys combinations with strict operator', () => {
+        expect.assertions(209);
+        forEachCombinations<HotKey>(allModifiers, (modifiers, hotkey) => {
+            expect(parse('!' + modifiers.join('+'))).toEqual({ ...hotkey, strict: true });
+        });
+    });
+
     test('modifier and simple keys combinations', () => {
         forEachCombinations<HotKey>(allModifiers, (modifiers, hotkey) => {
             simpleKeys.forEach(key => {
@@ -249,6 +256,19 @@ describe('modifier and special key combinations', () => {
             });
         });
     });
+
+    test('modifier and simple keys combinations with strict operator', () => {
+        forEachCombinations<HotKey>(allModifiers, (modifiers, hotkey) => {
+            simpleKeys.forEach(key => {
+                expect(parse(`!${modifiers.join('+')}+${key}`)).toEqual({
+                    ...hotkey,
+                    key,
+                    strict: true,
+                });
+            });
+        });
+    });
+
     test('modifier and special keys combinations', () => {
         forEachCombinations<HotKey>(allModifiers, (modifiers, hotkey) => {
             Object.keys(specialKeysMap).forEach(key => {
@@ -259,11 +279,53 @@ describe('modifier and special key combinations', () => {
             });
         });
     });
+
+    test('modifier and special keys combinations with strict operator', () => {
+        forEachCombinations<HotKey>(allModifiers, (modifiers, hotkey) => {
+            Object.keys(specialKeysMap).forEach(key => {
+                expect(parse(`!${modifiers.join('+')}+${key}`)).toEqual({
+                    ...hotkey,
+                    key: specialKeysMap[key],
+                    strict: true,
+                });
+            });
+        });
+    });
 });
 
-test('parse shortcut combination, returns HotKey with appropiate modifiers set true', () => {
-    expect(parse('ctrl+b')).toEqual({
-        ctrl: true,
-        key: 'b',
-    } as HotKey);
+describe('strict operastor', () => {
+    test('exclamation mark edge case', () => {
+        expect(parse('!!')).toEqual({
+            key: '!',
+            strict: true,
+        });
+
+        expect(parse('!')).toEqual({
+            key: '!',
+        });
+    });
+
+    test('base cases', () => {
+        expect(parse('!ctrl+!')).toEqual({
+            ctrl: true,
+            key: '!',
+            strict: true,
+        });
+        expect(parse('!f')).toEqual({
+            key: 'f',
+            strict: true,
+        });
+    });
+});
+
+describe('plus operator', () => {
+    test('plus key edge case', () => {
+        expect(parse('ctrl++')).toEqual({
+            ctrl: true,
+            key: '+',
+        });
+        expect(parse('+')).toEqual({
+            key: '+',
+        });
+    });
 });

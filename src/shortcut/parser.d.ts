@@ -6,5 +6,6 @@ interface HotKey {
     meta?: boolean;
     mod?: boolean;
     shift?: boolean;
+    strict?: boolean;
 }
 export function parse(hotkey: string): HotKey;
