@@ -2,7 +2,7 @@ interface HotKey {
     alt?: boolean;
     cmd?: boolean;
     ctrl?: boolean;
-    key?: string;
+    key?: string | null;
     meta?: boolean;
     mod?: boolean;
     shift?: boolean;
