@@ -1,5 +1,5 @@
 import React from 'react';
-import { cleanup, render } from 'react-testing-library';
+import { cleanup, render, fireEvent } from 'react-testing-library';
 import { Focuser as FocuserHooks } from '../../hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';
 import { TabRegistry } from '../../TabRegistry';
@@ -169,6 +169,31 @@ import { escape, shiftTab, space, tab } from './__helpers__/event';
             const tabRegistryRef = React.createRef<TabRegistry>();
             render(<TabBoundary tabRegistryRef={tabRegistryRef} />);
             expect(tabRegistryRef.current).toBeInstanceOf(TabRegistry);
+        });
+
+        test('on key down callback is called', () => {
+            const onKeyDown = jest.fn();
+            const { container } = render(<TabBoundary onKeyDown={onKeyDown} />);
+            const boundary = expectInstanceOf(container.firstChild, HTMLDivElement);
+            fireEvent.keyDown(boundary, { key: 'any' });
+            expect(onKeyDown).toHaveBeenCalled();
+        });
+
+        test('focus prev/next in boundary via Tab keys', () => {
+            const { container } = render(
+                <TabBoundary>
+                    <Focuser focusKey="focuser1" />
+                    <Focuser focusKey="focuser2" />
+                </TabBoundary>,
+            );
+            const focuser1 = expectInstanceOf(container.querySelector('[name=focuser1]'), HTMLInputElement);
+            const focuser2 = expectInstanceOf(container.querySelector('[name=focuser2]'), HTMLInputElement);
+
+            fireEvent.keyDown(focuser1, { key: 'Tab' });
+            expect(container.querySelector(':focus')).toBe(focuser2);
+
+            fireEvent.keyDown(focuser2, { key: 'Tab', shiftKey: true });
+            expect(container.querySelector(':focus')).toBe(focuser1);
         });
     });
 

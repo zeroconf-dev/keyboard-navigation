@@ -3,6 +3,7 @@ import { TabRegistry } from '../../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, spreadControlProps, UnpackedHTMLAttributes } from '../../util';
 import { ControlProps, Focuser, FocuserRef, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Focuser';
 import { TabBoundary } from './TabBoundary';
+import { useTabRegistry } from '../useTabRegistry';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends ControlProps {
     /**
@@ -105,6 +106,7 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
     const boundaryProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
     const focuserRef = React.useRef<FocuserRef>(null);
     const focusOnClick = props.focusOnClick == null ? 'section' : props.focusOnClick;
+    const tabRegistry = useTabRegistry();
     let tabRegistryRef = React.useRef<TabRegistry<string>>(null);
     if (props.tabRegistryRef != null) {
         tabRegistryRef = props.tabRegistryRef;
@@ -126,7 +128,7 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
             e.stopPropagation();
 
             if (focusOnClick !== false) {
-                const tabRegistry = (focusOnClick !== 'section' && tabRegistryRef.current) || null;
+                const boundaryRegistry = (focusOnClick !== 'section' && tabRegistryRef.current) || null;
 
                 switch (focusOnClick) {
                     case 'section':
@@ -137,18 +139,18 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
                         }
                         break;
                     case 'first-child':
-                        if (tabRegistry != null) {
-                            tabRegistry.focusFirst();
+                        if (boundaryRegistry != null) {
+                            boundaryRegistry.focusFirst();
                         }
                         break;
                     case 'last-child':
-                        if (tabRegistry != null) {
-                            tabRegistry.focusLast();
+                        if (boundaryRegistry != null) {
+                            boundaryRegistry.focusLast();
                         }
                         break;
                     default:
-                        if (tabRegistry != null) {
-                            tabRegistry.focus(focusOnClick);
+                        if (boundaryRegistry != null) {
+                            boundaryRegistry.focus(focusOnClick);
                         }
                         break;
                 }
@@ -162,21 +164,21 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
     );
 
     const onEnterKey = React.useCallback(() => {
-        if (tabRegistryRef.current != null) {
-            tabRegistryRef.current.focus(undefined, {
+        if (tabRegistry != null) {
+            tabRegistry.focusIn([props.focusKey, props.focusKey + '-section'], {
                 focusOrigin: 'parent',
             });
         }
-    }, []);
+    }, [tabRegistry, props.focusKey]);
 
     const onEscapeKey = React.useCallback(() => {
-        if (tabRegistryRef.current != null) {
-            const reg = tabRegistryRef.current.get(props.focusKey);
+        if (tabRegistry != null) {
+            const reg = tabRegistry.get(props.focusKey);
             if (reg instanceof TabRegistry) {
                 reg.focusParent();
             }
         }
-    }, [props.focusKey]);
+    }, [tabRegistry, props.focusKey]);
 
     return (
         <TabBoundary

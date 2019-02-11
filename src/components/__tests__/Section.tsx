@@ -130,7 +130,7 @@ import { enter } from './__helpers__/event';
             expect(focusedElement.name).toBe('field2');
         });
 
-        test.skip('focus parent on escape', () => {
+        test('focus parent on escape', () => {
             const onFocus = jest.fn();
             const { container } = render(
                 <TabBoundary>
