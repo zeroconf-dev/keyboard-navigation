@@ -1,12 +1,12 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")"
 
 clean() {
-    (\
+    (
         cd "$DIR" && \
         rm -Rf package/build package/dist && \
-        find package -type f \( -regex '.*\.\(tsx?\|md\|map\|m?js\)' -o -name LICENSE \) -delete && \
+        find package -type f \( -regex '.*\.\(bak\|tsx?\|md\|map\|m?js\)' -o -name LICENSE \) -delete && \
         find package -mindepth 1 -type d -delete
     )
 }
