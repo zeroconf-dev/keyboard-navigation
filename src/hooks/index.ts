@@ -63,3 +63,13 @@ export type FocuserOptions = FocuserOptions;
 export type FocuserType = FocuserType;
 export type FocusOrigin = FocusOrigin;
 export type TabRegistryOptions = TabRegistryOptions;
+
+import { HotKeysObject, HotKeyEvent, HotKeyHandler, HotKeyWithHandler } from '../hotkeys/createHandler';
+export { createHandler as createHotkeyHandler } from '../hotkeys/createHandler';
+export type HotKeysObject = HotKeysObject;
+export type HotKeyEvent = HotKeyEvent;
+export type HotKeyHandler = HotKeyHandler;
+export type HotKeyWithHandler = HotKeyWithHandler;
+
+import { HotKey } from '../hotkeys/parser';
+export type HotKey = HotKey;

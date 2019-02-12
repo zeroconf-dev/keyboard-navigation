@@ -1,4 +1,5 @@
 import fs from 'fs';
+import commonjs from 'rollup-plugin-commonjs';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import ts from 'rollup-plugin-typescript';
@@ -34,6 +35,11 @@ export default {
     ],
     plugins: [
         'external-helpers',
+        commonjs({
+            namedExports: {
+                'hotkeys/parser': ['parse'],
+            },
+        }),
         replace({
             'process.env.NODE_ENV': JSON.stringify('production'),
         }),
