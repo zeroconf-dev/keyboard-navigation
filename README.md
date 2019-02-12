@@ -2,6 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/%40secoya%2Ftab-navigation.ts.svg)](https://badge.fury.io/js/%40secoya%2Ftab-navigation.ts)
 [![Build Status](https://travis-ci.org/thetrompf/tab-navigation.ts.svg?branch=master)](https://travis-ci.org/thetrompf/tab-navigation.ts)
+[![Coverage Status](https://coveralls.io/repos/github/thetrompf/tab-navigation.ts/badge.svg?branch=master)](https://coveralls.io/github/thetrompf/tab-navigation.ts?branch=master)
 
 This library ships with an implementation that works with react, but it is not limited to react. Maybe later the react
 part will be moved to separate library.
@@ -15,7 +16,9 @@ First add the tab-navigation.ts to your project
 ```shell
 npm install @secoya/tab-navigation.ts
 ```
+
 or
+
 ```shell
 yarn add @secoya/tab-navigation.ts
 ```
@@ -53,4 +56,3 @@ yarn add @secoya/tab-navigation.ts
 </body>
 </html>
 ```
-

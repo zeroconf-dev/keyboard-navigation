@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { spreadControlProps } from '../util';
 import { ArrowKeyHandler, ControlProps, Focuser, NavigationKeyHandler } from './Focuser';
-import { NavigationContext } from './TabBoundary';
+import { NavigationContext } from './NavigationContext';
 
 export type SubmitHandler = (
     stopEditing: (preventFocus?: boolean) => void,
@@ -202,7 +202,8 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
     };
 
     private onFieldKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (this.props.disabled) {
+        if (this.props.disabled || !this.state.isEditing) {
+            /* istanbul ignore next */
             return;
         }
 

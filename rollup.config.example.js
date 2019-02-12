@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
-import ts from 'rollup-plugin-ts';
+import ts from 'rollup-plugin-typescript';
 import typescript from 'typescript';
 
 const tsconfig = JSON.parse(fs.readFileSync('./tsconfig.json').toString());

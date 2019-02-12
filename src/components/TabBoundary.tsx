@@ -1,12 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '../util';
+import { NavigationContext } from './NavigationContext';
 
 function hasNameProperty<T>(obj: T): obj is T & { name: string } {
     return obj != null && typeof (obj as any).name === 'string';
 }
-
-export const NavigationContext = React.createContext<TabRegistry | null>(null);
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**
@@ -72,12 +71,10 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     tabRegistryRef?: React.RefObject<TabRegistry>;
 }
 
-type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = React.HTMLAttributes<
+export type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = React.HTMLAttributes<
     UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>
 > &
     ComponentProps<TComp>;
-
-export type TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements = 'div'> = Props<TComp>;
 
 interface State {}
 

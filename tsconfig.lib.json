@@ -1,9 +1,11 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
+        "declaration": true,
         "module": "commonjs",
-        "outDir": "./lib",
+        "outDir": "./package/build",
         "sourceMap": true,
+        "sourceRoot": "./",
         "target": "es5"
     }
 }

@@ -4,16 +4,18 @@
         "module": "commonjs",
         "jsx": "react",
         "importHelpers": true,
+        "skipLibCheck": true,
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
+        "esModuleInterop": true,
         "rootDir": "./src",
         "lib": ["dom", "es2015"],
         "typeRoots": ["./node_modules/@types"]
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": [".docz/**/*", "**/__tests__/*", "dist", "lib", "lib2015", "libnext", "node_modules"]
+    "exclude": [".docz/**/*", "docs/**/*", "**/__tests__/*", "lib", "lib2015", "libnext", "node_modules", "package"]
 }

@@ -1,8 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, spreadControlProps, UnpackedHTMLAttributes } from '../util';
 import { ControlProps, Focuser, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Focuser';
-import { NavigationContext, TabBoundary } from './TabBoundary';
+import { NavigationContext } from './NavigationContext';
+import { TabBoundary } from './TabBoundary';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends ControlProps {
     /**
@@ -66,7 +67,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends Cont
     tabRegistryRef?: React.RefObject<TabRegistry>;
 }
 
-type Props<TComp extends keyof JSX.IntrinsicElements> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
+export type Props<TComp extends keyof JSX.IntrinsicElements> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
 
 type PropsWithTabRegistry<TComp extends keyof JSX.IntrinsicElements> = Props<TComp> & {
     tabRegistry: TabRegistry | null;
@@ -93,6 +94,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
     }
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'tabRegistry') => {
+        /* istanbul ignore next */
         switch (propKey) {
             case 'as':
             case 'autoFocus':
@@ -121,7 +123,9 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
             case 'tabRegistryRef':
                 return false;
             default:
+                /* istanbul ignore next */
                 assertNeverNonThrow(propKey);
+                /* istanbul ignore next */
                 return true;
         }
     };

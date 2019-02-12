@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { createNavigationHandler, NavigationMap } from '../FieldNavigation';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
@@ -43,7 +43,8 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
     tabDirectionAxis?: 'x' | 'y';
 }
 
-type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
+export type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = UnpackedHTMLAttributes<TComp> &
+    ComponentProps<TComp>;
 
 interface State {
     navigationHandler: NavigationKeyHandler;
@@ -75,6 +76,7 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
 
     public componentWillReceiveProps(nextProps: Props<TComp>) {
         if (this.props.navigationMap !== nextProps.navigationMap) {
+            /* istanbul ignore next */
             this.setState(_ => ({
                 navigationHandler: createNavigationHandler(nextProps.navigationMap, this.tabRegistryRef),
             }));
@@ -82,6 +84,7 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
     }
 
     private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'tabRegistry') => {
+        /* istanbul ignore next */
         switch (propKey) {
             case 'as':
             case 'children':
@@ -91,7 +94,9 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
             case 'tabRegistry':
                 return false;
             default:
+                /* istanbul ignore next */
                 assertNeverNonThrow(propKey);
+                /* istanbul ignore next */
                 return true;
         }
     };

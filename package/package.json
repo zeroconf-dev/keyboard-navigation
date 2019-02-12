@@ -1,0 +1,29 @@
+{
+    "author": {
+        "email": "briankchristensen@gmail.com",
+        "name": "Brian K. Christensen",
+        "url": "https://github.com/thetrompf"
+    },
+    "bugs": {
+        "url": "https://github.com/thetrompf/tab-navigation.ts/issues/new"
+    },
+    "dependencies": {
+        "@secoya/collection.ts": "3.1.0",
+        "tslib": "1.9.3"
+    },
+    "esnext": "index.esnext",
+    "license": "BSD-3-Clause",
+    "main": "index.js",
+    "module": "index.mjs",
+    "name": "@secoya/tab-navigation.ts",
+    "peerDependencies": {
+        "react": ">=16.0.0",
+        "react-dom": ">=16.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/thetrompf/tab-navigation.ts"
+    },
+    "types": "index.d.ts",
+    "version": "4.0.0-18"
+}

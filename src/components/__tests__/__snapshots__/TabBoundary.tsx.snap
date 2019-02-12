@@ -1,3 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TabBoundary duplicate focus keys within same boundary throws 1`] = `"The value: focuser already exists"`;
+exports[`TabBoundary.Classic duplicate focus keys within same boundary throws 1`] = `"The value: focuser already exists"`;
+
+exports[`TabBoundary.Hooks duplicate focus keys within same boundary throws 1`] = `"The value: focuser already exists"`;

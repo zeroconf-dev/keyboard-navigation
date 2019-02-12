@@ -33,7 +33,9 @@ describe('TabRegistry', () => {
             expect(Array.from(tr.keysRecursive())).toEqual([
                 1,
                 2,
+                3,
                 31,
+                32,
                 321,
                 33,
                 4,
@@ -164,6 +166,14 @@ describe('TabRegistry', () => {
             tr.add(1, focuser1);
             expect(() => tr.addAfter(1, focuser2, 1)).toThrowErrorMatchingSnapshot();
         });
+
+        test('adding a child registry sets parent', () => {
+            const focuser = getSuccessFocuser();
+            const parentRegistry = TabRegistry.fromMap(new Map([['focuser', focuser]]));
+            const tr = TabRegistry.empty();
+            parentRegistry.addAfter('child', tr, 'focuser');
+            expect(tr.parentRegistry).toBe(parentRegistry);
+        });
     });
 
     describe('.addBefore()', () => {
@@ -215,6 +225,14 @@ describe('TabRegistry', () => {
             const tr = new TabRegistry<number>();
             tr.add(1, focuser1);
             expect(() => tr.addBefore(1, focuser2, 1)).toThrowErrorMatchingSnapshot();
+        });
+
+        test('adding a child registry sets parent', () => {
+            const focuser = getSuccessFocuser();
+            const parentRegistry = TabRegistry.fromMap(new Map([['focuser', focuser]]));
+            const tr = TabRegistry.empty();
+            parentRegistry.addBefore('child', tr, 'focuser');
+            expect(tr.parentRegistry).toBe(parentRegistry);
         });
     });
 
@@ -330,6 +348,18 @@ describe('TabRegistry', () => {
             const tr = TabRegistry.empty();
             expect(tr.focus()).toBe(false);
         });
+
+        test('focus with child origin will focus parent registry if enabled', () => {
+            const focuser = getSuccessFocuser();
+            const tr = TabRegistry.empty({
+                focusParentOnChildOrigin: true,
+            });
+
+            TabRegistry.fromMap(new Map([['focuser', focuser], ['complex', tr as any]]));
+            tr.focus(undefined, { focusOrigin: 'child' });
+
+            expect(focuser).toHaveBeenCalled();
+        });
     });
 
     describe('.focusFirst()', () => {
@@ -371,12 +401,30 @@ describe('TabRegistry', () => {
 
         test('a set with only *not* focuser will return even if cycle is enabled', () => {
             const notFocuser = getNotFocuser();
-            const tr = TabRegistry.fromMap(
-                new Map([[1, notFocuser], [2, notFocuser], [3, notFocuser], [4, notFocuser]]),
-            ).enableCycle();
+            // prettier-ignore
+            const tr = TabRegistry.fromMap(new Map([
+                [1, notFocuser],
+                [2, notFocuser],
+                [3, notFocuser],
+                [4, notFocuser],
+            ])).enableCycle();
 
             expect(tr.focusFirst()).toBe(false);
             expect(notFocuser).toHaveBeenCalledTimes(4);
+        });
+
+        test('recurse if first focuser is another registry', () => {
+            const focuser = getSuccessFocuser();
+
+            // prettier-ignore
+            const tr = TabRegistry.fromMap(new Map([
+                [1, new Map([
+                    [2, focuser],
+                ])],
+            ]));
+
+            tr.focusFirst();
+            expect(focuser).toHaveBeenCalled();
         });
     });
 
@@ -386,7 +434,7 @@ describe('TabRegistry', () => {
             expect(tr.focusIn([2])).toBe(false);
         });
 
-        test('focus an existing first level non-success focuer will return false', () => {
+        test('focus an existing first level non-success focuser will return false', () => {
             const focuser = getNotFocuser();
             const tr = TabRegistry.fromMap(new Map([[1, focuser]]));
             expect(tr.focusIn([1])).toBe(false);
@@ -409,10 +457,15 @@ describe('TabRegistry', () => {
             const tr4 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr5]]));
             const tr3 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr4]]));
             const tr2 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr3]]));
-            const tr1 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr2]]));
+            const tr1 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, tr2]]));
 
-            expect(tr1.focusIn([2, 2, 2, 2, 1])).toBe(true);
+            expect(tr1.focusFirstIn([2, 2, 2, 1])).toBe(true);
             expect(focuser).toHaveBeenCalledTimes(1);
+        });
+
+        test('focus on empty registry returns false', () => {
+            const tr = TabRegistry.empty();
+            expect(tr.focusFirstIn([1])).toBe(false);
         });
     });
 
@@ -428,7 +481,7 @@ describe('TabRegistry', () => {
             expect(tr.focusIn([1])).toBe(true);
         });
 
-        test('focus an existing first level non-success focuer will return false', () => {
+        test('focus an existing first level non-success focuser will return false', () => {
             const focuser = getNotFocuser();
             const tr = TabRegistry.fromMap(new Map([[1, focuser]]));
             expect(tr.focusIn([1])).toBe(false);
@@ -455,6 +508,18 @@ describe('TabRegistry', () => {
 
             expect(tr1.focusIn([2, 2, 2, 2, 1])).toBe(true);
             expect(focuser).toHaveBeenCalledTimes(1);
+        });
+
+        test('attempting to focus into/beyond simple focuser returns flase', () => {
+            const focuser = getSuccessFocuser();
+            const tr = TabRegistry.fromMap(new Map([['focuser', focuser]]));
+            expect(tr.focusIn(['focuser', 'non-existing-next-level'])).toBe(false);
+            expect(focuser).not.toHaveBeenCalled();
+        });
+
+        test('focusing on empty path/keys returns false', () => {
+            const tr = TabRegistry.empty();
+            expect(tr.focusIn([])).toBe(false);
         });
     });
 
@@ -501,6 +566,14 @@ describe('TabRegistry', () => {
             expect(focuser3).toHaveBeenCalledTimes(1);
             expect(focuser4).toHaveBeenCalledTimes(1);
             expect(focuser1).toHaveBeenCalledTimes(1);
+        });
+
+        test('when cycling all disabled focusers, does not infinitely recurse, but just returns false', () => {
+            const disabled = getNotFocuser();
+            const tr = TabRegistry.fromMap(new Map([['disabled1', disabled], ['disabled2', disabled]]), {
+                cycle: true,
+            });
+            expect(tr.focusNext('disabled2')).toBe(false);
         });
     });
 
@@ -637,14 +710,15 @@ describe('TabRegistry', () => {
 
             expect(row2EditButton).toHaveBeenCalledWith({ focusOrigin: 'prev' });
         });
+
+        test('test when nothing is next false is returned', () => {
+            const focuser = getSuccessFocuser();
+            const tr = TabRegistry.fromMap(new Map([['first', focuser]]));
+            expect(tr.focusNextIn(['first'])).toBe(false);
+        });
     });
 
     describe('.focusLast()', () => {
-        test('focus first on an empty registry returns false', () => {
-            const tr = new TabRegistry();
-            expect(tr.focusLast()).toBe(false);
-        });
-
         test('focusing a key that exists returns what the focuser returns', () => {
             const successFocuser = getSuccessFocuser();
             const notFocuser = getNotFocuser();
@@ -684,6 +758,28 @@ describe('TabRegistry', () => {
 
             expect(tr.focusLast()).toBe(false);
             expect(notFocuser).toHaveBeenCalledTimes(4);
+        });
+
+        test('calling on empty registry returns false', () => {
+            const tr = TabRegistry.empty();
+            expect(tr.focusLast()).toBe(false);
+        });
+
+        test('focus last where last is another registry will focus last in inner registry', () => {
+            const notFocuser = getNotFocuser();
+            const focuser = getSuccessFocuser();
+            // prettier-ignore
+            const tr = TabRegistry.fromMap(
+                new Map<number, FocuserType>([
+                    [1, notFocuser],
+                    [2, TabRegistry.fromMap(new Map<number, FocuserType>([
+                        [3, focuser],
+                    ]))],
+                ]),
+            );
+            expect(tr.focusLast()).toBe(true);
+            expect(focuser).toHaveBeenCalled();
+            expect(notFocuser).not.toHaveBeenCalled();
         });
     });
 
@@ -728,6 +824,11 @@ describe('TabRegistry', () => {
 
             expect(complexEditor.focusLastIn(['control-row'])).toBe(true);
             expect(row2DeleteButton).toHaveBeenCalledWith({ focusOrigin: 'next' });
+        });
+
+        test('calling on empty registry returns false', () => {
+            const tr = new TabRegistry();
+            expect(tr.focusLastIn(['non-existing'])).toBe(false);
         });
     });
 
@@ -774,6 +875,14 @@ describe('TabRegistry', () => {
             expect(focuser2).toHaveBeenCalledTimes(1);
             expect(focuser3).toHaveBeenCalledTimes(1);
             expect(focuser4).toHaveBeenCalledTimes(1);
+        });
+
+        test('when cycling all disabled focusers, does not end in infinitely recurse, but just returns false', () => {
+            const disabled = getNotFocuser();
+            const tr = TabRegistry.fromMap(new Map([['disabled1', disabled], ['disabled2', disabled]]), {
+                cycle: true,
+            });
+            expect(tr.focusPrev('disabled1')).toBe(false);
         });
     });
 
@@ -910,6 +1019,12 @@ describe('TabRegistry', () => {
 
             expect(row1DeleteButton).toHaveBeenCalledWith({ focusOrigin: 'next' });
         });
+
+        test('test when nothing is previous false is returned', () => {
+            const focuser = getSuccessFocuser();
+            const tr = TabRegistry.fromMap(new Map([['first', focuser]]));
+            expect(tr.focusPrevIn(['first'])).toBe(false);
+        });
     });
 
     describe('.get()', () => {
@@ -1031,6 +1146,16 @@ describe('TabRegistry', () => {
                 [1, focuser],
             ]));
             expect(tr.hasIn([1, 2, 3])).toBe(false);
+        });
+
+        test('asking for non-existing path returns false', () => {
+            const tr = new TabRegistry();
+            expect(tr.hasIn(['non-existing'])).toBe(false);
+        });
+
+        test('asking with empty path returns false', () => {
+            const tr = new TabRegistry();
+            expect(tr.hasIn([])).toBe(false);
         });
     });
 
@@ -1223,6 +1348,115 @@ describe('TabRegistry', () => {
         });
     });
 
+    describe('.keys()', () => {
+        test('iterating over empty registry does not produce any values', () => {
+            const tr = TabRegistry.empty();
+            expect(Array.from(tr.keys())).toHaveLength(0);
+        });
+    });
+
+    describe('Symbol.iterator', () => {
+        test('...spread a registry into an array', () => {
+            const focuser1 = getSuccessFocuser();
+            const focuser2 = getSuccessFocuser();
+            const focuser3 = getSuccessFocuser();
+            const focuser4 = getSuccessFocuser();
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    ['focuser1', focuser1],
+                    ['focuser2', focuser2],
+                    ['focuser3', focuser3],
+                    ['focuser4', focuser4],
+                ]),
+            );
+
+            const focusers = [...tr];
+
+            expect(focusers).toHaveLength(4);
+        });
+
+        test('...spreading nested registries flattens the result', () => {
+            const focuser1 = getSuccessFocuser();
+            const focuser2 = getSuccessFocuser();
+            const focuser3 = getSuccessFocuser();
+            const focuser4 = getSuccessFocuser();
+            // prettier-ignore
+            const tr2 = TabRegistry.fromMap(new Map([
+                ['focuser3', focuser3],
+                ['focuser4', focuser4],
+            ]));
+            // prettier-ignore
+            const tr1 = TabRegistry.fromMap(new Map([
+                ['focuser1', focuser1],
+                ['focuser2', focuser2],
+                ['registry2', tr2 as any],
+            ]));
+
+            const focusers = [...tr1];
+            expect(focusers).toHaveLength(4);
+        });
+
+        test('...spreading empty registry results in empty array', () => {
+            const tr = TabRegistry.empty();
+            const focusers = [...tr];
+            expect(focusers).toHaveLength(0);
+        });
+
+        test('retrieving an iterator including nested registries', () => {
+            const focuser = getSuccessFocuser();
+            // prettier-ignore
+            const tr2 = TabRegistry.fromMap(new Map([
+                ['focuser3', focuser],
+                ['focuser4', focuser],
+            ]));
+            // prettier-ignore
+            const tr1 = TabRegistry.fromMap(new Map([
+                ['focuser1', focuser],
+                ['focuser2', focuser],
+                ['registry2', tr2 as any],
+            ]));
+
+            const iter = tr1[Symbol.iterator](true);
+
+            expect(jest.isMockFunction(iter.next().value)).toBe(true);
+            expect(jest.isMockFunction(iter.next().value)).toBe(true);
+            expect(iter.next().value).toBeInstanceOf(TabRegistry);
+            expect(jest.isMockFunction(iter.next().value)).toBe(true);
+            expect(jest.isMockFunction(iter.next().value)).toBe(true);
+            expect(iter.next().value).toBeUndefined();
+        });
+    });
+
+    describe('.keysRecursive', () => {
+        test('retrieving keys on empty registry, returns nothing', () => {
+            const tr = TabRegistry.empty();
+            const keys = [...tr.keysRecursive()];
+            expect(keys).toHaveLength(0);
+        });
+
+        test('nested registries is flattened', () => {
+            const focuser1 = getSuccessFocuser();
+            const focuser2 = getSuccessFocuser();
+            const focuser3 = getSuccessFocuser();
+            const focuser4 = getSuccessFocuser();
+
+            // prettier-ignore
+            const tr2 = TabRegistry.fromMap(new Map([
+                ['focuser3', focuser3],
+                ['focuser4', focuser4],
+            ]));
+            // prettier-ignore
+            const tr1 = TabRegistry.fromMap(new Map([
+                ['focuser1', focuser1],
+                ['focuser2', focuser2],
+                ['registry2', tr2 as any],
+            ]));
+
+            expect([...tr1.keysRecursive()]).toHaveLength(5);
+            expect([...tr1.keysRecursive(false)]).toHaveLength(4);
+        });
+    });
+
     describe('.rootRegistry', () => {
         test('return self, when no parent', () => {
             const tr = new TabRegistry<number>();
@@ -1250,56 +1484,54 @@ describe('TabRegistry', () => {
         });
     });
 
-    describe('Nested registries', () => {
-        test('iterating through', () => {
-            const focuser1 = getSuccessFocuser();
-            const focuser2 = getSuccessFocuser();
-            const focuser4 = getSuccessFocuser();
+    describe('.lastKey', () => {
+        test('retrieving last key on emptry registry returns null', () => {
+            const tr = TabRegistry.empty();
+            expect(tr.lastKey).toBe(null);
+        });
+    });
 
-            const focuser5 = getSuccessFocuser();
-            const focuser6 = getSuccessFocuser();
-            const focuser7 = getSuccessFocuser();
+    describe('.last', () => {
+        test('retrieving last focuser on emptry registry returns null', () => {
+            const tr = TabRegistry.empty();
+            expect(tr.last).toBe(null);
+        });
 
-            const parentTr = new TabRegistry<number>();
-            const tr = new TabRegistry<number>();
+        test('retrieving last focuser on non-empty registry', () => {
+            const focuser = getSuccessFocuser();
+            const tr = TabRegistry.fromMap(new Map([['focuser', focuser]]));
+            expect(tr.last).toBe(focuser);
+        });
+    });
 
-            parentTr.add(1, focuser1);
-            parentTr.add(2, focuser2);
-            parentTr.add(3, tr);
-            parentTr.add(4, focuser4);
-            tr.add(5, focuser5);
-            tr.add(6, focuser6);
-            tr.add(7, focuser7);
+    describe('.firstKey', () => {
+        test('retrieving first key on emptry registry returns null', () => {
+            const tr = TabRegistry.empty();
+            expect(tr.firstKey).toBe(null);
+        });
+    });
 
-            expect(parentTr.focusFirst()).toBe(true);
-            expect(focuser1).toHaveBeenCalledTimes(1);
-            expect(parentTr.focusNext(1)).toBe(true);
-            expect(focuser2).toHaveBeenCalledTimes(1);
-            expect(parentTr.focusNext(2)).toBe(true);
-            expect(focuser5).toHaveBeenCalledTimes(1);
-            expect(tr.focusNext(5)).toBe(true);
-            expect(focuser6).toHaveBeenCalledTimes(1);
-            expect(tr.focusNext(6)).toBe(true);
-            expect(focuser7).toHaveBeenCalledTimes(1);
-            expect(tr.focusNext(7)).toBe(true);
-            expect(focuser4).toHaveBeenCalledTimes(1);
-            expect(parentTr.focusNext(4)).toBe(false);
+    describe('.first', () => {
+        test('retrieving first focuser on emptry registry returns null', () => {
+            const tr = TabRegistry.empty();
+            expect(tr.first).toBe(null);
+        });
 
-            expect(parentTr.focusLast()).toBe(true);
-            expect(focuser4).toHaveBeenCalledTimes(2);
-            expect(parentTr.focusPrev(4)).toBe(true);
-            expect(focuser7).toHaveBeenCalledTimes(2);
-            expect(tr.focusPrev(7)).toBe(true);
-            expect(focuser6).toHaveBeenCalledTimes(2);
-            expect(tr.focusPrev(6)).toBe(true);
-            expect(focuser5).toHaveBeenCalledTimes(2);
-            expect(tr.focusPrev(5)).toBe(true);
-            expect(focuser2).toHaveBeenCalledTimes(2);
-            expect(parentTr.focusPrev(2)).toBe(true);
-            expect(focuser1).toHaveBeenCalledTimes(2);
-            expect(parentTr.focusPrev(1)).toBe(false);
+        test('retrieving first focuser on non-empty registry', () => {
+            const focuser = getSuccessFocuser();
+            const tr = TabRegistry.fromMap(new Map([['focuser', focuser]]));
+            expect(tr.first).toBe(focuser);
+        });
+    });
 
-            expect(Array.from(parentTr.keysRecursive())).toEqual([1, 2, 5, 6, 7, 4]);
+    describe('.isCycleEnabled', () => {
+        test('property is false when disabled', () => {
+            const tr = TabRegistry.empty({ cycle: false });
+            expect(tr.isCycleEnabled).toBe(false);
+        });
+        test('property is true when enabled', () => {
+            const tr = TabRegistry.empty({ cycle: true });
+            expect(tr.isCycleEnabled).toBe(true);
         });
     });
 });

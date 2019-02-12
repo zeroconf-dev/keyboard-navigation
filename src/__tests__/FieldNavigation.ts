@@ -429,5 +429,38 @@ describe('FieldNavigation', () => {
             );
             expect.assertions(4);
         });
+
+        test('navigation handler on non-existing key does not throw', () => {
+            const handler = createNavigationHandler([['field1', 'field2']], () => null);
+
+            expect(() =>
+                handler('non-exist1', 'ArrowRight', { altKey: false, ctrlKey: false, metaKey: false, shiftKey: false }),
+            ).not.toThrow();
+        });
+
+        test('navigation handler does not act when modifier keys are pressed', () => {
+            const [focuserMap, handler] = createFocusersFromMap([['field1', 'field2']]);
+
+            handler('field1', 'ArrowRight', { altKey: true, ctrlKey: false, metaKey: false, shiftKey: false });
+            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            expect.assertions(2);
+
+            handler('field1', 'ArrowRight', { altKey: false, ctrlKey: true, metaKey: false, shiftKey: false });
+            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            expect.assertions(4);
+
+            handler('field1', 'ArrowRight', { altKey: false, ctrlKey: false, metaKey: true, shiftKey: false });
+            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            expect.assertions(6);
+
+            handler('field1', 'ArrowRight', { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true });
+            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            expect.assertions(8);
+        });
+
+        test('navigation handler does not throw on unknown key pressed', () => {
+            const handler = createNavigationHandler([['field1', 'field2']], () => null);
+            expect(() => handler('field1', 'QuestionMark', noModifierKeys)).not.toThrow();
+        });
     });
 });

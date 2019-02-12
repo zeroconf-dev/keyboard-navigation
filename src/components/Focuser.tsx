@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
-import { NavigationContext } from './TabBoundary';
+import { NavigationContext } from './NavigationContext';
 
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
 export type NavigationKey =
@@ -135,7 +135,7 @@ export interface ControlProps {
     onSpace?: KeyboardEventHandler;
 }
 
-interface Props extends ControlProps {
+export interface Props extends ControlProps {
     /**
      * Set the classname of the underlaying input field,
      * this makes the component compatible with most css-in-js libraries
