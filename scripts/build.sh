@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")"
 
