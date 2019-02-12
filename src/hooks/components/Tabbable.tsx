@@ -10,16 +10,13 @@ export const Button = React.forwardRef((props: ButtonProps, ref: React.Ref<HTMLB
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = React.useCallback(
-        () => {
-            if (buttonRef.current == null || disabled) {
-                return false;
-            }
-            buttonRef.current.focus();
-            return true;
-        },
-        [props.name, disabled],
-    );
+    const focus = React.useCallback(() => {
+        if (buttonRef.current == null || disabled) {
+            return false;
+        }
+        buttonRef.current.focus();
+        return true;
+    }, [props.name, disabled]);
 
     if (typeof ref === 'function') {
         ref(buttonRef.current);
@@ -37,16 +34,13 @@ export const Input = React.forwardRef((props: InputProps, ref: React.Ref<HTMLInp
     const inputRef = React.useRef<HTMLInputElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = React.useCallback(
-        () => {
-            if (inputRef.current == null || disabled) {
-                return false;
-            }
-            inputRef.current.focus();
-            return true;
-        },
-        [props.name, disabled],
-    );
+    const focus = React.useCallback(() => {
+        if (inputRef.current == null || disabled) {
+            return false;
+        }
+        inputRef.current.focus();
+        return true;
+    }, [props.name, disabled]);
 
     if (typeof ref === 'function') {
         ref(inputRef.current);
@@ -64,16 +58,13 @@ export const Select = React.forwardRef((props: SelectProps, ref: React.Ref<HTMLS
     const selectRef = React.useRef<HTMLSelectElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = React.useCallback(
-        () => {
-            if (selectRef.current == null || disabled) {
-                return false;
-            }
-            selectRef.current.focus();
-            return true;
-        },
-        [props.name, disabled],
-    );
+    const focus = React.useCallback(() => {
+        if (selectRef.current == null || disabled) {
+            return false;
+        }
+        selectRef.current.focus();
+        return true;
+    }, [props.name, disabled]);
 
     if (typeof ref === 'function') {
         ref(selectRef.current);
@@ -91,16 +82,13 @@ export const TextArea = React.forwardRef((props: TextAreaProps, ref: React.Ref<H
     const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = React.useCallback(
-        () => {
-            if (textAreaRef.current == null || disabled) {
-                return false;
-            }
-            textAreaRef.current.focus();
-            return true;
-        },
-        [props.name, disabled],
-    );
+    const focus = React.useCallback(() => {
+        if (textAreaRef.current == null || disabled) {
+            return false;
+        }
+        textAreaRef.current.focus();
+        return true;
+    }, [props.name, disabled]);
 
     if (typeof ref === 'function') {
         ref(textAreaRef.current);

@@ -51,13 +51,13 @@ export function isHotkeyMatching(hotkey: HotKey, event: HotKeyEvent): boolean {
 export function createHandler(hotkeys: HotKeysObject | HotKeyWithHandler[]): HotKeyHandler {
     if (Array.isArray(hotkeys)) {
         return (e: HotKeyEvent & { preventDefault: () => void; stopPropagation: () => void }) => {
-            const hotkeyObj = hotkeys.find(hotkey => isHotkeyMatching(hotkey, e));
-
-            if (hotkeyObj != null) {
-                e.stopPropagation();
-                e.preventDefault();
-                hotkeyObj.handler();
-            }
+            hotkeys
+                .filter(hotkey => isHotkeyMatching(hotkey, e))
+                .forEach(hotkeyObj => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    hotkeyObj.handler();
+                });
         };
     } else {
         return createHandler(

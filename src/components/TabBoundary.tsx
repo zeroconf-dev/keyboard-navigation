@@ -4,6 +4,7 @@ import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '../uti
 import { NavigationContext } from './NavigationContext';
 
 function hasNameProperty<T>(obj: T): obj is T & { name: string } {
+    /* istanbul ignore next */
     return obj != null && typeof (obj as any).name === 'string';
 }
 
