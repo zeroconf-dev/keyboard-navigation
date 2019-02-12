@@ -16,7 +16,7 @@ export function useNewTabRegistry(props: NewTabRegistryProps): TabRegistry {
                 focusFirstOnNextOrigin: props.focusFirstOnNextOrigin,
                 focusParentOnChildOrigin: props.focusParentOnChildOrigin,
             }),
-        [props.cycle, props.focusFirstOnNextOrigin, props.focusParentOnChildOrigin],
+        [],
     );
 
     if (props.tabRegistryRef != null) {

@@ -2,6 +2,14 @@ import React from 'react';
 import { TabRegistry } from '../TabRegistry';
 import { NavigationContext } from './NavigationContext';
 
+function hasFocusFn(obj: any): obj is { focus: (...args: any[]) => boolean | void } {
+    if (obj != null && typeof obj.focus === 'function') {
+        return true;
+    }
+    /* istanbul ignore next */
+    return false;
+}
+
 export interface TabbableProps {
     name: string;
 }
@@ -26,47 +34,85 @@ export function Tabbable<TComp extends Component>(
     type OriginalProps = ComponentPropTypes<TComp>;
     type ResultProps = OriginalProps & TabbableProps;
 
-    return class extends React.Component<ResultProps> {
-        private refComponent: React.ReactElement<OriginalProps> | null = null;
-        private tabRegistry: TabRegistry | null = null;
+    type ResultPropsWithTabRegistry = ResultProps & { tabRegistry: TabRegistry | null };
 
-        public componentWillUnmount() {
-            if (this.tabRegistry != null) {
-                this.tabRegistry.delete(this.props.name);
-                this.tabRegistry = null;
+    /* istanbul ignore next */
+    const displayName = typeof Comp === 'string' ? Comp : Comp.displayName || Comp.name;
+
+    class TabbableComponent extends React.Component<ResultPropsWithTabRegistry> {
+        public static displayName = `TabRegistry(${displayName})`;
+        private refComponent: TComp | null = null;
+
+        public componentDidMount() {
+            if (this.props.tabRegistry != null) {
+                this.props.tabRegistry.add(this.props.name, this.focus);
             }
         }
 
-        private focusTabbable = (): boolean => {
-            if (this.refComponent instanceof HTMLElement) {
-                this.refComponent.focus();
-                return true;
+        public componentWillReceiveProps(nextProps: ResultPropsWithTabRegistry) {
+            if (
+                this.props.name !== nextProps.name &&
+                this.props.tabRegistry != null &&
+                this.props.tabRegistry.has(this.props.name)
+            ) {
+                this.props.tabRegistry.delete(this.props.name);
+            }
+        }
+
+        public componentDidUpdate(prevProps: ResultPropsWithTabRegistry) {
+            if (this.props.name !== prevProps.name && this.props.tabRegistry != null) {
+                this.props.tabRegistry.add(this.props.name, this.focus);
+            }
+        }
+
+        public componentWillUnmount() {
+            if (this.props.tabRegistry != null) {
+                this.props.tabRegistry.delete(this.props.name);
+            }
+        }
+
+        private focus = (): boolean => {
+            if (hasFocusFn(this.refComponent) && !this.props.disabled) {
+                const result = this.refComponent.focus();
+                return result === true || result == null;
             }
             return false;
         };
 
-        private renderWithTabRegistry = (tabRegistry: TabRegistry<string> | null) => {
-            if (this.tabRegistry != null && tabRegistry !== this.tabRegistry) {
-                this.tabRegistry.delete(this.props.name);
+        private onFocus = (e: React.FocusEvent<TComp>) => {
+            if (this.props.onFocus != null) {
+                this.props.onFocus(e);
             }
-            if (tabRegistry != null) {
-                tabRegistry.add(this.props.name, this.focusTabbable);
-            }
-            this.tabRegistry = tabRegistry;
-
-            const WrappedComponent = Comp as React.ComponentClass<ComponentPropTypes<TComp>>;
-
-            return <WrappedComponent {...this.props} {...this.state} ref={this.setComponentRef} />;
         };
 
-        private setComponentRef = (ref: any): void => {
+        private setComponentRef = (ref: TComp): void => {
             this.refComponent = ref;
         };
 
         public render() {
-            return <NavigationContext.Consumer>{this.renderWithTabRegistry}</NavigationContext.Consumer>;
+            const { tabRegistry, ...props } = this.props;
+            return <Comp {...props} onFocus={this.onFocus} ref={this.setComponentRef} />;
         }
-    };
+    }
+
+    type PropsWithForwardRef = ResultProps & { forwardedRef?: React.Ref<TabbableComponent> };
+    class TabbableComponentWithForwardRef extends React.Component<PropsWithForwardRef> {
+        public static displayName = displayName;
+
+        private renderChildren = (tabRegistry: TabRegistry | null) => {
+            const { forwardedRef, ...props } = this.props;
+            return <TabbableComponent {...props as ResultProps} ref={forwardedRef} tabRegistry={tabRegistry} />;
+        };
+
+        public render() {
+            return <NavigationContext.Consumer children={this.renderChildren} />;
+        }
+    }
+
+    return React.forwardRef<TabbableComponent, ResultProps>((props, ref) => (
+        <TabbableComponentWithForwardRef {...props} forwardedRef={ref} />
+    )) as React.ComponentClass<ResultProps> &
+        React.ForwardRefExoticComponent<React.PropsWithoutRef<ResultProps> & React.RefAttributes<TabbableComponent>>;
 }
 
 export const Button = Tabbable('button');

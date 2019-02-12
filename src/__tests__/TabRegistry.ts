@@ -719,11 +719,6 @@ describe('TabRegistry', () => {
     });
 
     describe('.focusLast()', () => {
-        test('focus first on an empty registry returns false', () => {
-            const tr = new TabRegistry();
-            expect(tr.focusLast()).toBe(false);
-        });
-
         test('focusing a key that exists returns what the focuser returns', () => {
             const successFocuser = getSuccessFocuser();
             const notFocuser = getNotFocuser();
@@ -766,8 +761,25 @@ describe('TabRegistry', () => {
         });
 
         test('calling on empty registry returns false', () => {
-            const tr = new TabRegistry();
+            const tr = TabRegistry.empty();
             expect(tr.focusLast()).toBe(false);
+        });
+
+        test('focus last where last is another registry will focus last in inner registry', () => {
+            const notFocuser = getNotFocuser();
+            const focuser = getSuccessFocuser();
+            // prettier-ignore
+            const tr = TabRegistry.fromMap(
+                new Map<number, FocuserType>([
+                    [1, notFocuser],
+                    [2, TabRegistry.fromMap(new Map<number, FocuserType>([
+                        [3, focuser],
+                    ]))],
+                ]),
+            );
+            expect(tr.focusLast()).toBe(true);
+            expect(focuser).toHaveBeenCalled();
+            expect(notFocuser).not.toHaveBeenCalled();
         });
     });
 

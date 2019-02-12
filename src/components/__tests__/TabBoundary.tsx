@@ -5,6 +5,7 @@ import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBound
 import { TabRegistry } from '../../TabRegistry';
 import { Focuser as FocuserClassic } from '../Focuser';
 import { NavigationContext } from '../NavigationContext';
+import { Input } from '../Tabbable';
 import { TabBoundary as TabBoundaryClassic } from '../TabBoundary';
 import { expectInstanceOf } from './__helpers__/assert';
 import { escape, shiftTab, space, tab } from './__helpers__/event';
@@ -66,7 +67,7 @@ import { escape, shiftTab, space, tab } from './__helpers__/event';
             tab(focuser2);
             expect(onFocus3).toHaveBeenCalledWith({ focusOrigin: 'prev' }, 'focuser3');
             shiftTab(focuser3);
-            expect(onFocus2).toHaveBeenCalledWith({ focusOrigin: 'next' }, 'focuser2');
+            expect(onFocus2).toHaveBeenCalledWith({ focusOrigin: 'next', focusFirstOnNextOrigin: false }, 'focuser2');
         });
 
         test('focus parent on escape focuses first focuser of parent boundary', () => {
@@ -180,20 +181,158 @@ import { escape, shiftTab, space, tab } from './__helpers__/event';
         });
 
         test('focus prev/next in boundary via Tab keys', () => {
+            const onFocus1 = jest.fn();
+            const onFocus2 = jest.fn();
             const { container } = render(
                 <TabBoundary>
-                    <Focuser focusKey="focuser1" />
-                    <Focuser focusKey="focuser2" />
+                    <Input name="focuser1" onFocus={onFocus1} />
+                    <Input name="focuser2" onFocus={onFocus2} />
                 </TabBoundary>,
             );
-            const focuser1 = expectInstanceOf(container.querySelector('[name=focuser1]'), HTMLInputElement);
-            const focuser2 = expectInstanceOf(container.querySelector('[name=focuser2]'), HTMLInputElement);
+            const input1 = expectInstanceOf(container.querySelector('[name=focuser1]'), HTMLInputElement);
+            const input2 = expectInstanceOf(container.querySelector('[name=focuser2]'), HTMLInputElement);
 
-            fireEvent.keyDown(focuser1, { key: 'Tab' });
-            expect(container.querySelector(':focus')).toBe(focuser2);
+            fireEvent.keyDown(input1, { key: 'Tab' });
+            expect(onFocus2).toHaveBeenCalled();
 
-            fireEvent.keyDown(focuser2, { key: 'Tab', shiftKey: true });
-            expect(container.querySelector(':focus')).toBe(focuser1);
+            fireEvent.keyDown(input2, { key: 'Tab', shiftKey: true });
+            expect(onFocus1).toHaveBeenCalled();
+        });
+
+        test('can change focusFirstOnNextOrigin between renders', () => {
+            const onFocus1 = jest.fn();
+            const onFocus2 = jest.fn();
+            const { container, rerender } = render(
+                <TabBoundary>
+                    <TabBoundary boundaryKey="first" focusFirstOnNextOrigin={false}>
+                        <Input name="input1" onFocus={onFocus1} />
+                        <Input name="input2" onFocus={onFocus2} />
+                    </TabBoundary>
+                    <Input name="input3" />
+                </TabBoundary>,
+            );
+
+            const input3 = expectInstanceOf(container.querySelector('[name=input3]'), HTMLInputElement);
+
+            shiftTab(input3);
+            expect(onFocus2).toHaveBeenCalled();
+
+            rerender(
+                <TabBoundary>
+                    <TabBoundary boundaryKey="first" focusFirstOnNextOrigin={true}>
+                        <Input name="input1" onFocus={onFocus1} />
+                        <Input name="input2" onFocus={onFocus2} />
+                    </TabBoundary>
+                    <Input name="input3" />
+                </TabBoundary>,
+            );
+
+            shiftTab(input3);
+            expect(onFocus1).toHaveBeenCalled();
+        });
+
+        test('can change cycle between renders', () => {
+            const onFocus1 = jest.fn();
+            const onFocus2 = jest.fn();
+            const { container, rerender } = render(
+                <TabBoundary cycle={false}>
+                    <Input name="input1" onFocus={onFocus1} />
+                    <Input name="input2" onFocus={onFocus2} />
+                </TabBoundary>,
+            );
+
+            const input2 = expectInstanceOf(container.querySelector('[name=input2]'), HTMLInputElement);
+
+            tab(input2);
+            expect(onFocus1).not.toHaveBeenCalled();
+
+            rerender(
+                <TabBoundary cycle={true}>
+                    <Input name="input1" onFocus={onFocus1} />
+                    <Input name="input2" onFocus={onFocus2} />
+                </TabBoundary>,
+            );
+
+            tab(input2);
+            expect(onFocus1).toHaveBeenCalled();
+
+            rerender(
+                <TabBoundary cycle={false}>
+                    <Input name="input1" onFocus={onFocus1} />
+                    <Input name="input2" onFocus={onFocus2} />
+                </TabBoundary>,
+            );
+
+            tab(input2);
+            expect(onFocus1).toHaveBeenCalledTimes(1);
+        });
+
+        test('can change focus parent on child origin between renders', () => {
+            const onFocus1 = jest.fn();
+            const onFocus2 = jest.fn();
+            const onFocus3 = jest.fn();
+
+            const tabRegistryRef = React.createRef<TabRegistry>();
+
+            const { rerender } = render(
+                <TabBoundary boundaryKey="outer">
+                    <Input name="input1" onFocus={onFocus1} />
+                    <TabBoundary boundaryKey="inner" focusParentOnChildOrigin={false} tabRegistryRef={tabRegistryRef}>
+                        <Input name="input2" onFocus={onFocus2} />
+                        <Input name="input3" onFocus={onFocus3} />
+                    </TabBoundary>
+                </TabBoundary>,
+            );
+
+            let tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+            tabRegistry.focus(undefined, { focusOrigin: 'child' });
+
+            expect(onFocus2).toHaveBeenCalled();
+
+            rerender(
+                <TabBoundary boundaryKey="outer">
+                    <Input name="input1" onFocus={onFocus1} />
+                    <TabBoundary boundaryKey="inner" focusParentOnChildOrigin={true} tabRegistryRef={tabRegistryRef}>
+                        <Input name="input2" onFocus={onFocus2} />
+                        <Input name="input3" onFocus={onFocus3} />
+                    </TabBoundary>
+                </TabBoundary>,
+            );
+
+            tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+
+            tabRegistry.focus(undefined, { focusOrigin: 'child' });
+            expect(onFocus1).toHaveBeenCalled();
+        });
+
+        test('can change boundary key between renders', () => {
+            const tabRegistryRef = React.createRef<TabRegistry>();
+
+            const { rerender } = render(
+                <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
+                    <TabBoundary boundaryKey="inner" />
+                </TabBoundary>,
+            );
+
+            let tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+            expect(tabRegistry.has('inner')).toBe(true);
+            expect(tabRegistry.has('inner-new')).toBe(false);
+
+            rerender(
+                <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
+                    <TabBoundary boundaryKey="inner-new" />
+                </TabBoundary>,
+            );
+
+            tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+
+            expect(tabRegistry.has('inner')).toBe(false);
+            expect(tabRegistry.has('inner-new')).toBe(true);
+        });
+
+        test('bonundary can be rendered as another host component', () => {
+            const { container } = render(<TabBoundary as="details" />);
+            expectInstanceOf(container.firstElementChild, HTMLDetailsElement);
         });
     });
 

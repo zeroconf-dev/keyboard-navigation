@@ -55,7 +55,9 @@ function filterProps<TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
         case 'tabDirectionAxis':
             return false;
         default:
+            /* istanbul ignore next */
             assertNeverNonThrow(propKey);
+            /* istanbul ignore next */
             return true;
     }
 }

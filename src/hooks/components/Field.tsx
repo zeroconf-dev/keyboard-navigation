@@ -176,7 +176,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
         if (props.onEditStart != null) {
             props.onEditStart(stopEditing);
         }
-    }, [disabled, isEditing, props.onEditStart, stopEditing]); // undefined as any,
+    }, [disabled, isEditing, props.onEditStart, stopEditing]);
 
     const clickOutside = React.useCallback(
         (e: MouseEvent) => {
@@ -189,7 +189,6 @@ export const Field: React.SFC<Props> = (props: Props) => {
                 props.onSubmit(stopEditing, 'click-outside');
             }
         },
-        // undefined as any,
         [isEditing, submitOnClickOutside, props.onSubmit, stopEditing],
     );
 

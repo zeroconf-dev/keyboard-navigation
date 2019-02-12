@@ -148,5 +148,10 @@ import { enter } from './__helpers__/event';
 
             expect(onFocus).toHaveBeenCalled();
         });
+
+        test('grid can be rendered as another host component', () => {
+            const { container } = render(<Section as="details" focusKey="section" />);
+            expectInstanceOf(container.firstElementChild, HTMLDetailsElement);
+        });
     });
 });

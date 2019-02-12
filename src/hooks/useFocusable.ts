@@ -4,20 +4,17 @@ import { useTabRegistry } from './useTabRegistry';
 
 export const useFocusable = (
     focusKey: string | undefined,
-    focus: TabRegistry<string> | ((opts: FocuserOptions) => boolean),
+    focus: TabRegistry | ((opts: FocuserOptions) => boolean),
 ) => {
     const tabRegistry = useTabRegistry();
-    React.useLayoutEffect(
-        () => {
+    React.useLayoutEffect(() => {
+        if (tabRegistry != null && focusKey != null) {
+            tabRegistry.add(focusKey, focus);
+        }
+        return () => {
             if (tabRegistry != null && focusKey != null) {
-                tabRegistry.add(focusKey, focus);
+                tabRegistry.delete(focusKey);
             }
-            return () => {
-                if (tabRegistry != null && focusKey != null) {
-                    tabRegistry.delete(focusKey);
-                }
-            };
-        },
-        [tabRegistry, focusKey, focus],
-    );
+        };
+    }, [tabRegistry, focusKey, focus]);
 };

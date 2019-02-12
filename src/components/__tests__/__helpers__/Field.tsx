@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import React from 'react';
 import { fireEvent, render } from 'react-testing-library';
 import { Props } from '../../../hooks/components/Field';

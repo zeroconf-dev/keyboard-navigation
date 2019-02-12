@@ -454,7 +454,13 @@ export class TabRegistry<E = any> {
             return false;
         }
 
-        const result = focuser instanceof TabRegistry ? focuser.focusLast() : focuser(focusOriginNext);
+        const result =
+            focuser instanceof TabRegistry
+                ? focuser.focus(undefined, {
+                      ...focusOriginNext,
+                      focusFirstOnNextOrigin: focuser.focusFirstOnNextOrigin,
+                  })
+                : focuser(focusOriginNext);
 
         if (result) {
             return true;
@@ -609,7 +615,13 @@ export class TabRegistry<E = any> {
                 continue;
             }
 
-            const result = focuser instanceof TabRegistry ? focuser.focusLast() : focuser(focusOriginNext);
+            const result =
+                focuser instanceof TabRegistry
+                    ? focuser.focus(undefined, {
+                          ...focusOriginNext,
+                          focusFirstOnNextOrigin: focuser.focusFirstOnNextOrigin,
+                      })
+                    : focuser(focusOriginNext);
 
             if (result) {
                 this.focusCycleStartKey = null;

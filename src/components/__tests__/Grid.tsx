@@ -354,7 +354,10 @@ import { arrowDown, arrowLeft, arrowRight, arrowUp, shiftTab, tab } from './__he
                 'section3',
             );
             shiftTab(section3);
-            expect(onFocus.section2).toHaveBeenCalledWith({ focusOrigin: 'next' }, 'section2');
+            expect(onFocus.section2).toHaveBeenCalledWith(
+                { focusOrigin: 'next', focusFirstOnNextOrigin: true },
+                'section2',
+            );
 
             shiftTab(section2);
             expect(onFocus.section1).toHaveBeenCalledWith(
@@ -416,7 +419,10 @@ import { arrowDown, arrowLeft, arrowRight, arrowUp, shiftTab, tab } from './__he
                 'section2',
             );
             shiftTab(section2);
-            expect(onFocus.section3).toHaveBeenCalledWith({ focusOrigin: 'next' }, 'section3');
+            expect(onFocus.section3).toHaveBeenCalledWith(
+                { focusOrigin: 'next', focusFirstOnNextOrigin: true },
+                'section3',
+            );
 
             shiftTab(section3);
             expect(onFocus.section1).toHaveBeenCalledWith(
@@ -427,6 +433,15 @@ import { arrowDown, arrowLeft, arrowRight, arrowUp, shiftTab, tab } from './__he
 
             expect(onFocus.section4).not.toHaveBeenCalled();
             expect(container.querySelector(':focus')).toBe(section1);
+        });
+
+        test('grid can be rendered as another host component', () => {
+            const renderGrid = () => <div />;
+            const navigationMap: [string][] = [['field1']];
+            const { container } = render(
+                <Grid as="details" children={renderGrid} focusKey="grid" navigationMap={navigationMap} />,
+            );
+            expectInstanceOf(container.firstElementChild, HTMLDetailsElement);
         });
     });
 });
