@@ -1,9 +1,9 @@
 import React from 'react';
 import { TabRegistry } from '../../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, spreadControlProps, UnpackedHTMLAttributes } from '../../util';
+import { useTabRegistry } from '../useTabRegistry';
 import { ControlProps, Focuser, FocuserRef, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Focuser';
 import { TabBoundary } from './TabBoundary';
-import { useTabRegistry } from '../useTabRegistry';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends ControlProps {
     /**

@@ -1,5 +1,5 @@
 import React from 'react';
-import { cleanup, render, fireEvent } from 'react-testing-library';
+import { cleanup, fireEvent, render } from 'react-testing-library';
 import { Focuser as FocuserHooks } from '../../hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';
 import { TabRegistry } from '../../TabRegistry';
