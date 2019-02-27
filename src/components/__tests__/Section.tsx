@@ -78,6 +78,17 @@ import { enter } from './__helpers__/event';
             expect(focusedElement.name).toBe('section');
         });
 
+        test('clicking on input field inside section, should not steal focus from input', () => {
+            const { container } = render(
+                <Section focusKey="section">
+                    <input name="input" />
+                </Section>,
+            );
+            const input = expectInstanceOf(container.querySelector('[name=input]'), HTMLInputElement);
+            fireEvent.click(input);
+            expect(container.querySelector(':focus')).toBe(null);
+        });
+
         test('clicking on section focuses first focuser, when focusOnClick is set to first-child', () => {
             const { container } = render(
                 <Section focusKey="section" focusOnClick="first-child">

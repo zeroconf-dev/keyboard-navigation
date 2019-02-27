@@ -1,6 +1,12 @@
 import React from 'react';
 import { TabRegistry } from '../../TabRegistry';
-import { assertNeverNonThrow, filterPropKeys, spreadControlProps, UnpackedHTMLAttributes } from '../../util';
+import {
+    assertNeverNonThrow,
+    filterPropKeys,
+    isNativeFocusable,
+    spreadControlProps,
+    UnpackedHTMLAttributes,
+} from '../../util';
 import { useTabRegistry } from '../useTabRegistry';
 import { ControlProps, Focuser, FocuserRef, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Focuser';
 import { TabBoundary } from './TabBoundary';
@@ -124,6 +130,10 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
 
     const onClick = React.useCallback(
         (e: React.MouseEvent<any>) => {
+            if (isNativeFocusable(e.target)) {
+                return;
+            }
+
             e.preventDefault();
             e.stopPropagation();
 

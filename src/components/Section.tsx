@@ -1,6 +1,13 @@
 import React from 'react';
 import { TabRegistry } from '../TabRegistry';
-import { assertNeverNonThrow, filterPropKeys, spreadControlProps, UnpackedHTMLAttributes } from '../util';
+import {
+    assertNeverNonThrow,
+    filterPropKeys,
+    isNativeFocusable,
+    spreadControlProps,
+    UnpackedHTMLAttributes,
+    UnpackedHTMLElement,
+} from '../util';
 import { ControlProps, Focuser, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Focuser';
 import { NavigationContext } from './NavigationContext';
 import { TabBoundary } from './TabBoundary';
@@ -136,7 +143,10 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
         }
     };
 
-    private onClick = (e: React.MouseEvent<any>) => {
+    private onClick = (e: React.MouseEvent<Element>) => {
+        if (isNativeFocusable(e.target)) {
+            return;
+        }
         e.preventDefault();
         e.stopPropagation();
 
@@ -175,7 +185,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
         }
 
         if (this.props.onClick != null) {
-            this.props.onClick(e);
+            this.props.onClick(e as React.MouseEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>);
         }
     };
 
