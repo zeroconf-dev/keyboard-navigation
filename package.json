@@ -1,6 +1,6 @@
 {
     "name": "@secoya/tab-navigation.ts",
-    "version": "2.5.1",
+    "version": "2.5.2",
     "dependencies": {
         "@secoya/collection.ts": "^2.11.0",
         "prop-types": "^15.6.2"
