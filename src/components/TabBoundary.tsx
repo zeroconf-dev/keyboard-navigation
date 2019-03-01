@@ -28,7 +28,7 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
 
     private tabRegistry: TabRegistry<any>;
 
-    public context!: TabContextTypes;
+    public context: TabContextTypes | null | undefined;
 
     public constructor(props: TabBoundaryProps<TComp>, context: TabContextTypes) {
         super(props, context);
@@ -39,15 +39,18 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
     }
 
     public componentDidMount() {
-        if (this.context != null && this.context.tabRegistry != null) {
+        if (this.context != null && this.context.tabRegistry != null && this.props.boundaryKey! + null) {
             this.context.tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
         }
     }
 
     public componentWillReceiveProps(nextProps: TabBoundaryProps<TComp>, nextContext: TabContextTypes) {
         if (
-            (nextContext.tabRegistry == null && this.context.tabRegistry != null && this.props.boundaryKey != null) ||
-            (nextProps.boundaryKey == null && this.props.boundaryKey != null && this.context.tabRegistry != null)
+            ((nextContext == null || nextContext.tabRegistry == null) &&
+                (this.context != null && this.context.tabRegistry != null && this.props.boundaryKey != null)) ||
+            (nextProps.boundaryKey == null &&
+                this.props.boundaryKey != null &&
+                (this.context != null && this.context.tabRegistry != null))
         ) {
             this.context.tabRegistry.delete(this.props.boundaryKey);
         }
@@ -55,15 +58,18 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
 
     public componentDidUpdate(prevProps: TabBoundaryProps<TComp>, prevContext: TabContextTypes) {
         if (
-            (prevContext.tabRegistry == null && this.context.tabRegistry != null && this.props.boundaryKey != null) ||
-            (prevProps.boundaryKey == null && this.props.boundaryKey != null && this.context.tabRegistry != null)
+            ((prevContext == null || prevContext.tabRegistry == null) &&
+                (this.context != null && this.context.tabRegistry != null && this.props.boundaryKey != null)) ||
+            (prevProps.boundaryKey == null &&
+                this.props.boundaryKey != null &&
+                (this.context != null && this.context.tabRegistry != null))
         ) {
             this.context.tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
         }
     }
 
     public componentWillUnmount() {
-        if (this.context != null && this.context.tabRegistry != null) {
+        if (this.context != null && this.context.tabRegistry != null && this.props.boundaryKey != null) {
             this.context.tabRegistry.delete(this.props.boundaryKey);
         }
     }
