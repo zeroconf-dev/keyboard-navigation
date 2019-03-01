@@ -394,6 +394,7 @@
     const focusOriginNone = { focusOrigin: 'none' };
     const focusOriginNext = { focusOrigin: 'next' };
     const focusOriginPrev = { focusOrigin: 'prev' };
+    const focusOriginChild = { focusOrigin: 'child' };
     /**
      * Library class for controlling complex nested linked structures.
      */
@@ -427,7 +428,7 @@
                     else {
                         yield this.focuserMap.get(key);
                     }
-                    key = this.registry.next(key);
+                    key = this.getNextKey(key);
                 }
             };
             /**
@@ -440,7 +441,7 @@
                 let key = this.registry.first;
                 while (key) {
                     yield key;
-                    key = this.registry.next(key);
+                    key = this.getNextKey(key);
                 }
             };
             /**
@@ -460,17 +461,19 @@
                     else {
                         yield key;
                     }
-                    key = this.registry.next(key);
+                    key = this.getNextKey(key);
                 }
             };
             this.focuserMap = new Map();
             this.registry = new DoublyLinkedOrderedSet();
-            this.parentRegistry = null;
-            if (options != null) {
-                this.cycle = options.cycle === true;
+            this.internalParentRegistry = null;
+            if (options == null) {
+                this.cycle = false;
+                this.focusParentOnChildOrigin = false;
             }
             else {
-                this.cycle = false;
+                this.cycle = options.cycle === true;
+                this.focusParentOnChildOrigin = options.focusParentOnChildOrigin === true;
             }
         }
         get first() {
@@ -518,6 +521,9 @@
                 return null;
             }
             return this.registry.last;
+        }
+        get parentRegistry() {
+            return this.internalParentRegistry;
         }
         /**
          * Constructs any empty registry with default options.
@@ -625,6 +631,10 @@
          * Returns `false` if the focuser does not exist.
          */
         focus(key, options) {
+            const opts = options || focusOriginNone;
+            if (this.focusParentOnChildOrigin && opts.focusOrigin === 'child') {
+                return this.focusParent();
+            }
             let internalKey = key;
             if (internalKey == null) {
                 if (options != null && options.focusOrigin === 'next') {
@@ -641,7 +651,7 @@
             if (focuser == null) {
                 return false;
             }
-            return focuser instanceof TabRegistry ? focuser.focus(undefined, options) : focuser(options || focusOriginNone);
+            return focuser instanceof TabRegistry ? focuser.focus(undefined, opts) : focuser(opts);
         }
         /**
          * Execute first focuser in the registry.
@@ -690,7 +700,8 @@
          * the first key will be the root identifier.
          */
         focusIn(keys, options) {
-            let key = keys.shift();
+            // tslint:disable-next-line: prefer-const
+            let [key, ...nextKeys] = keys;
             if (key == null) {
                 return false;
             }
@@ -700,7 +711,7 @@
                 if (focuser == null) {
                     return false;
                 }
-                const k = keys.shift();
+                const k = nextKeys.shift();
                 if (k != null) {
                     key = k;
                     if (focuser instanceof TabRegistry) {
@@ -782,7 +793,7 @@
             // if cycly is enabled.
             let focuser;
             let current;
-            let next = this.registry.next(key);
+            let next = this.getNextKey(key);
             const totalCount = this.registry.size;
             for (let i = totalCount; i > 0; i--) {
                 if (next == null) {
@@ -790,7 +801,7 @@
                 }
                 current = next;
                 focuser = this.focuserMap.get(current);
-                next = this.registry.next(current);
+                next = this.getNextKey(current);
                 if (focuser == null) {
                     continue;
                 }
@@ -819,9 +830,9 @@
                 }
                 return this.focusFirst();
             }
-            if (this.parentRegistry != null) {
+            if (this.internalParentRegistry != null) {
                 this.focusCycleStartKey = null;
-                this.parentRegistry.focusNext(this.parentRegistryKey);
+                this.internalParentRegistry.focusNext(this.parentRegistryKey);
                 return true;
             }
             this.focusCycleStartKey = null;
@@ -832,15 +843,24 @@
          * from the key after the first key in `keys`.
          */
         focusNextIn(keys) {
-            const key = keys.shift();
+            const [key, ...nextKeys] = keys;
             if (key == null) {
                 return false;
             }
-            const next = this.registry.next(key);
+            const next = this.getNextKey(key);
             if (next == null) {
                 return false;
             }
-            return this.focusIn([next, ...keys], focusOriginPrev);
+            return this.focusIn([next, ...nextKeys], focusOriginPrev);
+        }
+        /**
+         * Focus the parent registry.
+         */
+        focusParent() {
+            if (this.internalParentRegistry != null) {
+                return this.internalParentRegistry.focus(undefined, focusOriginChild);
+            }
+            return false;
         }
         /**
          * Execute the focuser before `key`.
@@ -856,7 +876,7 @@
             // if cycly is enabled.
             let focuser;
             let current;
-            let prev = this.registry.prev(key);
+            let prev = this.getPrevKey(key);
             const totalCount = this.registry.size;
             for (let i = totalCount; i > 0; i--) {
                 if (prev == null) {
@@ -864,7 +884,7 @@
                 }
                 current = prev;
                 focuser = this.focuserMap.get(prev);
-                prev = this.registry.prev(prev);
+                prev = this.getPrevKey(prev);
                 if (focuser == null) {
                     continue;
                 }
@@ -893,9 +913,9 @@
                 }
                 return this.focusLast();
             }
-            if (this.parentRegistry != null) {
+            if (this.internalParentRegistry != null) {
                 this.focusCycleStartKey = null;
-                this.parentRegistry.focusPrev(this.parentRegistryKey);
+                this.internalParentRegistry.focusPrev(this.parentRegistryKey);
                 return true;
             }
             this.focusCycleStartKey = null;
@@ -906,15 +926,15 @@
          * from the key before the first key in `keys`.
          */
         focusPrevIn(keys) {
-            const key = keys.shift();
+            const [key, ...nextKeys] = keys;
             if (key == null) {
                 return false;
             }
-            const prev = this.registry.prev(key);
+            const prev = this.getPrevKey(key);
             if (prev == null) {
                 return false;
             }
-            return this.focusIn([prev, ...keys], focusOriginNext);
+            return this.focusIn([prev, ...nextKeys], focusOriginNext);
         }
         /**
          * Returns focuser for `key` if it exists
@@ -935,7 +955,7 @@
          * otherwise return `null`.
          */
         getNext(key) {
-            const next = this.registry.next(key);
+            const next = this.getNextKey(key);
             if (next == null) {
                 return null;
             }
@@ -946,11 +966,17 @@
             return focuser;
         }
         /**
+         * Returns the key next to the key parameter.
+         */
+        getNextKey(key) {
+            return this.registry.next(key);
+        }
+        /**
          * Returns the forcuser before `key` if it exists
          * otherwise return `null`.
          */
         getPrev(key) {
-            const prev = this.registry.prev(key);
+            const prev = this.getPrevKey(key);
             if (prev == null) {
                 return null;
             }
@@ -959,6 +985,12 @@
                 return null;
             }
             return focuser;
+        }
+        /**
+         * Returns the key previous to the key parameter.
+         */
+        getPrevKey(key) {
+            return this.registry.prev(key);
         }
         /**
          * Returns whether or not the focuser for `key` exists.
@@ -971,7 +1003,8 @@
          * from the first key exist.
          */
         hasIn(keys) {
-            let key = keys.shift();
+            // tslint:disable-next-line: prefer-const
+            let [key, ...nextKeys] = keys;
             if (key == null) {
                 return false;
             }
@@ -981,7 +1014,7 @@
                 if (focuser == null) {
                     return false;
                 }
-                const k = keys.shift();
+                const k = nextKeys.shift();
                 if (k != null) {
                     key = k;
                     if (focuser instanceof TabRegistry) {
@@ -1004,7 +1037,7 @@
             if (!this.registry.has(key)) {
                 return false;
             }
-            return this.registry.next(key) != null;
+            return this.getNextKey(key) != null;
         }
         /**
          * Returns whether or not there exists a focuser prev `key`.
@@ -1013,7 +1046,7 @@
             if (!this.registry.has(key)) {
                 return false;
             }
-            return this.registry.prev(key) != null;
+            return this.getPrevKey(key) != null;
         }
         /**
          * Move a focuser to the next spot in the registry.
@@ -1023,7 +1056,7 @@
             if (focuser == null) {
                 throw new Error(`Focuser for ${key} was not found`);
             }
-            const next = this.registry.next(key);
+            const next = this.getNextKey(key);
             if (next != null) {
                 this.registry.setAfter(key, next);
             }
@@ -1036,7 +1069,7 @@
             if (focuser == null) {
                 throw new Error(`Focuser for ${key} was not found`);
             }
-            const prev = this.registry.prev(key);
+            const prev = this.getPrevKey(key);
             if (prev != null) {
                 this.registry.setBefore(key, prev);
             }
@@ -1060,7 +1093,7 @@
          * the `parentRegistry`.
          */
         setParentRegistry(parentRegistryKey, parentRegistry) {
-            this.parentRegistry = parentRegistry;
+            this.internalParentRegistry = parentRegistry;
             this.parentRegistryKey = parentRegistryKey;
         }
         /**
@@ -1208,13 +1241,31 @@
                         this.tabRegistry.focusNext(name);
                     }
                 }
+                else if (e.key === 'Escape' && this.props.focusParentOnEscape) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.tabRegistry.focusParent();
+                }
             };
             this.tabRegistry = new TabRegistry({
-                cycle: !!props.cycle,
+                cycle: props.cycle,
+                focusParentOnChildOrigin: props.focusParentOnChildOrigin,
             });
         }
         componentDidMount() {
             if (this.context != null && this.context.tabRegistry != null) {
+                this.context.tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
+            }
+        }
+        componentWillReceiveProps(nextProps, nextContext) {
+            if ((nextContext.tabRegistry == null && this.context.tabRegistry != null && this.props.boundaryKey != null) ||
+                (nextProps.boundaryKey == null && this.props.boundaryKey != null && this.context.tabRegistry != null)) {
+                this.context.tabRegistry.delete(this.props.boundaryKey);
+            }
+        }
+        componentDidUpdate(prevProps, prevContext) {
+            if ((prevContext.tabRegistry == null && this.context.tabRegistry != null && this.props.boundaryKey != null) ||
+                (prevProps.boundaryKey == null && this.props.boundaryKey != null && this.context.tabRegistry != null)) {
                 this.context.tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
             }
         }

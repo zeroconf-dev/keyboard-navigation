@@ -329,7 +329,7 @@ export class TabRegistry<E = any> {
      * Excute focuser that matches the `keys` path
      * from the first key in the registry.
      */
-    public focusFirstIn(keys: E[]): boolean {
+    public focusFirstIn(keys: ReadonlyArray<E>): boolean {
         if (this.registry.isEmpty) {
             return false;
         }
@@ -345,8 +345,9 @@ export class TabRegistry<E = any> {
      * Execute focuser that matchs the `keys` path
      * the first key will be the root identifier.
      */
-    public focusIn(keys: E[], options?: FocuserOptions): boolean {
-        let key = keys.shift();
+    public focusIn(keys: ReadonlyArray<E>, options?: FocuserOptions): boolean {
+        // tslint:disable-next-line: prefer-const
+        let [key, ...nextKeys] = keys;
         if (key == null) {
             return false;
         }
@@ -357,7 +358,7 @@ export class TabRegistry<E = any> {
                 return false;
             }
 
-            const k = keys.shift();
+            const k = nextKeys.shift();
             if (k != null) {
                 key = k;
                 if (focuser instanceof TabRegistry) {
@@ -416,7 +417,7 @@ export class TabRegistry<E = any> {
      * Excute focuser that matches the `keys` path
      * from the last key in the registry.
      */
-    public focusLastIn(keys: E[]): boolean {
+    public focusLastIn(keys: ReadonlyArray<E>): boolean {
         if (this.registry.isEmpty) {
             return false;
         }
@@ -500,8 +501,8 @@ export class TabRegistry<E = any> {
      * Excute focuser that matches the `keys` path
      * from the key after the first key in `keys`.
      */
-    public focusNextIn(keys: E[]): boolean {
-        const key = keys.shift();
+    public focusNextIn(keys: ReadonlyArray<E>): boolean {
+        const [key, ...nextKeys] = keys;
         if (key == null) {
             return false;
         }
@@ -509,7 +510,7 @@ export class TabRegistry<E = any> {
         if (next == null) {
             return false;
         }
-        return this.focusIn([next, ...keys], focusOriginPrev);
+        return this.focusIn([next, ...nextKeys], focusOriginPrev);
     }
 
     /**
@@ -595,8 +596,8 @@ export class TabRegistry<E = any> {
      * Excute focuser that matches the `keys` path
      * from the key before the first key in `keys`.
      */
-    public focusPrevIn(keys: E[]): boolean {
-        const key = keys.shift();
+    public focusPrevIn(keys: ReadonlyArray<E>): boolean {
+        const [key, ...nextKeys] = keys;
         if (key == null) {
             return false;
         }
@@ -604,7 +605,7 @@ export class TabRegistry<E = any> {
         if (prev == null) {
             return false;
         }
-        return this.focusIn([prev, ...keys], focusOriginNext);
+        return this.focusIn([prev, ...nextKeys], focusOriginNext);
     }
 
     /**
@@ -678,8 +679,9 @@ export class TabRegistry<E = any> {
      * Test if nested focuser that matchs the `keys` path
      * from the first key exist.
      */
-    public hasIn(keys: E[]): boolean {
-        let key = keys.shift();
+    public hasIn(keys: ReadonlyArray<E>): boolean {
+        // tslint:disable-next-line: prefer-const
+        let [key, ...nextKeys] = keys;
         if (key == null) {
             return false;
         }
@@ -690,7 +692,7 @@ export class TabRegistry<E = any> {
                 return false;
             }
 
-            const k = keys.shift();
+            const k = nextKeys.shift();
             if (k != null) {
                 key = k;
                 if (focuser instanceof TabRegistry) {

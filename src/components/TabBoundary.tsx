@@ -28,9 +28,9 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
 
     private tabRegistry: TabRegistry<any>;
 
-    public context: TabContextTypes | null | undefined;
+    public context!: TabContextTypes;
 
-    public constructor(props: TabBoundaryProps<TComp>, context?: TabContextTypes) {
+    public constructor(props: TabBoundaryProps<TComp>, context: TabContextTypes) {
         super(props, context);
         this.tabRegistry = new TabRegistry({
             cycle: props.cycle,
@@ -40,6 +40,24 @@ export class TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> exte
 
     public componentDidMount() {
         if (this.context != null && this.context.tabRegistry != null) {
+            this.context.tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
+        }
+    }
+
+    public componentWillReceiveProps(nextProps: TabBoundaryProps<TComp>, nextContext: TabContextTypes) {
+        if (
+            (nextContext.tabRegistry == null && this.context.tabRegistry != null && this.props.boundaryKey != null) ||
+            (nextProps.boundaryKey == null && this.props.boundaryKey != null && this.context.tabRegistry != null)
+        ) {
+            this.context.tabRegistry.delete(this.props.boundaryKey);
+        }
+    }
+
+    public componentDidUpdate(prevProps: TabBoundaryProps<TComp>, prevContext: TabContextTypes) {
+        if (
+            (prevContext.tabRegistry == null && this.context.tabRegistry != null && this.props.boundaryKey != null) ||
+            (prevProps.boundaryKey == null && this.props.boundaryKey != null && this.context.tabRegistry != null)
+        ) {
             this.context.tabRegistry.add(this.props.boundaryKey, this.tabRegistry);
         }
     }
