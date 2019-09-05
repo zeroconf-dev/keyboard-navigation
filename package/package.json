@@ -1,28 +1,28 @@
 {
     "author": {
         "email": "briankchristensen@gmail.com",
-        "name": "Brian K. Christensen",
+        "name": "Brian Kejlberg",
         "url": "https://github.com/thetrompf"
     },
     "bugs": {
-        "url": "https://github.com/thetrompf/tab-navigation.ts/issues/new"
+        "url": "https://github.com/zeroconf-dev/keyboard-navigation/issues/new"
     },
     "dependencies": {
         "@secoya/collection.ts": "3.1.0",
-        "tslib": "1.9.3"
+        "tslib": "1.10.0"
     },
     "esnext": "index.esnext",
     "license": "BSD-3-Clause",
     "main": "index.js",
     "module": "index.mjs",
-    "name": "@secoya/tab-navigation.ts",
+    "name": "@zeroconf/keyboard-navigation",
     "peerDependencies": {
-        "react": ">=16.0.0",
-        "react-dom": ">=16.0.0"
+        "react": ">=16.8.6",
+        "react-dom": ">=16.8.6"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/thetrompf/tab-navigation.ts"
+        "url": "https://github.com/zeroconf-dev/keyboard-navigation"
     },
     "types": "index.d.ts",
     "version": "4.0.0-alpha.2"
