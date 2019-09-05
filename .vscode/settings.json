@@ -7,6 +7,7 @@
         "**/CVS": true,
         "**/.DS_Store": true
     },
+    "jest.pathToJest": "./node_modules/.bin/jest",
     "prettier.printWidth": 120,
     "prettier.tabWidth": 4,
     "prettier.singleQuote": true,

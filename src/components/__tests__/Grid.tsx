@@ -1,5 +1,5 @@
+import { cleanup, render } from '@testing-library/react';
 import React from 'react';
-import { cleanup, render } from 'react-testing-library';
 import { NavigationMap } from '../../FieldNavigation';
 import { Focuser as FocuserHooks } from '../../hooks/components/Focuser';
 import { Grid as GridHooks } from '../../hooks/components/Grid';

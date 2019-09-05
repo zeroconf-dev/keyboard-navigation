@@ -133,7 +133,7 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
         document.addEventListener('click', this.clickOutside, false);
     }
 
-    public componentWillReceiveProps(nextProps: PropsTabRegistry) {
+    public UNSAFE_componentWillReceiveProps(nextProps: PropsTabRegistry) {
         if (!this.props.disabled && nextProps.disabled) {
             this.stopEditing(true);
         }

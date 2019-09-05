@@ -1,5 +1,5 @@
+import { act as testAct, cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
 import React from 'react';
-import { cleanup, fireEvent, render } from 'react-testing-library';
 import { Focuser as FocuserHooks, ModifierKeys } from '../../hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';
 import { TabRegistry } from '../../TabRegistry';
@@ -8,6 +8,7 @@ import { Focuser as FocuserClassic } from '../Focuser';
 import { TabBoundary as TabBoundaryClassic } from '../TabBoundary';
 import { expectInstanceOf } from './__helpers__/assert';
 import { allNavigationEvents, shiftTab, tab } from './__helpers__/event';
+import { act as domAct } from 'react-dom/test-utils';
 
 const noModifiers: ModifierKeys = {
     altKey: false,
@@ -39,8 +40,8 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
         afterEach(cleanup);
 
         test('focuser rendered outside boundary does not act on tab navigation', () => {
-            const { getByValue } = render(<Focuser focusKey="test" />);
-            const inputElement = getByValue('');
+            const { getByPlaceholderText } = render(<Focuser focusKey="test" />);
+            const inputElement = getByPlaceholderText('');
             const result = tab(inputElement);
             expect(result).toBe(true);
         });
@@ -308,21 +309,30 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
 
         test('changing focus key removing old key from tab registry', () => {
             const tabRegistryRef = React.createRef<TabRegistry>();
-            const { rerender } = render(
-                <TabBoundary tabRegistryRef={tabRegistryRef}>
-                    <Focuser focusKey="focuser-old" />
-                </TabBoundary>,
-            );
+            domAct(() => {
+                let rerender: RenderResult['rerender'];
+                testAct(() => {
+                    const res = render(
+                        <TabBoundary tabRegistryRef={tabRegistryRef}>
+                            <Focuser focusKey="focuser-old" />
+                        </TabBoundary>,
+                    );
+                    rerender = res.rerender;
+                });
+
+                const tr = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+                expect(tr.has('focuser-old')).toBe(true);
+
+                testAct(() => {
+                    rerender(
+                        <TabBoundary tabRegistryRef={tabRegistryRef}>
+                            <Focuser focusKey="focuser-new" />
+                        </TabBoundary>,
+                    );
+                });
+            });
 
             const tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
-            expect(tabRegistry.has('focuser-old')).toBe(true);
-
-            rerender(
-                <TabBoundary tabRegistryRef={tabRegistryRef}>
-                    <Focuser focusKey="focuser-new" />
-                </TabBoundary>,
-            );
-
             expect(tabRegistry.has('focuser-old')).toBe(false);
             expect(tabRegistry.has('focuser-new')).toBe(true);
         });

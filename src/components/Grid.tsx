@@ -74,7 +74,7 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
         };
     }
 
-    public componentWillReceiveProps(nextProps: Props<TComp>) {
+    public UNSAFE_componentWillReceiveProps(nextProps: Props<TComp>) {
         if (this.props.navigationMap !== nextProps.navigationMap) {
             /* istanbul ignore next */
             this.setState(_ => ({

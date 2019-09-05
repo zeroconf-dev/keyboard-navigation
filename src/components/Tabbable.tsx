@@ -49,7 +49,7 @@ export function Tabbable<TComp extends Component>(
             }
         }
 
-        public componentWillReceiveProps(nextProps: ResultPropsWithTabRegistry) {
+        public UNSAFE_componentWillReceiveProps(nextProps: ResultPropsWithTabRegistry) {
             if (
                 this.props.name !== nextProps.name &&
                 this.props.tabRegistry != null &&

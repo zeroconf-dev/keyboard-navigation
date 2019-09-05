@@ -111,28 +111,6 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
         }
     }
 
-    public componentWillReceiveProps(nextProps: PropsWithTabRegistry<TComp>) {
-        if (this.props.cycle !== nextProps.cycle) {
-            nextProps.cycle ? this.tabRegistry.enableCycle() : this.tabRegistry.disableCycle();
-        }
-
-        if (this.props.focusParentOnChildOrigin !== nextProps.focusParentOnChildOrigin) {
-            this.tabRegistry.focusParentOnChildOrigin = nextProps.focusParentOnChildOrigin === true;
-        }
-
-        if (this.props.focusFirstOnNextOrigin !== nextProps.focusFirstOnNextOrigin) {
-            this.tabRegistry.focusFirstOnNextOrigin = nextProps.focusFirstOnNextOrigin === true;
-        }
-
-        if (
-            this.props.boundaryKey !== nextProps.boundaryKey &&
-            this.props.parentRegistry != null &&
-            this.props.parentRegistry.has(this.props.boundaryKey)
-        ) {
-            this.props.parentRegistry.delete(this.props.boundaryKey);
-        }
-    }
-
     public componentDidUpdate(prevProps: PropsWithTabRegistry<TComp>) {
         if (
             this.props.boundaryKey !== prevProps.boundaryKey &&
@@ -185,6 +163,28 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
             this.props.onKeyDown(e);
         }
     };
+
+    public UNSAFE_componentWillReceiveProps(nextProps: PropsWithTabRegistry<TComp>) {
+        if (this.props.cycle !== nextProps.cycle) {
+            nextProps.cycle ? this.tabRegistry.enableCycle() : this.tabRegistry.disableCycle();
+        }
+
+        if (this.props.focusParentOnChildOrigin !== nextProps.focusParentOnChildOrigin) {
+            this.tabRegistry.focusParentOnChildOrigin = nextProps.focusParentOnChildOrigin === true;
+        }
+
+        if (this.props.focusFirstOnNextOrigin !== nextProps.focusFirstOnNextOrigin) {
+            this.tabRegistry.focusFirstOnNextOrigin = nextProps.focusFirstOnNextOrigin === true;
+        }
+
+        if (
+            this.props.boundaryKey !== nextProps.boundaryKey &&
+            this.props.parentRegistry != null &&
+            this.props.parentRegistry.has(this.props.boundaryKey)
+        ) {
+            this.props.parentRegistry.delete(this.props.boundaryKey);
+        }
+    }
 
     public render() {
         const props = filterPropKeys<ComponentProps<TComp>, TComp, PropsWithTabRegistry<TComp>>(

@@ -85,7 +85,7 @@ export function spreadControlProps<Props extends ControlProps>(props: Props): Co
         })
         .reduce(
             (carry, item) => {
-                carry[item] = props[item];
+                (carry as any)[item] = props[item];
                 return carry;
             },
             {} as ControlProps,

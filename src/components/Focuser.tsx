@@ -181,16 +181,6 @@ class FocuserWithTabRegistry extends React.Component<PropsWithTabRegistry, State
         }
     }
 
-    public componentWillReceiveProps(nextProps: PropsWithTabRegistry) {
-        if (
-            this.props.focusKey !== nextProps.focusKey &&
-            this.props.tabRegistry != null &&
-            this.props.tabRegistry.has(this.props.focusKey)
-        ) {
-            this.props.tabRegistry.delete(this.props.focusKey);
-        }
-    }
-
     public componentDidUpdate(prevProps: PropsWithTabRegistry) {
         if (this.props.focusKey !== prevProps.focusKey && this.props.tabRegistry != null) {
             this.props.tabRegistry.add(this.props.focusKey, this.focus);
@@ -378,6 +368,16 @@ class FocuserWithTabRegistry extends React.Component<PropsWithTabRegistry, State
         return true;
     };
 
+    public UNSAFE_componentWillReceiveProps(nextProps: PropsWithTabRegistry) {
+        if (
+            this.props.focusKey !== nextProps.focusKey &&
+            this.props.tabRegistry != null &&
+            this.props.tabRegistry.has(this.props.focusKey)
+        ) {
+            this.props.tabRegistry.delete(this.props.focusKey);
+        }
+    }
+
     public render() {
         return (
             <input
@@ -390,6 +390,7 @@ class FocuserWithTabRegistry extends React.Component<PropsWithTabRegistry, State
                 onBlur={this.onBlur}
                 onChange={emptyChangeHandler}
                 onKeyDown={this.onKeyDown}
+                placeholder=""
                 ref={this.setFocuserRef}
                 style={styles}
                 tabIndex={-1}

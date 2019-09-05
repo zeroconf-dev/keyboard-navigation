@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 
 export type AllEventKey =
     | '+'

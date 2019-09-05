@@ -1,5 +1,6 @@
+import { cleanup, fireEvent, render, act as testAct, RenderResult } from '@testing-library/react';
 import React from 'react';
-import { cleanup, fireEvent, render } from 'react-testing-library';
+import { act as domAct } from 'react-dom/test-utils';
 import { Focuser as FocuserHooks } from '../../hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';
 import { TabRegistry } from '../../TabRegistry';
@@ -9,6 +10,7 @@ import { Input } from '../Tabbable';
 import { TabBoundary as TabBoundaryClassic } from '../TabBoundary';
 import { expectInstanceOf } from './__helpers__/assert';
 import { escape, shiftTab, space, tab } from './__helpers__/event';
+
 [
     {
         Focuser: FocuserClassic,
@@ -30,18 +32,32 @@ import { escape, shiftTab, space, tab } from './__helpers__/event';
             jest.spyOn(console, 'error').mockImplementation(() => {
                 return;
             });
-            expect(() =>
+
+            const errorRef = React.createRef() as React.MutableRefObject<any>;
+            class ErrorBoundary extends React.Component {
+                public componentDidCatch(error: any) {
+                    errorRef.current = error;
+                }
+                public render() {
+                    return this.props.children;
+                }
+            }
+
+            testAct(() => {
                 render(
-                    <TabBoundary>
-                        <Focuser focusKey="focuser" />
-                        <Focuser focusKey="focuser" />
-                    </TabBoundary>,
-                ),
-            ).toThrowErrorMatchingSnapshot();
-            (console as any).error.mockRestore();
+                    <ErrorBoundary>
+                        <TabBoundary>
+                            <Focuser focusKey="focuser" />
+                            <Focuser focusKey="focuser" />
+                        </TabBoundary>
+                    </ErrorBoundary>,
+                );
+            });
+
+            expect(errorRef.current).toMatchSnapshot();
         });
 
-        // tslint:disable-next-line:max-line-length
+            // tslint:disable-next-line:max-line-length
         test(`tab beyond last focuser in boundary, focuses sibling boundary's "next" focuser in the tab direction`, () => {
             const onFocus1 = jest.fn();
             const onFocus2 = jest.fn();
@@ -307,25 +323,30 @@ import { escape, shiftTab, space, tab } from './__helpers__/event';
 
         test('can change boundary key between renders', () => {
             const tabRegistryRef = React.createRef<TabRegistry>();
+            domAct(() => {
+                let rerender: RenderResult['rerender'];
+                testAct(() => {
+                    const res = render(
+                        <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
+                            <TabBoundary boundaryKey="inner" />
+                        </TabBoundary>,
+                    );
+                    rerender = res.rerender;
+                });
 
-            const { rerender } = render(
-                <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
-                    <TabBoundary boundaryKey="inner" />
-                </TabBoundary>,
-            );
+                const tr = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+                expect(tr.has('inner')).toBe(true);
+                expect(tr.has('inner-new')).toBe(false);
 
-            let tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
-            expect(tabRegistry.has('inner')).toBe(true);
-            expect(tabRegistry.has('inner-new')).toBe(false);
-
-            rerender(
-                <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
-                    <TabBoundary boundaryKey="inner-new" />
-                </TabBoundary>,
-            );
-
-            tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
-
+                testAct(() => {
+                    rerender(
+                        <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
+                            <TabBoundary boundaryKey="inner-new" />
+                        </TabBoundary>,
+                    );
+                });
+            });
+            const tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
             expect(tabRegistry.has('inner')).toBe(false);
             expect(tabRegistry.has('inner-new')).toBe(true);
         });

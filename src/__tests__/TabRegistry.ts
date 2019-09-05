@@ -237,7 +237,7 @@ describe('TabRegistry', () => {
     });
 
     describe('.delete()', () => {
-        test("deleting a key that doesn't exist throws", () => {
+        test('deleting a key that doesn\'t exist throws', () => {
             const tr = new TabRegistry<number>();
             expect(() => tr.delete(1)).toThrowErrorMatchingSnapshot();
         });
@@ -286,7 +286,7 @@ describe('TabRegistry', () => {
     });
 
     describe('.disableCycle()', () => {
-        test("disabling boundry cycle, after constructing a registry will won't cycle", () => {
+        test('disabling boundry cycle, after constructing a registry will won\'t cycle', () => {
             const cycleFocuser1 = getSuccessFocuser();
             const cycleFocuser2 = getSuccessFocuser();
             const nonCycleFocuser1 = getSuccessFocuser();
@@ -330,7 +330,7 @@ describe('TabRegistry', () => {
     });
 
     describe('.focus()', () => {
-        test("focusing a key that doesn't exist returns false", () => {
+        test('focusing a key that doesn\'t exist returns false', () => {
             const tr = new TabRegistry<number>();
             expect(tr.focus(1)).toBe(false);
         });
@@ -429,7 +429,7 @@ describe('TabRegistry', () => {
     });
 
     describe('.focusFirstIn()', () => {
-        test("focus nested registry that doesn't exist will return false", () => {
+        test('focus nested registry that doesn\'t exist will return false', () => {
             const tr = new TabRegistry();
             expect(tr.focusIn([2])).toBe(false);
         });
@@ -470,7 +470,7 @@ describe('TabRegistry', () => {
     });
 
     describe('.focusIn()', () => {
-        test("focus nested registry that doesn't exist will return false", () => {
+        test('focus nested registry that doesn\'t exist will return false', () => {
             const tr = new TabRegistry();
             expect(tr.focusIn([1, 2])).toBe(false);
         });
@@ -524,7 +524,7 @@ describe('TabRegistry', () => {
     });
 
     describe('.focusNext()', () => {
-        test("focus next to a key that doesn't exist throws", () => {
+        test('focus next to a key that doesn\'t exist throws', () => {
             const tr = TabRegistry.empty();
             expect(() => tr.focusNext(1)).toThrowErrorMatchingSnapshot();
         });
@@ -833,7 +833,7 @@ describe('TabRegistry', () => {
     });
 
     describe('.focusPrev()', () => {
-        test("focus prev of a key that doesn't exist throws", () => {
+        test('focus prev of a key that doesn\'t exist throws', () => {
             const tr = TabRegistry.empty();
             expect(() => tr.focusPrev(1)).toThrowErrorMatchingSnapshot();
         });
@@ -1139,7 +1139,7 @@ describe('TabRegistry', () => {
             ])).toBe(true);
         });
 
-        test("focusing a complex path that doesn't exist return false", () => {
+        test('focusing a complex path that doesn\'t exist return false', () => {
             const focuser = getSuccessFocuser();
             // prettier-ignore
             const tr = TabRegistry.fromMap(new Map([
@@ -1206,7 +1206,7 @@ describe('TabRegistry', () => {
             expect(Array.from(tr.keys())).toEqual([1, 2, 3]);
         });
 
-        test("moving a key that doesn't exist throws", () => {
+        test('moving a key that doesn\'t exist throws', () => {
             const tr = new TabRegistry();
             expect(() => tr.moveNext(1)).toThrowErrorMatchingSnapshot();
         });
@@ -1229,7 +1229,7 @@ describe('TabRegistry', () => {
             expect(Array.from(tr.keys())).toEqual([1, 2, 3]);
         });
 
-        test("moving a key that doesn't exist throws", () => {
+        test('moving a key that doesn\'t exist throws', () => {
             const tr = new TabRegistry();
             expect(() => tr.movePrev(1)).toThrowErrorMatchingSnapshot();
         });

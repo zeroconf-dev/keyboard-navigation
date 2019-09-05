@@ -391,6 +391,7 @@ export const Focuser = React.forwardRef((props: Props, ref: React.Ref<FocuserRef
             onBlur={onBlur}
             onChange={emptyChangeHandler}
             onKeyDown={onKeyDown}
+            placeholder=""
             ref={inputRef}
             style={styles}
             tabIndex={-1}
