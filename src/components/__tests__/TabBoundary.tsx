@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, render, act as testAct, RenderResult } from '@testing-library/react';
-import React from 'react';
+import { act as testAct, cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
+import * as React from 'react';
 import { act as domAct } from 'react-dom/test-utils';
 import { Focuser as FocuserHooks } from '../../hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';

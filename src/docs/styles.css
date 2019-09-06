@@ -1,0 +1,74 @@
+html {
+    --dangerColor: red;
+    --darkColor: rgba(5, 5, 5, 1);
+    --primaryColor: rgba(27, 154, 170, 1);
+    --lightAccentColor: rgba(221, 219, 203, 1);
+    --darkAccentColor: rgba(245, 241, 227, 1);
+    --whiteColor: rgba(232, 232, 232, 1);
+
+    --backgroundColor: var(--darkAccentColor);
+    --borderColor: rgba(232, 223, 192, 1); /* darkAccent.lighten(10) */
+    --borderHighligtColor: rgba(187, 183, 151, 1); /* lightAcecnt.darken(20) */
+    --borderActiveColor: rgba(31, 187, 197, 1); /* primaryColor.lighten(20) */
+}
+
+.field-container {
+    position: relative;
+    width: 300px;
+}
+
+.field-container .editor {
+    background: var(--backgroundColor);
+    border: 1px solid var(--borderColor);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.field-container .focuser:focus + .field .editor,
+.field-container .editor.active {
+    outline: 0;
+}
+.field-container .focuser:focus + .field .editor {
+    border: 1px solid var(--borderHighligtColor);
+}
+.field-container .editor.active {
+    border: 1px solid var(--borderActiveColor);
+}
+.field-container .has-error .editor,
+.field-container .has-error .editor.active {
+    border: 1px solid var(--dangerColor);
+}
+.field-container .error-message {
+    color: var(--dangerColor);
+}
+
+.field-container input {
+    background: inherit;
+    border: 0;
+    font-weight: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    height: 100%;
+    outline: 0;
+    width: 100%;
+}
+
+.field-container label {
+    cursor: pointer;
+}
+
+.flex-container {
+    display: flex;
+}
+
+.flex-container > * {
+    flex: 1 0 0px;
+    margin: 5px;
+}
+
+.focus-renderer {
+    border: 1px solid transparent;
+}
+.focuser:focus + .focus-renderer {
+    border: 1px solid var(--borderHighligtColor);
+}

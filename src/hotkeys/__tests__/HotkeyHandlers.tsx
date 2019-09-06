@@ -1,5 +1,5 @@
-import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import * as React from 'react';
 import { expectInstanceOf } from '../../components/__tests__/__helpers__/assert';
 import { Input } from '../../components/Tabbable';
 import { createHandler, HotKeysObject } from '../createHandler';

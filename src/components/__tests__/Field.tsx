@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render } from '@testing-library/react';
-import React from 'react';
+import * as React from 'react';
 import { Field as FieldHooks } from '../../hooks/components/Field';
 import { Field as FieldClassic, Props } from '../Field';
 import { Focuser } from '../Focuser';
@@ -233,7 +233,7 @@ import { onSubmitStopEditing, renderFieldEditMode, rerenderFieldEditMode } from 
         describe('Click outside', () => {
             afterEach(cleanup);
 
-            test("click on field doesn't propagate out", () => {
+            test('click on field doesn\'t propagate out', () => {
                 const onClick = jest.fn();
                 const onSubmit = onSubmitStopEditing();
                 const renderEditor = (isEditing: boolean) => {
@@ -424,7 +424,7 @@ import { onSubmitStopEditing, renderFieldEditMode, rerenderFieldEditMode } from 
                 expect(onSubmit).toHaveBeenCalledWith(expect.anything(), 'blur');
             });
 
-            test("Submit is *not* called when bluring if submitOnBlur isn't enabled", () => {
+            test('Submit is *not* called when bluring if submitOnBlur isn\'t enabled', () => {
                 const onSubmit = onSubmitStopEditing();
                 const renderEditor = (isEditing: boolean) => {
                     return (

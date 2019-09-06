@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { createNavigationHandler, NavigationMap } from '../FieldNavigation';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '../util';
@@ -74,15 +74,6 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
         };
     }
 
-    public UNSAFE_componentWillReceiveProps(nextProps: Props<TComp>) {
-        if (this.props.navigationMap !== nextProps.navigationMap) {
-            /* istanbul ignore next */
-            this.setState(_ => ({
-                navigationHandler: createNavigationHandler(nextProps.navigationMap, this.tabRegistryRef),
-            }));
-        }
-    }
-
     private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'tabRegistry') => {
         /* istanbul ignore next */
         switch (propKey) {
@@ -100,6 +91,15 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
                 return true;
         }
     };
+
+    public UNSAFE_componentWillReceiveProps(nextProps: Props<TComp>) {
+        if (this.props.navigationMap !== nextProps.navigationMap) {
+            /* istanbul ignore next */
+            this.setState(_ => ({
+                navigationHandler: createNavigationHandler(nextProps.navigationMap, this.tabRegistryRef),
+            }));
+        }
+    }
 
     public render() {
         const props = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(this.props, this.filterPropKeys);

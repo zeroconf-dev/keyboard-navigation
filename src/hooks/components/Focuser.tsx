@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { FocuserOptions } from '../../TabRegistry';
 import { useFocusable } from '../useFocusable';
 import { useTabRegistry } from '../useTabRegistry';

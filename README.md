@@ -1,32 +1,32 @@
 # TabNavigation.ts
 
-[![npm version](https://badge.fury.io/js/%40secoya%2Ftab-navigation.ts.svg)](https://badge.fury.io/js/%40secoya%2Ftab-navigation.ts)
-[![Build Status](https://travis-ci.org/thetrompf/tab-navigation.ts.svg?branch=master)](https://travis-ci.org/thetrompf/tab-navigation.ts)
-[![Coverage Status](https://coveralls.io/repos/github/thetrompf/tab-navigation.ts/badge.svg?branch=master)](https://coveralls.io/github/thetrompf/tab-navigation.ts?branch=master)
+[![npm version](https://badge.fury.io/js/%40zeroconf%2Fkeyboard-navigation.svg)](https://badge.fury.io/js/%40zeroconf%2Fkeyboard-navigation)
+[![Build Status](https://travis-ci.org/zeroconf/keyboard-navigation.svg?branch=master)](https://travis-ci.org/zeroconf/keyboard-navigation)
+[![Coverage Status](https://coveralls.io/repos/github/zeroconf/keyboard-navigation/badge.svg?branch=master)](https://coveralls.io/github/zeroconf/keyboard-navigation?branch=master)
 
 This library ships with an implementation that works with react, but it is not limited to react. Maybe later the react
 part will be moved to separate library.
 
-[Read the docs](https://thetrompf.github.io/tab-navigation.ts)
+[Read the docs](https://zeroconf.dev/keyboard-navigation)
 
 ## Getting started
 
-First add the tab-navigation.ts to your project
+First add the keyboard-navigation to your project
 
 ```shell
-npm install @secoya/tab-navigation.ts
+npm install @zeroconf/keyboard-navigation
 ```
 
 or
 
 ```shell
-yarn add @secoya/tab-navigation.ts
+yarn add @zeroconf/keyboard-navigation
 ```
 
 ```html
 <html>
 <head>
-    <script type="application/javascript" src="//github.com/thetrompf/tab-navigation.ts/blob/latest/dist/umd.js">
+    <script type="application/javascript" src="//unpkg.com/@zeroconf/keyboard-navigation/blob/latest/dist/umd.js">
 </head>
 <body>
 

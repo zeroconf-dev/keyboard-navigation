@@ -4,7 +4,7 @@
         "target": "es2015",
         "module": "es2015",
         "outDir": "./package/build",
-        "sourceRoot": "./",
         "sourceMap": true
-    }
+    },
+    "exclude": ["**/__tests__/*", ".docz", "coverage", "docs", "examples", "node_modules", "package"]
 }

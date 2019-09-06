@@ -1,6 +1,6 @@
 /* istanbul ignore file */
-import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import * as React from 'react';
 import { Props } from '../../../hooks/components/Field';
 import { expectInstanceOf } from './assert';
 

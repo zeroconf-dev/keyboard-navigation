@@ -1,5 +1,6 @@
 import { act as testAct, cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
-import React from 'react';
+import * as React from 'react';
+import { act as domAct } from 'react-dom/test-utils';
 import { Focuser as FocuserHooks, ModifierKeys } from '../../hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';
 import { TabRegistry } from '../../TabRegistry';
@@ -8,7 +9,6 @@ import { Focuser as FocuserClassic } from '../Focuser';
 import { TabBoundary as TabBoundaryClassic } from '../TabBoundary';
 import { expectInstanceOf } from './__helpers__/assert';
 import { allNavigationEvents, shiftTab, tab } from './__helpers__/event';
-import { act as domAct } from 'react-dom/test-utils';
 
 const noModifiers: ModifierKeys = {
     altKey: false,

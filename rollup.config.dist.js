@@ -13,28 +13,27 @@ export default {
     external: ['react', 'react-dom', 'prop-types'],
     output: [
         {
-            file: 'package/dist/tab-navigation.amd.js',
+            file: 'package/dist/keyboard-navigation.amd.js',
             format: 'amd',
             globals: {
                 react: 'React',
                 'react-dom': 'ReactDOM',
                 'prop-types': 'PropTypes',
             },
-            name: 'tab-navigation',
+            name: 'keyboard-navigation',
         },
         {
-            file: 'package/dist/tab-navigation.umd.js',
+            file: 'package/dist/keyboard-navigation.umd.js',
             format: 'umd',
             globals: {
                 react: 'React',
                 'react-dom': 'ReactDOM',
                 'prop-types': 'PropTypes',
             },
-            name: 'tab-navigation',
+            name: 'keyboard-navigation',
         },
     ],
     plugins: [
-        'external-helpers',
         commonjs({
             namedExports: {
                 'hotkeys/parser': ['parse'],

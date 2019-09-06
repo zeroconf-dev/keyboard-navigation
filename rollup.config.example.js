@@ -28,7 +28,6 @@ export default {
         name: 'example',
     },
     plugins: [
-        'external-helpers',
         replace({
             'process.env.NODE_ENV': JSON.stringify('production'),
         }),

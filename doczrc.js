@@ -1,7 +1,7 @@
 import { css } from 'docz-plugin-css';
 
 export default {
-    base: '/tab-navigation.ts',
+    base: '/keyboard-navigation',
     dest: './docs',
     htmlContext: {
         head: {
@@ -27,6 +27,6 @@ export default {
         },
         showPlaygroundEditor: true,
     },
-    title: 'TabNavigation.ts - Docs',
+    title: 'Keyboard Navigation - Docs - Zeroconf OSS',
     typescript: true,
 };

@@ -4,12 +4,12 @@ menu: Component
 route: /focuser
 ---
 
-import '../docs/styles.less';
-import { Playground, PropsTable } from 'docz';
+# Focuser
+
+import '../docs/styles.css';
+import { Playground, Props } from 'docz';
 import { Focuser } from './Focuser';
 import { useCallback, useMemo, useRef } from 'react';
-
-# Focuser
 
 Every higher level component regarding keyboard navigation in this library
 is build upon or partially implements features from the [`Fucuser`](/focuser) component.
@@ -27,8 +27,7 @@ to make the user believe the `div` is in focus.
 
 ## Basic usage
 
-<Playground>
-    {() => {
+    <!-- {() => {
         const ref = useRef();
         const focus = useCallback(
             () => ref.current != null && ref.current.focus(),
@@ -46,10 +45,12 @@ to make the user believe the `div` is in focus.
                 <button onClick={focus}>Focus the renderer!</button>
             </div>
         );
-    }}
+    }} -->
 
+<Playground>
+    <div />
 </Playground>
 
 ## Props
 
-<PropsTable of={Focuser} />
+<Props of={Focuser} />

@@ -11,11 +11,10 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
-        "esModuleInterop": true,
         "rootDir": "./src",
         "lib": ["dom", "es2015"],
         "typeRoots": ["./node_modules/@types"]
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": [".docz/**/*", "docs/**/*", "**/__tests__/*", "lib", "lib2015", "libnext", "node_modules", "package"]
+    "exclude": [".docz", "coverage", "docs", "examples", "node_modules", "package"]
 }

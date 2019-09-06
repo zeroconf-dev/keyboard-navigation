@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { FocuserOptions, TabRegistry } from '../TabRegistry';
 import { spreadControlProps } from '../util';
 import { ArrowKeyHandler, ControlProps, Focuser, NavigationKeyHandler } from './Focuser';
@@ -131,12 +131,6 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
 
     public componentDidMount() {
         document.addEventListener('click', this.clickOutside, false);
-    }
-
-    public UNSAFE_componentWillReceiveProps(nextProps: PropsTabRegistry) {
-        if (!this.props.disabled && nextProps.disabled) {
-            this.stopEditing(true);
-        }
     }
 
     public componentWillUnmount() {
@@ -287,6 +281,12 @@ class FieldWithTabRegistry extends React.Component<PropsTabRegistry, State> {
             this.props.onEditStop();
         }
     };
+
+    public UNSAFE_componentWillReceiveProps(nextProps: PropsTabRegistry) {
+        if (!this.props.disabled && nextProps.disabled) {
+            this.stopEditing(true);
+        }
+    }
 
     public render() {
         return (

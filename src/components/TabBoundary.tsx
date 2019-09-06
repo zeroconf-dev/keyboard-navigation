@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '../util';
 import { NavigationContext } from './NavigationContext';

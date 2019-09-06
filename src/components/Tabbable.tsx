@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { TabRegistry } from '../TabRegistry';
 import { NavigationContext } from './NavigationContext';
 
@@ -49,16 +49,6 @@ export function Tabbable<TComp extends Component>(
             }
         }
 
-        public UNSAFE_componentWillReceiveProps(nextProps: ResultPropsWithTabRegistry) {
-            if (
-                this.props.name !== nextProps.name &&
-                this.props.tabRegistry != null &&
-                this.props.tabRegistry.has(this.props.name)
-            ) {
-                this.props.tabRegistry.delete(this.props.name);
-            }
-        }
-
         public componentDidUpdate(prevProps: ResultPropsWithTabRegistry) {
             if (this.props.name !== prevProps.name && this.props.tabRegistry != null) {
                 this.props.tabRegistry.add(this.props.name, this.focus);
@@ -88,6 +78,16 @@ export function Tabbable<TComp extends Component>(
         private setComponentRef = (ref: TComp): void => {
             this.refComponent = ref;
         };
+
+        public UNSAFE_componentWillReceiveProps(nextProps: ResultPropsWithTabRegistry) {
+            if (
+                this.props.name !== nextProps.name &&
+                this.props.tabRegistry != null &&
+                this.props.tabRegistry.has(this.props.name)
+            ) {
+                this.props.tabRegistry.delete(this.props.name);
+            }
+        }
 
         public render() {
             const { tabRegistry, ...props } = this.props;

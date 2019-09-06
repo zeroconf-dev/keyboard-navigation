@@ -4,16 +4,16 @@ menu: Component
 route: /field
 ---
 
-import '../docs/styles.less';
-import { Playground, PropsTable } from 'docz';
+# Field
+
+import '../docs/styles.css';
+import { Playground, Props } from 'docz';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { Field } from './Field';
 import { Focuser } from './Focuser';
 import { NavigationContext } from './NavigationContext';
 import { TabRegistry } from '../TabRegistry';
 import { createNavigationHandler } from '../FieldNavigation';
-
-# Field
 
 This component helps creating field-by-field editing components,
 so components that have life-cycles that looks something like this:
@@ -29,8 +29,7 @@ navigate to next field or focusable component, without having an editable field.
 
 ## Basic usage
 
-<Playground>
-    {() => {
+    <!-- {() => {
         const onSubmit = stopEditing => stopEditing();
         const renderEditor = isEditing => {
             return isEditing ? (
@@ -43,13 +42,15 @@ navigate to next field or focusable component, without having an editable field.
             );
         };
         return <Field label="Field" onSubmit={onSubmit} renderEditor={renderEditor} />;
-    }}
+    }} -->
+
+<Playground>
+    <div />
 </Playground>
 
 ## Tab navigation between fields
 
-<Playground>
-    {() => {
+    <!-- {() => {
         const [tabRegistry, setTabRegistry] = useState(() => new TabRegistry);
         const registryFetcher = useCallback(() => tabRegistry, []);
         const onArrowKeys = useMemo(() => createNavigationHandler([
@@ -70,14 +71,15 @@ navigate to next field or focusable component, without having an editable field.
                 </div>
             </NavigationContext.Provider>
         );
-    }}
+    }} -->
 
+<Playground>
+    <div />
 </Playground>
 
 ## Setting up custom field
 
-<Playground>
-    {() => {
+    <!-- {() => {
         const [state, setState] = useReducer((oldState, newState) => ({
             ...oldState,
             ...newState,
@@ -117,10 +119,12 @@ navigate to next field or focusable component, without having an editable field.
                 submitOnBlur={true}
             />
         );
-    }}
+    }} -->
 
+<Playground>
+    <div />
 </Playground>
 
 ## Props
 
-<PropsTable of={Field} />
+<Props of={Field} />

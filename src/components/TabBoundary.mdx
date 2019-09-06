@@ -4,10 +4,6 @@ menu: Component
 route: /tab-boundary
 ---
 
-import { Playground, PropsTable } from 'docz';
-import { TabBoundary } from './TabBoundary';
-import { Input } from './Tabbable';
-
 # Tab boundary
 
 A super awesome description of what a tab boundary is, and what problems it solves
@@ -15,12 +11,18 @@ regarding keyboard navigation in complex editors, and/or field structures.
 
 ## Basic usage
 
+import { Playground, Props } from 'docz';
+import { TabBoundary } from './TabBoundary';
+import { Input } from './Tabbable';
+
 <Playground>
     <TabBoundary>
-        <Input autoComplete="off" name="username" placeholder="Username" /><br />
+        <Input autoComplete="off" name="username" placeholder="Username" />
+        <br />
         <Input autoComplete="off" name="password" placeholder="Password" type="password" />
     </TabBoundary>
 </Playground>
 
 ## Props
 
+<Props of={TabBoundary} />

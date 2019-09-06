@@ -4,5 +4,5 @@
         "noEmit": true,
         "downlevelIteration": true
     },
-    "exclude": ["coverage", "dist", "docs", "examples", "package", "node_modules"]
+    "exclude": [".docz", "coverage", "docs", "examples", "node_modules", "package"]
 }
