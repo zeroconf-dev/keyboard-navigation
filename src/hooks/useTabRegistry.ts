@@ -1,4 +1,4 @@
+import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 import * as React from 'react';
-import { NavigationContext } from '../components/NavigationContext';
 
 export const useTabRegistry = () => React.useContext(NavigationContext);

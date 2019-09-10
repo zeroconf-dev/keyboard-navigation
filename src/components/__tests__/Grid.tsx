@@ -1,14 +1,14 @@
 import { cleanup, render } from '@testing-library/react';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
+import { arrowDown, arrowLeft, arrowRight, arrowUp, shiftTab, tab } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
+import { Focuser as FocuserClassic, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { Grid as GridClassic } from '@zeroconf/keyboard-navigation/components/Grid';
+import { Section as SectionClassic } from '@zeroconf/keyboard-navigation/components/Section';
+import { NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
+import { Grid as GridHooks } from '@zeroconf/keyboard-navigation/hooks/components/Grid';
+import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/components/Section';
 import * as React from 'react';
-import { NavigationMap } from '../../FieldNavigation';
-import { Focuser as FocuserHooks } from '../../hooks/components/Focuser';
-import { Grid as GridHooks } from '../../hooks/components/Grid';
-import { Section as SectionHooks } from '../../hooks/components/Section';
-import { Focuser as FocuserClassic, NavigationKeyHandler } from '../Focuser';
-import { Grid as GridClassic } from '../Grid';
-import { Section as SectionClassic } from '../Section';
-import { expectInstanceOf } from './__helpers__/assert';
-import { arrowDown, arrowLeft, arrowRight, arrowUp, shiftTab, tab } from './__helpers__/event';
 
 [
     {

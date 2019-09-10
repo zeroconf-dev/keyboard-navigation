@@ -1,5 +1,5 @@
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import * as React from 'react';
-import { TabRegistry } from '../TabRegistry';
 
 interface NewTabRegistryProps {
     cycle?: boolean;

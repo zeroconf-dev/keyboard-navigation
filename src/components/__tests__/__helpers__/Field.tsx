@@ -1,8 +1,8 @@
 /* istanbul ignore file */
 import { fireEvent, render } from '@testing-library/react';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
+import { Props } from '@zeroconf/keyboard-navigation/hooks/components/Field';
 import * as React from 'react';
-import { Props } from '../../../hooks/components/Field';
-import { expectInstanceOf } from './assert';
 
 export const onSubmitStopEditing = () => jest.fn((stopEditing: () => void) => stopEditing());
 

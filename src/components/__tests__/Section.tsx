@@ -1,14 +1,14 @@
 import { cleanup, fireEvent, render } from '@testing-library/react';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
+import { enter } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
+import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { Section as SectionClassic } from '@zeroconf/keyboard-navigation/components/Section';
+import { TabBoundary as TabBoundaryClassic } from '@zeroconf/keyboard-navigation/components/TabBoundary';
+import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
+import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/components/Section';
+import { TabBoundary as TabBoundaryHooks } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import * as React from 'react';
-import { Focuser as FocuserHooks } from '../../hooks/components/Focuser';
-import { Section as SectionHooks } from '../../hooks/components/Section';
-import { TabBoundary as TabBoundaryHooks } from '../../hooks/components/TabBoundary';
-import { TabRegistry } from '../../TabRegistry';
-import { Focuser as FocuserClassic } from '../Focuser';
-import { Section as SectionClassic } from '../Section';
-import { TabBoundary as TabBoundaryClassic } from '../TabBoundary';
-import { expectInstanceOf } from './__helpers__/assert';
-import { enter } from './__helpers__/event';
 
 [
     {

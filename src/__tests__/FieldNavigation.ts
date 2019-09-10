@@ -1,6 +1,6 @@
-import { ModifierKeys, NavigationKeyHandler } from '../components/Focuser';
-import { createNavigationHandler, NavigationMap } from '../FieldNavigation';
-import { TabRegistry } from '../TabRegistry';
+import { ModifierKeys, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { createNavigationHandler, NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 
 function getFailureFocuser() {
     return jest.fn(() => false);

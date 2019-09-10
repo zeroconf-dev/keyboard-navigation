@@ -1,12 +1,19 @@
+import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
+import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
+import { useNewTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useNewTabRegistry';
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
+import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
-import { NavigationContext } from '../../components/NavigationContext';
-import { TabRegistry } from '../../TabRegistry';
-import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '../../util';
-import { useFocusable } from '../useFocusable';
-import { useNewTabRegistry } from '../useNewTabRegistry';
 
-function hasNameProperty<T>(obj: T): obj is T & { name: string } {
-    return obj != null && typeof (obj as any).name === 'string';
+function getTargetFocusKey(obj: any): string | null {
+    /* istanbul ignore next */
+    return typeof obj === 'object' && obj != null
+        ? typeof obj.name === 'string'
+            ? obj.name
+            : typeof obj.dataset === 'object'
+                ? obj.dataset.focusKey || null
+                : null
+        : null;
 }
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
@@ -102,14 +109,15 @@ export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(props: Pr
 
     const onKeyDown = React.useCallback(
         (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
-            if (e.key === 'Tab' && hasNameProperty(e.target)) {
+            const targetFocusKey = getTargetFocusKey(e.target);
+            if (e.key === 'Tab' && targetFocusKey != null) {
                 e.preventDefault();
                 e.stopPropagation();
 
                 if (e.shiftKey) {
-                    tabRegistry.focusPrev(e.target.name);
+                    tabRegistry.focusPrev(targetFocusKey);
                 } else {
-                    tabRegistry.focusNext(e.target.name);
+                    tabRegistry.focusNext(targetFocusKey);
                 }
             } else if (e.key === 'Escape' && props.focusParentOnEscape) {
                 e.preventDefault();

@@ -1,7 +1,7 @@
+import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
+import { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
+import { FocuserOptions } from '@zeroconf/keyboard-navigation/TabRegistry';
 import * as React from 'react';
-import { FocuserOptions } from '../../TabRegistry';
-import { useFocusable } from '../useFocusable';
-import { useTabRegistry } from '../useTabRegistry';
 
 // tslint:disable:react-unused-props-and-state
 

@@ -1,5 +1,5 @@
-import { ModifierKeys, NavigationKey, NavigationKeyHandler } from './components/Focuser';
-import { FocuserOptions, TabRegistry } from './TabRegistry';
+import { ModifierKeys, NavigationKey, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { FocuserOptions, TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 
 type Maybe<T> = T | null;
 

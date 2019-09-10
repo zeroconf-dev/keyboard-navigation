@@ -1,4 +1,4 @@
-import { parse, HotKey } from './parser';
+import { parse, HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 
 export interface HotKeysObject {
     [hotkey: string]: () => void;

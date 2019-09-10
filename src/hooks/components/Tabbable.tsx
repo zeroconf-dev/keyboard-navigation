@@ -1,5 +1,5 @@
+import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
 import * as React from 'react';
-import { useFocusable } from '../useFocusable';
 
 export interface TabbableProps {
     name: string;
@@ -18,11 +18,13 @@ export const Button = React.forwardRef((props: ButtonProps, ref: React.Ref<HTMLB
         return true;
     }, [props.name, disabled]);
 
-    if (typeof ref === 'function') {
-        ref(buttonRef.current);
-    } else if (typeof ref === 'object' && ref != null) {
-        (ref as React.MutableRefObject<HTMLButtonElement | null>).current = buttonRef.current;
-    }
+    React.useEffect(() => {
+        if (typeof ref === 'function') {
+            ref(buttonRef.current);
+        } else if (typeof ref === 'object' && ref != null) {
+            (ref as React.MutableRefObject<HTMLButtonElement | null>).current = buttonRef.current;
+        }
+    }, [buttonRef.current]);
 
     useFocusable(props.name, focus);
 

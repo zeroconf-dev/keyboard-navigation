@@ -1,15 +1,15 @@
-import * as React from 'react';
-import { TabRegistry } from '../../TabRegistry';
+import { ControlProps, Focuser, FocuserRef, ModifierKeys, NavigationKey, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
+import { TabBoundary } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
+import { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import {
     assertNeverNonThrow,
     filterPropKeys,
     isNativeFocusable,
     spreadControlProps,
     UnpackedHTMLAttributes,
-} from '../../util';
-import { useTabRegistry } from '../useTabRegistry';
-import { ControlProps, Focuser, FocuserRef, ModifierKeys, NavigationKey, NavigationKeyHandler } from './Focuser';
-import { TabBoundary } from './TabBoundary';
+} from '@zeroconf/keyboard-navigation/util';
+import * as React from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends ControlProps {
     /**

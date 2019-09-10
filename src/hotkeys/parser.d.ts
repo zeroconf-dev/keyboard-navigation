@@ -8,4 +8,18 @@ interface HotKey {
     shift?: boolean;
     strict?: boolean;
 }
+
+declare class lexer {
+    parseError(text: string, hash: string): void;
+}
+
+export class Parser {
+    public readonly Parser: new () => Parser;
+    public readonly lexer: lexer;
+    public parse(hotkey: string): HotKey;
+    public parseError(text: string, hash: string): void;
+}
+
+export const parser: Parser;
+
 export function parse(hotkey: string): HotKey;

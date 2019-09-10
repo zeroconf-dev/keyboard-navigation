@@ -1,6 +1,6 @@
+import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import * as React from 'react';
-import { TabRegistry } from '../TabRegistry';
-import { NavigationContext } from './NavigationContext';
 
 function hasFocusFn(obj: any): obj is { focus: (...args: any[]) => boolean | void } {
     if (obj != null && typeof obj.focus === 'function') {

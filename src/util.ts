@@ -1,4 +1,4 @@
-import { ControlProps } from './components/Focuser';
+import { ControlProps } from '@zeroconf/keyboard-navigation/components/Focuser';
 
 /**
  * Helper for type-wise asserting that passing an object of type never

@@ -1,6 +1,6 @@
+import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
+import { FocuserOptions, TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import * as React from 'react';
-import { FocuserOptions, TabRegistry } from '../TabRegistry';
-import { NavigationContext } from './NavigationContext';
 
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
 export type NavigationKey =

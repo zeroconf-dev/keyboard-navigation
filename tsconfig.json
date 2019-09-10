@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "baseUrl": ".",
+        "target": "es2015",
         "module": "commonjs",
         "jsx": "react",
         "importHelpers": true,
@@ -13,7 +14,11 @@
         "moduleResolution": "node",
         "rootDir": "./src",
         "lib": ["dom", "es2015"],
-        "typeRoots": ["./node_modules/@types"]
+        "typeRoots": ["./node_modules/@types"],
+        "paths": {
+            "@zeroconf/keyboard-navigation/*": ["src/*"],
+            "@zeroconf/keyboard-navigation": ["src/index"]
+        }
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
     "exclude": [".docz", "coverage", "docs", "examples", "node_modules", "package"]

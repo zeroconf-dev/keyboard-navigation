@@ -1,11 +1,11 @@
 import { cleanup, fireEvent, render } from '@testing-library/react';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
+import { onSubmitStopEditing, renderFieldEditMode, rerenderFieldEditMode } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/Field';
+import { Field as FieldClassic, Props } from '@zeroconf/keyboard-navigation/components/Field';
+import { Focuser } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
+import { Field as FieldHooks } from '@zeroconf/keyboard-navigation/hooks/components/Field';
 import * as React from 'react';
-import { Field as FieldHooks } from '../../hooks/components/Field';
-import { Field as FieldClassic, Props } from '../Field';
-import { Focuser } from '../Focuser';
-import { TabBoundary } from '../TabBoundary';
-import { expectInstanceOf } from './__helpers__/assert';
-import { onSubmitStopEditing, renderFieldEditMode, rerenderFieldEditMode } from './__helpers__/Field';
 
 [
     {

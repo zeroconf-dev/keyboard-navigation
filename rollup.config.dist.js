@@ -16,33 +16,34 @@ export default {
             file: 'package/dist/keyboard-navigation.amd.js',
             format: 'amd',
             globals: {
-                react: 'React',
-                'react-dom': 'ReactDOM',
                 'prop-types': 'PropTypes',
+                'react': 'React',
+                'react-dom': 'ReactDOM',
             },
-            name: 'keyboard-navigation',
+            name: '@zeroconf/keyboard-navigation',
         },
         {
             file: 'package/dist/keyboard-navigation.umd.js',
             format: 'umd',
             globals: {
-                react: 'React',
-                'react-dom': 'ReactDOM',
                 'prop-types': 'PropTypes',
+                'react': 'React',
+                'react-dom': 'ReactDOM',
             },
-            name: 'keyboard-navigation',
+            name: '@zeroconf/keyboard-navigation',
         },
     ],
     plugins: [
+        resolve(),
         commonjs({
+            include: 'src/hotkeys/parser.js',
             namedExports: {
-                'hotkeys/parser': ['parse'],
+                '@zeroconf/keyboard-navigation/hotkeys/parser': ['parse', 'parser', 'Parser'],
             },
         }),
         replace({
             'process.env.NODE_ENV': JSON.stringify('production'),
         }),
-        resolve(),
         ts(
             Object.assign({}, tsconfig.compilerOptions, {
                 isolatedModules: true,

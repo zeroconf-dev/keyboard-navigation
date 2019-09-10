@@ -1,8 +1,8 @@
+import { ArrowKeyHandler, ControlProps, Focuser, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
+import { FocuserOptions, TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
+import { spreadControlProps } from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
-import { FocuserOptions, TabRegistry } from '../TabRegistry';
-import { spreadControlProps } from '../util';
-import { ArrowKeyHandler, ControlProps, Focuser, NavigationKeyHandler } from './Focuser';
-import { NavigationContext } from './NavigationContext';
 
 export type SubmitHandler = (
     stopEditing: (preventFocus?: boolean) => void,
