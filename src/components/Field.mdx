@@ -6,14 +6,13 @@ route: /field
 
 # Field
 
-import '../docs/styles.css';
 import { Playground, Props } from 'docz';
 import { useCallback, useMemo, useReducer, useState } from 'react';
-import { Field } from './Field';
-import { Focuser } from './Focuser';
-import { NavigationContext } from './NavigationContext';
-import { TabRegistry } from '../TabRegistry';
-import { createNavigationHandler } from '../FieldNavigation';
+import { Field } from '@zeroconf/keyboard-navigation/components/Field';
+import { Focuser } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
+import { createNavigationHandler } from '@zeroconf/keyboard-navigation/FieldNavigation';
 
 This component helps creating field-by-field editing components,
 so components that have life-cycles that looks something like this:
@@ -29,49 +28,47 @@ navigate to next field or focusable component, without having an editable field.
 
 ## Basic usage
 
-    <!-- {() => {
-        const onSubmit = stopEditing => stopEditing();
-        const renderEditor = isEditing => {
-            return isEditing ? (
-                <div className="editor active">
-                    Edit
-                    <Focuser autoFocus={true} focusKey="field-focuser" />
-                </div>
-            ) : (
-                <div className="editor">Read</div>
-            );
-        };
-        return <Field label="Field" onSubmit={onSubmit} renderEditor={renderEditor} />;
-    }} -->
+<!-- {() => {
+    const onSubmit = stopEditing => stopEditing();
+    const renderEditor = isEditing => {
+        return isEditing ? (
+            <div className="editor active">
+                Edit
+                <Focuser autoFocus={true} focusKey="field-focuser" />
+            </div>
+        ) : (
+            <div className="editor">Read</div>
+        );
+    };
+    return <Field label="Field" onSubmit={onSubmit} renderEditor={renderEditor} />;
+}} -->
 
-<Playground>
-    <div />
-</Playground>
+<Playground></Playground>
 
 ## Tab navigation between fields
 
-    <!-- {() => {
-        const [tabRegistry, setTabRegistry] = useState(() => new TabRegistry);
-        const registryFetcher = useCallback(() => tabRegistry, []);
-        const onArrowKeys = useMemo(() => createNavigationHandler([
-            ['Field1','Field2'],
-            ['Field3','Field4'],
-        ], registryFetcher), []);
-        const onSubmit = stopEditing => stopEditing();
-        const renderEditor = () => <div className="editor">Value</div>;
-        return (
-            <NavigationContext.Provider value={tabRegistry}>
-                <div className="flex-container">
-                    <Field label="Field1" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
-                    <Field label="Field2" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
-                </div>
-                <div className="flex-container">
-                    <Field label="Field3" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
-                    <Field label="Field4" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
-                </div>
-            </NavigationContext.Provider>
-        );
-    }} -->
+<!-- {() => {
+    const [tabRegistry, setTabRegistry] = useState(() => new TabRegistry);
+    const registryFetcher = useCallback(() => tabRegistry, []);
+    const onArrowKeys = useMemo(() => createNavigationHandler([
+        ['Field1','Field2'],
+        ['Field3','Field4'],
+    ], registryFetcher), []);
+    const onSubmit = stopEditing => stopEditing();
+    const renderEditor = () => <div className="editor">Value</div>;
+    return (
+        <NavigationContext.Provider value={tabRegistry}>
+            <div className="flex-container">
+                <Field label="Field1" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
+                <Field label="Field2" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
+            </div>
+            <div className="flex-container">
+                <Field label="Field3" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
+                <Field label="Field4" onArrowKeys={onArrowKeys} onSubmit={onSubmit} renderEditor={renderEditor} />
+            </div>
+        </NavigationContext.Provider>
+    );
+}} -->
 
 <Playground>
     <div />
@@ -79,47 +76,47 @@ navigate to next field or focusable component, without having an editable field.
 
 ## Setting up custom field
 
-    <!-- {() => {
-        const [state, setState] = useReducer((oldState, newState) => ({
-            ...oldState,
-            ...newState,
-        }), {
-            editorValue: '',
-            errorMessage: null,
-            value: 'user@domain.tld',
-        });
-        const onEditStart = useCallback(() => setState({editorValue: state.value}), [state.value]);
-        const onEditStop = useCallback(() => setState({errorMessage: null}), []);
-        const onChange = useCallback(e => setState({editorValue: e.target.value}), []);
-        const onSubmit = useCallback((stopEditing, submittedOn) => {
-            if (!/^.+@.+\\..+$/.test(state.editorValue)) {
-                setState({errorMessage: 'Invalid email address'});
-                return;
-            }
-            setState({value: state.editorValue});
-            stopEditing();
-        }, [state.editorValue]);
-        const renderEditor = useCallback((isEditing) => {
-            const editor = isEditing ? (
-                <input autoFocus={true} onChange={onChange} spellCheck={false} type="email" value={state.editorValue} />
-            ) : (
-                <div className="value">{state.value}</div>
-            );
-            return <div className={'editor' + (isEditing ? ' active' : '')}>{editor}</div>;
-        }, [state.value, state.editorValue]);
-
-        return (
-            <Field
-                errorMessage={state.errorMessage}
-                label="E-mail"
-                onSubmit={onSubmit}
-                onEditStart={onEditStart}
-                onEditStop={onEditStop}
-                renderEditor={renderEditor}
-                submitOnBlur={true}
-            />
+<!-- {() => {
+    const [state, setState] = useReducer((oldState, newState) => ({
+        ...oldState,
+        ...newState,
+    }), {
+        editorValue: '',
+        errorMessage: null,
+        value: 'user@domain.tld',
+    });
+    const onEditStart = useCallback(() => setState({editorValue: state.value}), [state.value]);
+    const onEditStop = useCallback(() => setState({errorMessage: null}), []);
+    const onChange = useCallback(e => setState({editorValue: e.target.value}), []);
+    const onSubmit = useCallback((stopEditing, submittedOn) => {
+        if (!/^.+@.+\\..+$/.test(state.editorValue)) {
+            setState({errorMessage: 'Invalid email address'});
+            return;
+        }
+        setState({value: state.editorValue});
+        stopEditing();
+    }, [state.editorValue]);
+    const renderEditor = useCallback((isEditing) => {
+        const editor = isEditing ? (
+            <input autoFocus={true} onChange={onChange} spellCheck={false} type="email" value={state.editorValue} />
+        ) : (
+            <div className="value">{state.value}</div>
         );
-    }} -->
+        return <div className={'editor' + (isEditing ? ' active' : '')}>{editor}</div>;
+    }, [state.value, state.editorValue]);
+
+    return (
+        <Field
+            errorMessage={state.errorMessage}
+            label="E-mail"
+            onSubmit={onSubmit}
+            onEditStart={onEditStart}
+            onEditStop={onEditStop}
+            renderEditor={renderEditor}
+            submitOnBlur={true}
+        />
+    );
+}} -->
 
 <Playground>
     <div />

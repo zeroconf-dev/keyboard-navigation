@@ -7,14 +7,16 @@ route: /grid
 # Grid
 
 import { Playground, Props } from 'docz';
-import { Grid } from './Grid';
+import { Grid } from '@zeroconf/keyboard-navigation/components/Grid';
 
 A super nice description of what the Grid component does, and problems it solves.
 
 ## Basic usage
 
 <Playground>
-    <Grid />
+    <Grid focusKey="grid" navigationMap={[[]]}>
+        {() => <div />}
+    </Grid>
 </Playground>
 
 ## Props

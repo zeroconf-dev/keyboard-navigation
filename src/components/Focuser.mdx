@@ -6,9 +6,8 @@ route: /focuser
 
 # Focuser
 
-import '../docs/styles.css';
 import { Playground, Props } from 'docz';
-import { Focuser } from './Focuser';
+import { Focuser } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { useCallback, useMemo, useRef } from 'react';
 
 Every higher level component regarding keyboard navigation in this library
@@ -27,25 +26,25 @@ to make the user believe the `div` is in focus.
 
 ## Basic usage
 
-    <!-- {() => {
-        const ref = useRef();
-        const focus = useCallback(
-            () => ref.current != null && ref.current.focus(),
-            [ref],
-        );
-        const style = useMemo(() => ({
-            height: 30,
-            width: 200,
-        }));
+<!-- {() => {
+    const ref = useRef();
+    const focus = useCallback(
+        () => ref.current != null && ref.current.focus(),
+        [ref],
+    );
+    const style = useMemo(() => ({
+        height: 30,
+        width: 200,
+    }));
 
-        return (
-            <div>
-                <Focuser ref={ref} />
-                <div className="focus-renderer" style={style} />
-                <button onClick={focus}>Focus the renderer!</button>
-            </div>
-        );
-    }} -->
+    return (
+        <div>
+            <Focuser ref={ref} />
+            <div className="focus-renderer" style={style} />
+            <button onClick={focus}>Focus the renderer!</button>
+        </div>
+    );
+}} -->
 
 <Playground>
     <div />
