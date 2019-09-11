@@ -82,44 +82,44 @@ jobs:
           npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
           npm publish
 
-  workflows:
-    version: 2.1
-    build-master:
-      jobs:
-      - install:
-          filters:
-            tags:
-              only: master
-      - test:
-          requires:
-          - install
-      - lint:
-          requires:
-          - install
-      - build:
-          requires:
-          - install
-    build-tagged:
-      jobs:
-      - install:
-          filters:
-            tags:
-              only: /v\d+(\.\d+){2}/
-      - test:
-          requires:
-          - install
-      - lint:
-          requires:
-          - install
-      - build:
-          requires:
-          - install
-      - npm:
-          type: approval
-          requires:
-          - build
-          - lint
-          - test
-      - publish:
-          requires:
-            - npm
+workflows:
+  version: 2.1
+  build-master:
+    jobs:
+    - install:
+        filters:
+          tags:
+            only: master
+    - test:
+        requires:
+        - install
+    - lint:
+        requires:
+        - install
+    - build:
+        requires:
+        - install
+  build-tagged:
+    jobs:
+    - install:
+        filters:
+          tags:
+            only: /v\d+(\.\d+){2}/
+    - test:
+        requires:
+        - install
+    - lint:
+        requires:
+        - install
+    - build:
+        requires:
+        - install
+    - npm:
+        type: approval
+        requires:
+        - build
+        - lint
+        - test
+    - publish:
+        requires:
+          - npm
