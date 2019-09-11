@@ -1,8 +1,7 @@
-# TabNavigation.ts
+# Keyboard navigation
 
-[![npm version](https://badge.fury.io/js/%40zeroconf%2Fkeyboard-navigation.svg)](https://badge.fury.io/js/%40zeroconf%2Fkeyboard-navigation)
-[![Build Status](https://travis-ci.org/zeroconf/keyboard-navigation.svg?branch=master)](https://travis-ci.org/zeroconf/keyboard-navigation)
-[![Coverage Status](https://coveralls.io/repos/github/zeroconf/keyboard-navigation/badge.svg?branch=master)](https://coveralls.io/github/zeroconf/keyboard-navigation?branch=master)
+![npm version](https://img.shields.io/npm/v/@zeroconf/keyboard-navigation)
+[![CircleCI](https://circleci.com/gh/zeroconf-dev/keyboard-navigation/tree/master.svg?style=svg)](https://circleci.com/gh/zeroconf-dev/keyboard-navigation/tree/master)
 
 This library ships with an implementation that works with react, but it is not limited to react. Maybe later the react
 part will be moved to separate library.
