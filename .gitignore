@@ -1,11 +1,11 @@
 /.docz/
 /.rpt2_cache/
-/coverage/
 /dist/
 /lib/
 /lib2015/
 /libnext/
 /node_modules/
+/reports/
 /types/
 
 *.log

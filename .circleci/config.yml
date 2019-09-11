@@ -1,29 +1,125 @@
 ---
 version: 2
 jobs:
-  build:
+  install:
     docker:
     - image: circleci/node:lts
     steps:
     - checkout
     - restore_cache:
-      name: Restore yarn package cache
-      keys:
-      - yarn-packages-{{ checksum "yarn.lock" }}
+        name: Restore node_modules from cache
+        keys:
+        - zeroconf-dev/keyboard-navigation/yarn.lock-{{ checksum "yarn.lock" }}
     - run:
-      name: Install dependencies
-      command: yarn install --frozen-lockfile
+        name: Install dependencies
+        command: yarn install --frozen-lockfile
     - save_cache:
-      name: "Save yarn package cache"
-      key: yarn-packages-{{ checksum "yarn.lock" }}
-      paths:
-      - ~/.cache/yarn
+        name: Save yarn package cache to cache
+        key: zeroconf-dev/keyboard-navigation/yarn.lock-{{ checksum "yarn.lock" }}
+        paths:
+        - ~/project/node_modules
+        - ~/.cache/yarn
+    - persist_to_workspace:
+        root: ~/project
+        paths:
+        - node_modules
+
+  lint:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - checkout
+    - attach_workspace:
+        at: ~/project
+    - run:
+        name: Run linter
+        command: yarn lint
 
   test:
     docker:
     - image: circleci/node:lts
     steps:
     - checkout
+    - attach_workspace:
+        at: ~/project
     - run:
-      name: Test
-      command: yarn test
+        name: Run tests
+        command: yarn test --ci --coverage --reporters=jest-junit --runInBand
+        environment:
+          JEST_JUNIT_OUTPUT_NAME: js-test-results.xml
+          JEST_JUNIT_OUTPUT_DIR: reports/junit
+    - persist_to_workspace:
+        root: ~/project
+        paths:
+        - reports/coverage/*
+        - reports/junit/*
+
+  build:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - checkout
+    - attach_workspace:
+        at: ~/project
+    - run:
+        name: Build project
+        command: ./scripts/build.sh
+    - persist_to_workspace:
+        root: ~/project
+        paths:
+        - package/*
+
+  publish:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - checkout
+    - attach_workspace:
+        at: ~/project
+    - run:
+        name: Publish to NPM
+        command: |
+          npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          npm publish
+
+  workflows:
+    version: 2.1
+    build-master:
+      jobs:
+      - install:
+          filters:
+            tags:
+              only: master
+      - test:
+          requires:
+          - install
+      - lint:
+          requires:
+          - install
+      - build:
+          requires:
+          - install
+    build-tagged:
+      jobs:
+      - install:
+          filters:
+            tags:
+              only: /v\d+(\.\d+){2}/
+      - test:
+          requires:
+          - install
+      - lint:
+          requires:
+          - install
+      - build:
+          requires:
+          - install
+      - npm:
+          type: approval
+          requires:
+          - build
+          - lint
+          - test
+      - publish:
+          requires:
+            - npm

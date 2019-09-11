@@ -1,9 +1,9 @@
 /.docz/
 /.rpt2_cache/
 /.vscode/
-/coverage/
 /docs/
 /examples/
+/reports/
 /src/**/__tests__/
 /src/**/__mocks__/
 
