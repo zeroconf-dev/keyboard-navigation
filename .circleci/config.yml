@@ -82,23 +82,6 @@ jobs:
 
 workflows:
   version: 2
-  build-master:
-    jobs:
-    - install:
-        filters:
-          branches:
-            only: master
-          tags:
-            ignore: /.*/
-    - test:
-        requires:
-        - install
-    - lint:
-        requires:
-        - install
-    - build:
-        requires:
-        - install
   build-tagged:
     jobs:
     - install:
@@ -125,3 +108,20 @@ workflows:
     - publish:
         requires:
         - publish_npm
+  build-master:
+    jobs:
+    - install:
+        filters:
+          branches:
+            only: master
+          tags:
+            ignore: /.*/
+    - test:
+        requires:
+        - install
+    - lint:
+        requires:
+        - install
+    - build:
+        requires:
+        - install
