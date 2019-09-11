@@ -119,8 +119,8 @@ workflows:
     - publish_npm:
         requires:
         - build
-        - lint
         - test
+        - lint
         type: approval
     - publish:
         requires:
