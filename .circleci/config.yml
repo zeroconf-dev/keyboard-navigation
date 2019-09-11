@@ -78,6 +78,7 @@ jobs:
         command: |
           npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
           npm publish
+        working_directory: ~/project/package
 
 workflows:
   version: 2
@@ -105,7 +106,7 @@ workflows:
           branches:
             ignore: /.*/
           tags:
-            only: /v\d+(\.\d+){2}/
+            only: /^v\d+(\.\d+){2}(\-(alpha|beta|rc)\.\d+)?$/
     - test:
         requires:
         - install
