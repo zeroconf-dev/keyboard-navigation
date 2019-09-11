@@ -50,8 +50,8 @@ import { Props as TabBoundaryProps } from '@zeroconf/keyboard-navigation/compone
 export { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
 export type TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements = 'div'> = TabBoundaryProps<TComp>;
 
-import { NavigationMap } from './FieldNavigation';
-export { createNavigationHandler } from './FieldNavigation';
+import { NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+export { createNavigationHandler } from '@zeroconf/keyboard-navigation/FieldNavigation';
 export type NavigationMap = NavigationMap;
 
 export { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
@@ -83,5 +83,4 @@ export type HotKeyHandler = HotKeyHandler;
 export type HotKeyWithHandler = HotKeyWithHandler;
 
 import { HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
-export { parser as hotkeyParser } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 export type HotKey = HotKey;

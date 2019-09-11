@@ -17,7 +17,7 @@ export default {
             format: 'amd',
             globals: {
                 'prop-types': 'PropTypes',
-                'react': 'React',
+                react: 'React',
                 'react-dom': 'ReactDOM',
             },
             name: '@zeroconf/keyboard-navigation',
@@ -27,7 +27,7 @@ export default {
             format: 'umd',
             globals: {
                 'prop-types': 'PropTypes',
-                'react': 'React',
+                react: 'React',
                 'react-dom': 'ReactDOM',
             },
             name: '@zeroconf/keyboard-navigation',
@@ -36,9 +36,9 @@ export default {
     plugins: [
         resolve(),
         commonjs({
-            include: 'src/hotkeys/parser.js',
+            include: 'src/hotkeys/_parser.js',
             namedExports: {
-                '@zeroconf/keyboard-navigation/hotkeys/parser': ['parse', 'parser', 'Parser'],
+                'src/hotkeys/_parser': ['parse', 'parser', 'Parser'],
             },
         }),
         replace({
