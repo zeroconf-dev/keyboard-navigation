@@ -116,12 +116,12 @@ workflows:
     - build:
         requires:
         - install
-    - npm:
-        type: approval
+    - publish_npm:
         requires:
         - build
         - lint
         - test
+        type: approval
     - publish:
         requires:
-          - npm
+        - publish_npm
