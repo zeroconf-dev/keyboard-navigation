@@ -88,8 +88,7 @@ workflows:
     jobs:
     - install:
         filters:
-          tags:
-            only: master
+          only: master
     - test:
         requires:
         - install
