@@ -1,6 +1,10 @@
 import { act as testAct, cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
-import { allNavigationEvents, shiftTab, tab } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
+import {
+    allNavigationEvents,
+    shiftTab,
+    tab,
+} from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
 import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { TabBoundary as TabBoundaryClassic } from '@zeroconf/keyboard-navigation/components/TabBoundary';
 import { Focuser as FocuserHooks, ModifierKeys } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';

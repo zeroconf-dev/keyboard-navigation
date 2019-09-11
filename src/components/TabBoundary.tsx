@@ -9,8 +9,8 @@ function getTargetFocusKey(obj: any): string | null {
         ? typeof obj.name === 'string'
             ? obj.name
             : typeof obj.dataset === 'object'
-                ? obj.dataset.focusKey || null
-                : null
+            ? obj.dataset.focusKey || null
+            : null
         : null;
 }
 

@@ -1,4 +1,10 @@
-import { ControlProps, Focuser, ModifierKeys, NavigationKey, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
+import {
+    ControlProps,
+    Focuser,
+    ModifierKeys,
+    NavigationKey,
+    NavigationKeyHandler,
+} from '@zeroconf/keyboard-navigation/components/Focuser';
 import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';

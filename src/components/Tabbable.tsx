@@ -101,7 +101,7 @@ export function Tabbable<TComp extends Component>(
 
         private renderChildren = (tabRegistry: TabRegistry | null) => {
             const { forwardedRef, ...props } = this.props;
-            return <TabbableComponent {...props as ResultProps} ref={forwardedRef} tabRegistry={tabRegistry} />;
+            return <TabbableComponent {...(props as ResultProps)} ref={forwardedRef} tabRegistry={tabRegistry} />;
         };
 
         public render() {

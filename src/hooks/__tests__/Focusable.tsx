@@ -3,7 +3,7 @@ import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tes
 import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
 import { FocuserFn, TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
-import {  useLayoutEffect  } from 'react';
+import { useLayoutEffect } from 'react';
 import * as React from 'react';
 
 beforeAll(() => {
@@ -25,10 +25,7 @@ const useTabRegistry = () => {
     return context;
 };
 
-const useFocusable = (
-    focusKey: string,
-    focus: TabRegistry | FocuserFn,
-) => {
+const useFocusable = (focusKey: string, focus: TabRegistry | FocuserFn) => {
     const tabRegistry = useTabRegistry();
     useLayoutEffect(() => {
         if (focusKey != null) {
@@ -70,10 +67,11 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, { hasError: bool
 
     public render() {
         if (this.state.hasError) {
-            return <div>
-                <div role="alert">There was a problem.</div>{' '}
-                <button onClick={this.tryAgain}>Try again?</button>
-            </div>;
+            return (
+                <div>
+                    <div role="alert">There was a problem.</div> <button onClick={this.tryAgain}>Try again?</button>
+                </div>
+            );
         } else {
             return this.props.children;
         }
@@ -113,7 +111,7 @@ describe('Focusable', () => {
         });
     });
 
-    test('Rending a focusable inside context doesn\'t throw', () => {
+    test(`Rending a focusable inside context doesn't throw`, () => {
         const Focusable = () => {
             const props = useFocusable('test', () => true);
             return <div {...props} />;
@@ -148,7 +146,7 @@ describe('Focusable', () => {
             expect(focus).not.toHaveBeenCalled();
             tabRegistry.focus('test');
             expect(focus).toHaveBeenCalledTimes(1);
-            expect(focus).toHaveBeenCalledWith({ focusOrigin: 'none'});
+            expect(focus).toHaveBeenCalledWith({ focusOrigin: 'none' });
         });
     });
 

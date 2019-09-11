@@ -1,6 +1,10 @@
 import { cleanup, fireEvent, render } from '@testing-library/react';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
-import { onSubmitStopEditing, renderFieldEditMode, rerenderFieldEditMode } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/Field';
+import {
+    onSubmitStopEditing,
+    renderFieldEditMode,
+    rerenderFieldEditMode,
+} from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/Field';
 import { Field as FieldClassic, Props } from '@zeroconf/keyboard-navigation/components/Field';
 import { Focuser } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
@@ -233,7 +237,7 @@ import * as React from 'react';
         describe('Click outside', () => {
             afterEach(cleanup);
 
-            test('click on field doesn\'t propagate out', () => {
+            test(`click on field doesn't propagate out`, () => {
                 const onClick = jest.fn();
                 const onSubmit = onSubmitStopEditing();
                 const renderEditor = (isEditing: boolean) => {
@@ -424,7 +428,7 @@ import * as React from 'react';
                 expect(onSubmit).toHaveBeenCalledWith(expect.anything(), 'blur');
             });
 
-            test('Submit is *not* called when bluring if submitOnBlur isn\'t enabled', () => {
+            test(`Submit is *not* called when bluring if submitOnBlur isn't enabled`, () => {
                 const onSubmit = onSubmitStopEditing();
                 const renderEditor = (isEditing: boolean) => {
                     return (

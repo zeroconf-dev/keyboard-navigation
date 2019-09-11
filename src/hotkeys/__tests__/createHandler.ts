@@ -1,5 +1,5 @@
+import { HotKey } from '@zeroconf/keyboard-navigation/hotkeys/_parser';
 import { isKeyMatching, isModifierMatching, HotKeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import { HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 
 type Modifier = 'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey';
 const modifiers: Modifier[] = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'];

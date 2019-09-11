@@ -74,7 +74,7 @@ describe('Handlers', () => {
         } as HotKeysObject;
 
         const counters = Object.keys(handlers).reduce((c, k) => ({ ...c, [k]: 0 }), {}) as {
-            [K in keyof typeof handlers]: number
+            [K in keyof typeof handlers]: number;
         };
 
         const onKeyDown = createHandler(handlers);

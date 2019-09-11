@@ -57,7 +57,7 @@ import { act as domAct } from 'react-dom/test-utils';
             expect(errorRef.current).toMatchSnapshot();
         });
 
-            // tslint:disable-next-line:max-line-length
+        // tslint:disable-next-line:max-line-length
         test(`tab beyond last focuser in boundary, focuses sibling boundary's "next" focuser in the tab direction`, () => {
             const onFocus1 = jest.fn();
             const onFocus2 = jest.fn();

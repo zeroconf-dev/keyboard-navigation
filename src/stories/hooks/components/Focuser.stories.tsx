@@ -67,12 +67,7 @@ const Card: React.FC<CardProps> = props => {
     const ref = useRef<HTMLDivElement>(null);
     const p = useFocusable(props.focusKey, ref, props.autoFocus);
     return (
-        <div
-            {...p}
-            onFocus={props.onFocus}
-            ref={ref}
-            style={styles.card}
-        >
+        <div {...p} onFocus={props.onFocus} ref={ref} style={styles.card}>
             {props.children}
         </div>
     );
@@ -88,7 +83,11 @@ const FocusOnClick: React.FC<FocusOnClickProps> = props => {
             tabRegistry.focus(props.focusKey);
         }
     }, [tabRegistry, props.focusKey]);
-    return <Button name="focus-card" onClick={onClick} style={styles.button}>{props.children}</Button>;
+    return (
+        <Button name="focus-card" onClick={onClick} style={styles.button}>
+            {props.children}
+        </Button>
+    );
 };
 
 storiesOf('hooks/useFocusable', module)
@@ -99,24 +98,31 @@ storiesOf('hooks/useFocusable', module)
     ))
     .add('with onFocus action', () => (
         <TabBoundary>
-            <Card focusKey="dummy" onFocus={action('focus')}>Focus action</Card>
+            <Card focusKey="dummy" onFocus={action('focus')}>
+                Focus action
+            </Card>
         </TabBoundary>
     ))
     .add('with autoFocus', () => (
         <TabBoundary>
-            <Card autoFocus={true} focusKey="auto-focus">This is card automatically gains focus on mount.</Card>
+            <Card autoFocus={true} focusKey="auto-focus">
+                This is card automatically gains focus on mount.
+            </Card>
         </TabBoundary>
     ))
     .add('navigating between fields', () => (
         <TabBoundary>
-            <Card autoFocus={true} focusKey="field1">Press 'Tab' to focus next card.</Card>
+            <Card autoFocus={true} focusKey="field1">
+                Press 'Tab' to focus next card.
+            </Card>
             <Card focusKey="field2">Press 'Shift + Tab' to focus previous card.</Card>
         </TabBoundary>
     ))
     .add('programtically focus card', () => (
         <TabBoundary>
-            <Card focusKey="card" onFocus={action('focused')}>Click the button to focus card.</Card>
+            <Card focusKey="card" onFocus={action('focused')}>
+                Click the button to focus card.
+            </Card>
             <FocusOnClick focusKey="card">Focus card above</FocusOnClick>
         </TabBoundary>
-    ))
-    ;
+    ));

@@ -237,7 +237,7 @@ describe('TabRegistry', () => {
     });
 
     describe('.delete()', () => {
-        test("deleting a key that doesn't exist throws", () => {
+        test(`deleting a key that doesn't exist throws`, () => {
             const tr = new TabRegistry<number>();
             expect(() => tr.delete(1)).toThrowErrorMatchingSnapshot();
         });
