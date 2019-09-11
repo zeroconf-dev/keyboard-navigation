@@ -1,5 +1,5 @@
 ---
-version: 2
+version: 2.1
 jobs:
   install:
     docker:
@@ -83,7 +83,7 @@ jobs:
           npm publish
 
 workflows:
-  version: 2.1
+  version: 2
   build-master:
     jobs:
     - install:
