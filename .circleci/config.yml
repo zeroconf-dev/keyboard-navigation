@@ -88,7 +88,10 @@ workflows:
     jobs:
     - install:
         filters:
-          only: master
+          branches:
+            only: master
+          tags:
+            ignore: /.*/
     - test:
         requires:
         - install
@@ -102,6 +105,8 @@ workflows:
     jobs:
     - install:
         filters:
+          branches:
+            ignore: /.*/
           tags:
             only: /v\d+(\.\d+){2}/
     - test:
