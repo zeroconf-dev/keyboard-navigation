@@ -12,7 +12,7 @@ module.exports = {
     },
     modulePathIgnorePatterns: ['<rootDir>/build','<rootDir>/.docz','<rootDir>/package'],
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
-    preset: 'ts-jest',
+    preset: 'ts-jest/presets/js-with-ts',
     reporters: ['default', 'jest-junit'],
     testPathIgnorePatterns: ['/node_modules/', '/__helpers__/'],
 };
