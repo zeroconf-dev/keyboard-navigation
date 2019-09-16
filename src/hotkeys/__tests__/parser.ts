@@ -1,4 +1,4 @@
-import { parse, HotKey } from '@zeroconf/keyboard-navigation/hotkeys/_parser';
+import { parse, HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 
 test('parse with empty string throws', () => {
     expect(() => parse('')).toThrow();
