@@ -10,9 +10,18 @@ module.exports = {
         '@zeroconf/keyboard-navigation$': '<rootDir>/src/index',
         '@zeroconf/keyboard-navigation/(.*)': '<rootDir>/src/$1',
     },
-    modulePathIgnorePatterns: ['<rootDir>/build','<rootDir>/.docz','<rootDir>/package'],
+    modulePathIgnorePatterns: ['<rootDir>/build', '<rootDir>/.docz', '<rootDir>/package'],
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     preset: 'ts-jest/presets/js-with-ts',
-    reporters: ['default', 'jest-junit'],
+    reporters: [
+        'default',
+        [
+            'jest-junit',
+            {
+                outputDirectory: '<rootDir>/reports/junit',
+                outputName: 'js-test-results.xml',
+            },
+        ],
+    ],
     testPathIgnorePatterns: ['/node_modules/', '/__helpers__/'],
 };
