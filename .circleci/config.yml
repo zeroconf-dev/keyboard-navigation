@@ -91,21 +91,46 @@ workflows:
           tags:
             only: /^v\d+(\.\d+){2}(\-(alpha|beta|rc)\.\d+)?$/
     - test:
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v\d+(\.\d+){2}(\-(alpha|beta|rc)\.\d+)?$/
         requires:
         - install
     - lint:
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v\d+(\.\d+){2}(\-(alpha|beta|rc)\.\d+)?$/
         requires:
         - install
     - build:
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v\d+(\.\d+){2}(\-(alpha|beta|rc)\.\d+)?$/
         requires:
         - install
     - publish_npm:
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v\d+(\.\d+){2}(\-(alpha|beta|rc)\.\d+)?$/
         requires:
         - build
         - test
         - lint
         type: approval
     - publish:
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v\d+(\.\d+){2}(\-(alpha|beta|rc)\.\d+)?$/
         requires:
         - publish_npm
   build-master:
