@@ -36,9 +36,9 @@ export default {
     plugins: [
         resolve(),
         commonjs({
-            include: 'src/hotkeys/_parser.js',
+            include: 'src/hotkeys/parser.js',
             namedExports: {
-                'src/hotkeys/_parser': ['parse', 'parser', 'Parser'],
+                '@zeroconf/keyboard-navigation/hotkeys/parser': ['parse', 'parser', 'Parser'],
             },
         }),
         replace({

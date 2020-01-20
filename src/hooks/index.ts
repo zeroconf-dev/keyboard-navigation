@@ -1,91 +1,91 @@
 import {
-    EditorRenderer,
-    EditStartHandler,
-    Props as FieldProps,
-    SubmitHandler,
+    EditorRenderer as EditorRendererImport,
+    EditStartHandler as EditStartHandlerImport,
+    Props as FieldPropsImport,
+    SubmitHandler as SubmitHandlerImport,
 } from '@zeroconf/keyboard-navigation/hooks/components/Field';
 export { Field } from '@zeroconf/keyboard-navigation/hooks/components/Field';
-export type EditorRenderer = EditorRenderer;
-export type EditStartHandler = EditStartHandler;
-export type FieldProps = FieldProps;
-export type SubmitHandler = SubmitHandler;
+export type EditorRenderer = EditorRendererImport;
+export type EditStartHandler = EditStartHandlerImport;
+export type FieldProps = FieldPropsImport;
+export type SubmitHandler = SubmitHandlerImport;
 
 import {
-    ArrowKey,
-    ArrowKeyHandler,
-    BlurEventHandler,
-    ControlProps,
-    FocuserRef,
-    FocusEventHandler,
-    KeyboardEventHandler,
-    ModifierKeys,
-    NavigationKey,
-    NavigationKeyHandler,
-    Props as FocuserProps,
+    ArrowKey as ArrowKeyImport,
+    ArrowKeyHandler as ArrowKeyHandlerImport,
+    BlurEventHandler as BlurEventHandlerImport,
+    ControlProps as ControlPropsImport,
+    FocuserRef as FocuserRefImport,
+    FocusEventHandler as FocusEventHandlerImport,
+    KeyboardEventHandler as KeyboardEventHandlerImport,
+    ModifierKeys as ModifierKeysImport,
+    NavigationKey as NavigationKeyImport,
+    NavigationKeyHandler as NavigationKeyHandlerImport,
+    Props as FocuserPropsImport,
 } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 export { Focuser } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
-export type ArrowKey = ArrowKey;
-export type ArrowKeyHandler = ArrowKeyHandler;
-export type BlurEventHandler = BlurEventHandler;
-export type ControlProps = ControlProps;
-export type FocuserRef = FocuserRef;
-export type FocusEventHandler = FocusEventHandler;
-export type KeyboardEventHandler = KeyboardEventHandler;
-export type ModifierKeys = ModifierKeys;
-export type NavigationKey = NavigationKey;
-export type NavigationKeyHandler = NavigationKeyHandler;
-export type FocuserProps = FocuserProps;
+export type ArrowKey = ArrowKeyImport;
+export type ArrowKeyHandler = ArrowKeyHandlerImport;
+export type BlurEventHandler = BlurEventHandlerImport;
+export type ControlProps = ControlPropsImport;
+export type FocuserRef = FocuserRefImport;
+export type FocusEventHandler = FocusEventHandlerImport;
+export type KeyboardEventHandler = KeyboardEventHandlerImport;
+export type ModifierKeys = ModifierKeysImport;
+export type NavigationKey = NavigationKeyImport;
+export type NavigationKeyHandler = NavigationKeyHandlerImport;
+export type FocuserProps = FocuserPropsImport;
 
-import { Props as GridProps } from '@zeroconf/keyboard-navigation/hooks/components/Grid';
+import { Props as GridPropsImport } from '@zeroconf/keyboard-navigation/hooks/components/Grid';
 export { Grid } from '@zeroconf/keyboard-navigation/hooks/components/Grid';
-export type GridProps<TComp extends keyof JSX.IntrinsicElements> = GridProps<TComp>;
+export type GridProps<TComp extends keyof JSX.IntrinsicElements> = GridPropsImport<TComp>;
 
-import { Props as SectionProps } from '@zeroconf/keyboard-navigation/hooks/components/Section';
+import { Props as SectionPropsImport } from '@zeroconf/keyboard-navigation/hooks/components/Section';
 export { Section } from '@zeroconf/keyboard-navigation/hooks/components/Section';
-export type SectionProps<TComp extends keyof JSX.IntrinsicElements> = SectionProps<TComp>;
+export type SectionProps<TComp extends keyof JSX.IntrinsicElements> = SectionPropsImport<TComp>;
 
-import { TabbableProps } from '@zeroconf/keyboard-navigation/hooks/components/Tabbable';
+import { TabbableProps as TabbablePropsImport } from '@zeroconf/keyboard-navigation/hooks/components/Tabbable';
 export { Button, Input, Select, TextArea } from '@zeroconf/keyboard-navigation/hooks/components/Tabbable';
-export type TabbableProps = TabbableProps;
+export type TabbableProps = TabbablePropsImport;
 
-import { Props as TabBoundaryProps } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
+import { Props as TabBoundaryPropsImport } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
 export { TabBoundary } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
-export type TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements> = TabBoundaryProps<TComp>;
+export type TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements> = TabBoundaryPropsImport<TComp>;
 
 export { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
 export { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
 
-import { NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { NavigationMap as NavigationMapImport } from '@zeroconf/keyboard-navigation/FieldNavigation';
 export { createNavigationHandler } from '@zeroconf/keyboard-navigation/FieldNavigation';
-export type NavigationMap = NavigationMap;
+export type NavigationMap = NavigationMapImport;
 
 export { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 
 import {
-    FocuserFn,
-    FocuserOptions,
-    FocuserType,
-    FocusOrigin,
-    TabRegistryOptions,
+    FocuserFn as FocuserFnImport,
+    FocuserOptions as FocuserOptionsImport,
+    FocuserType as FocuserTypeImport,
+    FocusOrigin as FocusOriginImport,
+    TabRegistryOptions as TabRegistryOptionsImport,
 } from '@zeroconf/keyboard-navigation/TabRegistry';
 export { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
-export type FocuserFn = FocuserFn;
-export type FocuserOptions = FocuserOptions;
-export type FocuserType = FocuserType;
-export type FocusOrigin = FocusOrigin;
-export type TabRegistryOptions = TabRegistryOptions;
+export type FocuserFn = FocuserFnImport;
+export type FocuserOptions = FocuserOptionsImport;
+export type FocuserType = FocuserTypeImport;
+export type FocusOrigin = FocusOriginImport;
+export type TabRegistryOptions = TabRegistryOptionsImport;
 
 import {
-    HotKeysObject,
-    HotKeyEvent,
-    HotKeyHandler,
-    HotKeyWithHandler,
+    HotKeysObject as HotKeysObjectImport,
+    HotKeyEvent as HotKeyEventImport,
+    HotKeyHandler as HotKeyHandlerImport,
+    HotKeyWithHandler as HotKeyWithHandlerImport,
 } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 export { createHandler as createHotkeyHandler } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-export type HotKeysObject = HotKeysObject;
-export type HotKeyEvent = HotKeyEvent;
-export type HotKeyHandler = HotKeyHandler;
-export type HotKeyWithHandler = HotKeyWithHandler;
+export type HotKeysObject = HotKeysObjectImport;
+export type HotKeyEvent = HotKeyEventImport;
+export type HotKeyHandler = HotKeyHandlerImport;
+export type HotKeyWithHandler = HotKeyWithHandlerImport;
 
-import { HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
-export type HotKey = HotKey;
+import { HotKey as HotKeyImport } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+export type HotKey = HotKeyImport;
