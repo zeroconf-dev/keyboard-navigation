@@ -1,10 +1,10 @@
 import { act as testAct, cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
-import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
-import { escape, shiftTab, space, tab } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
 import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 import { Input } from '@zeroconf/keyboard-navigation/components/Tabbable';
 import { TabBoundary as TabBoundaryClassic } from '@zeroconf/keyboard-navigation/components/TabBoundary';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
+import { escape, shiftTab, space, tab } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
 import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';

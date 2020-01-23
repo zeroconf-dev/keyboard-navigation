@@ -1,4 +1,7 @@
 import { cleanup, render } from '@testing-library/react';
+import { Focuser as FocuserClassic, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { Grid as GridClassic } from '@zeroconf/keyboard-navigation/components/Grid';
+import { Section as SectionClassic } from '@zeroconf/keyboard-navigation/components/Section';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
 import {
     arrowDown,
@@ -8,9 +11,6 @@ import {
     shiftTab,
     tab,
 } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
-import { Focuser as FocuserClassic, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
-import { Grid as GridClassic } from '@zeroconf/keyboard-navigation/components/Grid';
-import { Section as SectionClassic } from '@zeroconf/keyboard-navigation/components/Section';
 import { NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { Grid as GridHooks } from '@zeroconf/keyboard-navigation/hooks/components/Grid';

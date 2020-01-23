@@ -42,14 +42,11 @@ export function filterPropKeys<
         .filter((propKey: keyof TProps) => {
             return filterFn(propKey as keyof U);
         })
-        .reduce(
-            (carry, propKey: keyof TProps) => {
-                const intrinsicProp = propKey as keyof UnpackedHTMLAttributes<TComp>;
-                carry[intrinsicProp] = props[intrinsicProp];
-                return carry;
-            },
-            {} as UnpackedHTMLAttributes<TComp>,
-        );
+        .reduce((carry, propKey: keyof TProps) => {
+            const intrinsicProp = propKey as keyof UnpackedHTMLAttributes<TComp>;
+            carry[intrinsicProp] = props[intrinsicProp];
+            return carry;
+        }, {} as UnpackedHTMLAttributes<TComp>);
 }
 
 /**
@@ -83,13 +80,10 @@ export function spreadControlProps<Props extends ControlProps>(props: Props): Co
                     return false;
             }
         })
-        .reduce(
-            (carry, item) => {
-                (carry as any)[item] = props[item];
-                return carry;
-            },
-            {} as ControlProps,
-        );
+        .reduce((carry, item) => {
+            (carry as any)[item] = props[item];
+            return carry;
+        }, {} as ControlProps);
 }
 
 export function isNativeFocusable(target: any): boolean {

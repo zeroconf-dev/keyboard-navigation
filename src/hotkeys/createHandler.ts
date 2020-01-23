@@ -61,15 +61,12 @@ export function createHandler(hotkeys: HotKeysObject | HotKeyWithHandler[]): Hot
         };
     } else {
         return createHandler(
-            Object.keys(hotkeys).reduce(
-                (carry, hotkey) => {
-                    const r = parse(hotkey) as HotKeyWithHandler;
-                    r.handler = hotkeys[hotkey];
-                    carry.push(r);
-                    return carry;
-                },
-                [] as HotKeyWithHandler[],
-            ),
+            Object.keys(hotkeys).reduce((carry, hotkey) => {
+                const r = parse(hotkey) as HotKeyWithHandler;
+                r.handler = hotkeys[hotkey];
+                carry.push(r);
+                return carry;
+            }, [] as HotKeyWithHandler[]),
         );
     }
 }

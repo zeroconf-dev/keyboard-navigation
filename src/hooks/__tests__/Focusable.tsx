@@ -1,7 +1,7 @@
 import { act, cleanup, render } from '@testing-library/react';
-import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
 import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
 import { FocuserFn, TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import { useLayoutEffect } from 'react';
 import * as React from 'react';

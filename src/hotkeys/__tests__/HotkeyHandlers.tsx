@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
-import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
 import { Input } from '@zeroconf/keyboard-navigation/components/Tabbable';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
 import { createHandler, HotKeysObject } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import * as React from 'react';
 
