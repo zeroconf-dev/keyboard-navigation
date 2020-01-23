@@ -53,6 +53,7 @@ export { TabBoundary } from '@zeroconf/keyboard-navigation/hooks/components/TabB
 export type TabBoundaryProps<TComp extends keyof JSX.IntrinsicElements> = TabBoundaryPropsImport<TComp>;
 
 export { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
+export { useNavigationMap } from '@zeroconf/keyboard-navigation/hooks/useNavigationMap';
 export { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
 
 import { NavigationMap as NavigationMapImport } from '@zeroconf/keyboard-navigation/FieldNavigation';
