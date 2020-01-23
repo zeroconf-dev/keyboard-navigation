@@ -1,5 +1,3 @@
-import { css } from 'docz-plugin-css';
-
 export default {
     base: '/keyboard-navigation',
     dest: './docs',
@@ -14,11 +12,7 @@ export default {
         },
     },
     indexHtml: './src/docs/index.html',
-    plugins: [
-        css({
-            preprocessor: 'less',
-        }),
-    ],
+    plugins: [],
     src: './src',
     themeConfig: {
         codemirrorTheme: 'dracula',
