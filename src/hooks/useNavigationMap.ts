@@ -11,7 +11,10 @@ export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(
     return {
         onKeyDown: useCallback(
             (e: React.KeyboardEvent<TElement>) => {
-                const focusKey = e.currentTarget.dataset.focuskey as string;
+                const focusKey = (e.target as HTMLElement).dataset.focuskey;
+                if (focusKey == null) {
+                    throw new Error('Could not find focuskey');
+                }
                 let shouldPrevent = false;
                 const modifierKeys: ModifierKeys = {
                     altKey: e.altKey,
