@@ -4,10 +4,11 @@ import { useCallback, useMemo } from 'react';
 export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(
     navigationMap: NavigationMap,
     tabRegistryRef: React.RefObject<TabRegistry>,
+    tabDirectionAxix?: 'x' | 'y',
 ): React.DetailedHTMLProps<React.HTMLAttributes<TElement>, TElement> => {
     const navigationHandler = useMemo(() => {
-        return createNavigationHandler(navigationMap, tabRegistryRef);
-    }, [navigationMap, tabRegistryRef]);
+        return createNavigationHandler(navigationMap, tabRegistryRef, tabDirectionAxix);
+    }, [navigationMap, tabRegistryRef, tabDirectionAxix]);
     return {
         onKeyDown: useCallback(
             (e: React.KeyboardEvent<TElement>) => {
