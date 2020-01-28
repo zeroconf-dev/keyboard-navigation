@@ -52,7 +52,7 @@ const useFocusable = (
     }, [tabRegistry, focusKey, autoFocus]);
 
     return {
-        'data-focus-key': focusKey,
+        'data-focuskey': focusKey,
         ref: ref,
         tabIndex: -1,
     } as React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;

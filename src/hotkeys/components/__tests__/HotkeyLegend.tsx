@@ -1,6 +1,6 @@
 import { cleanup, render } from '@testing-library/react';
-import { hotkeyToText } from '@zeroconf/keyboard-navigation/hotkeys/components/__tests__/__helpers__/hotkeyToText';
 import { HotkeyLegend } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyLegend';
+import { hotkeyToText } from '@zeroconf/keyboard-navigation/hotkeys/components/__tests__/__helpers__/hotkeyToText';
 import { HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import * as React from 'react';
 

@@ -7,7 +7,13 @@ describe('TabRegistry', () => {
     describe('TabRegistry.fromMap', () => {
         test('constructing linear structure', () => {
             const focuser: FocuserFn = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map<number, FocuserFn>([[1, focuser], [2, focuser], [3, focuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map<number, FocuserFn>([
+                    [1, focuser],
+                    [2, focuser],
+                    [3, focuser],
+                ]),
+            );
             expect(Array.from(tr.keysRecursive())).toEqual([1, 2, 3]);
         });
 
@@ -244,7 +250,12 @@ describe('TabRegistry', () => {
 
         test('deleting a key removes it from the registry', () => {
             const focuser = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser], [2, focuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser],
+                    [2, focuser],
+                ]),
+            );
             expect(tr.has(1)).toBe(true);
             tr.delete(1);
             expect(tr.has(1)).toBe(false);
@@ -254,7 +265,13 @@ describe('TabRegistry', () => {
             const focuser1 = getSuccessFocuser();
             const focuser2 = getSuccessFocuser();
             const focuser3 = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser1], [2, focuser2], [3, focuser3]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                    [3, focuser3],
+                ]),
+            );
 
             expect(focuser1).not.toHaveBeenCalled();
             tr.focusFirst();
@@ -271,7 +288,13 @@ describe('TabRegistry', () => {
             const focuser1 = getSuccessFocuser();
             const focuser2 = getSuccessFocuser();
             const focuser3 = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser1], [2, focuser2], [3, focuser3]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                    [3, focuser3],
+                ]),
+            );
 
             expect(focuser3).not.toHaveBeenCalled();
             tr.focusLast();
@@ -292,12 +315,24 @@ describe('TabRegistry', () => {
             const nonCycleFocuser1 = getSuccessFocuser();
             const nonCycleFocuser2 = getSuccessFocuser();
 
-            const cycleRegistry = TabRegistry.fromMap(new Map([[1, cycleFocuser1], [2, cycleFocuser2]]), {
-                cycle: true,
-            });
-            const nonCycleRegistry = TabRegistry.fromMap(new Map([[1, nonCycleFocuser1], [2, nonCycleFocuser2]]), {
-                cycle: true,
-            }).disableCycle();
+            const cycleRegistry = TabRegistry.fromMap(
+                new Map([
+                    [1, cycleFocuser1],
+                    [2, cycleFocuser2],
+                ]),
+                {
+                    cycle: true,
+                },
+            );
+            const nonCycleRegistry = TabRegistry.fromMap(
+                new Map([
+                    [1, nonCycleFocuser1],
+                    [2, nonCycleFocuser2],
+                ]),
+                {
+                    cycle: true,
+                },
+            ).disableCycle();
 
             expect(cycleRegistry.focusNext(2));
             expect(cycleFocuser1).toHaveBeenCalledTimes(1);
@@ -316,8 +351,18 @@ describe('TabRegistry', () => {
             const nonCycleFocuser1 = getSuccessFocuser();
             const nonCycleFocuser2 = getSuccessFocuser();
 
-            const cycleRegistry = TabRegistry.fromMap(new Map([[1, cycleFocuser1], [2, cycleFocuser2]])).enableCycle();
-            const nonCycleRegistry = TabRegistry.fromMap(new Map([[1, nonCycleFocuser1], [2, nonCycleFocuser2]]));
+            const cycleRegistry = TabRegistry.fromMap(
+                new Map([
+                    [1, cycleFocuser1],
+                    [2, cycleFocuser2],
+                ]),
+            ).enableCycle();
+            const nonCycleRegistry = TabRegistry.fromMap(
+                new Map([
+                    [1, nonCycleFocuser1],
+                    [2, nonCycleFocuser2],
+                ]),
+            );
 
             expect(cycleRegistry.focusNext(2));
             expect(cycleFocuser1).toHaveBeenCalledTimes(1);
@@ -338,7 +383,12 @@ describe('TabRegistry', () => {
         test('focusing a key that exists will execute the focuser and return the focusers return value', () => {
             const successFocuser = getSuccessFocuser();
             const notFocuser = getNotFocuser();
-            const tr = TabRegistry.fromMap(new Map([['focus', successFocuser], ['not-focus', notFocuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    ['focus', successFocuser],
+                    ['not-focus', notFocuser],
+                ]),
+            );
 
             expect(tr.focus('focus')).toBe(true);
             expect(tr.focus('not-focus')).toBe(false);
@@ -355,7 +405,12 @@ describe('TabRegistry', () => {
                 focusParentOnChildOrigin: true,
             });
 
-            TabRegistry.fromMap(new Map([['focuser', focuser], ['complex', tr as any]]));
+            TabRegistry.fromMap(
+                new Map([
+                    ['focuser', focuser],
+                    ['complex', tr as any],
+                ]),
+            );
             tr.focus(undefined, { focusOrigin: 'child' });
 
             expect(focuser).toHaveBeenCalled();
@@ -371,7 +426,12 @@ describe('TabRegistry', () => {
         test('focusing a key that exists returns what the focuser returns', () => {
             const successFocuser = getSuccessFocuser();
             const notFocuser = getNotFocuser();
-            const tr = TabRegistry.fromMap(new Map([['focus', successFocuser], ['not-focus', notFocuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    ['focus', successFocuser],
+                    ['not-focus', notFocuser],
+                ]),
+            );
 
             expect(tr.focusFirst()).toBe(true);
             expect(successFocuser).toHaveBeenCalledTimes(1);
@@ -383,7 +443,12 @@ describe('TabRegistry', () => {
         test('focusing a key that returns false, executes next focuser, stop on success and return true', () => {
             const successFocuser = getSuccessFocuser();
             const notFocuser = getNotFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, notFocuser], [2, successFocuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, notFocuser],
+                    [2, successFocuser],
+                ]),
+            );
             expect(tr.focusFirst()).toBe(true);
             expect(notFocuser).toHaveBeenCalledTimes(1);
             expect(successFocuser).toHaveBeenCalledTimes(1);
@@ -392,7 +457,12 @@ describe('TabRegistry', () => {
         test('a set with only *not* focuser, will run through the whole set and return false', () => {
             const notFocuser = getNotFocuser();
             const tr = TabRegistry.fromMap(
-                new Map([[1, notFocuser], [2, notFocuser], [3, notFocuser], [4, notFocuser]]),
+                new Map([
+                    [1, notFocuser],
+                    [2, notFocuser],
+                    [3, notFocuser],
+                    [4, notFocuser],
+                ]),
             );
 
             expect(tr.focusFirst()).toBe(false);
@@ -443,7 +513,12 @@ describe('TabRegistry', () => {
         test('focus a tab registry as leaf will focus the first focuser in the registry', () => {
             const focuser1 = getSuccessFocuser();
             const focuser2 = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser1], [2, focuser2]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                ]),
+            );
             const parentTr = TabRegistry.fromMap(new Map([[1, tr]]));
             expect(focuser1).not.toHaveBeenCalled();
             expect(parentTr.focusIn([1])).toBe(true);
@@ -454,10 +529,27 @@ describe('TabRegistry', () => {
         test('focus a deeply nested registry', () => {
             const focuser = getSuccessFocuser();
             const tr5 = TabRegistry.fromMap(new Map([[1, focuser]]));
-            const tr4 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr5]]));
-            const tr3 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr4]]));
-            const tr2 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, focuser], [2, tr3]]));
-            const tr1 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, tr2]]));
+            const tr4 = TabRegistry.fromMap(
+                new Map<number, FocuserType>([
+                    [1, focuser],
+                    [2, tr5],
+                ]),
+            );
+            const tr3 = TabRegistry.fromMap(
+                new Map<number, FocuserType>([
+                    [1, focuser],
+                    [2, tr4],
+                ]),
+            );
+            const tr2 = TabRegistry.fromMap(
+                new Map<number, FocuserType>([
+                    [1, focuser],
+                    [2, tr3],
+                ]),
+            );
+            const tr1 = TabRegistry.fromMap(
+                new Map<number, FocuserType>([[1, tr2]]),
+            );
 
             expect(tr1.focusFirstIn([2, 2, 2, 1])).toBe(true);
             expect(focuser).toHaveBeenCalledTimes(1);
@@ -490,7 +582,12 @@ describe('TabRegistry', () => {
         test('focus a tab registry as leaf will focus the first focuser in the registry', () => {
             const focuser1 = getSuccessFocuser();
             const focuser2 = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser1], [2, focuser2]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                ]),
+            );
             const parentTr = TabRegistry.fromMap(new Map([[1, tr]]));
             expect(focuser1).not.toHaveBeenCalled();
             expect(parentTr.focusIn([1])).toBe(true);
@@ -501,10 +598,30 @@ describe('TabRegistry', () => {
         test('focus a deeply nested registry', () => {
             const focuser = getSuccessFocuser();
             const tr5 = TabRegistry.fromMap(new Map([[1, focuser]]));
-            const tr4 = TabRegistry.fromMap(new Map<number, FocuserFn | TabRegistry>([[1, focuser], [2, tr5]]));
-            const tr3 = TabRegistry.fromMap(new Map<number, FocuserFn | TabRegistry>([[1, focuser], [2, tr4]]));
-            const tr2 = TabRegistry.fromMap(new Map<number, FocuserFn | TabRegistry>([[1, focuser], [2, tr3]]));
-            const tr1 = TabRegistry.fromMap(new Map<number, FocuserFn | TabRegistry>([[1, focuser], [2, tr2]]));
+            const tr4 = TabRegistry.fromMap(
+                new Map<number, FocuserFn | TabRegistry>([
+                    [1, focuser],
+                    [2, tr5],
+                ]),
+            );
+            const tr3 = TabRegistry.fromMap(
+                new Map<number, FocuserFn | TabRegistry>([
+                    [1, focuser],
+                    [2, tr4],
+                ]),
+            );
+            const tr2 = TabRegistry.fromMap(
+                new Map<number, FocuserFn | TabRegistry>([
+                    [1, focuser],
+                    [2, tr3],
+                ]),
+            );
+            const tr1 = TabRegistry.fromMap(
+                new Map<number, FocuserFn | TabRegistry>([
+                    [1, focuser],
+                    [2, tr2],
+                ]),
+            );
 
             expect(tr1.focusIn([2, 2, 2, 2, 1])).toBe(true);
             expect(focuser).toHaveBeenCalledTimes(1);
@@ -542,7 +659,14 @@ describe('TabRegistry', () => {
             const focuser3 = getNotFocuser();
             const focuser4 = getNotFocuser();
 
-            const tr = TabRegistry.fromMap(new Map([[1, focuser1], [2, focuser2], [3, focuser3], [4, focuser4]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                    [3, focuser3],
+                    [4, focuser4],
+                ]),
+            );
 
             expect(tr.focusNext(1)).toBe(false);
             expect(focuser1).not.toHaveBeenCalled();
@@ -558,7 +682,12 @@ describe('TabRegistry', () => {
             const focuser4 = getNotFocuser();
 
             const tr = TabRegistry.fromMap(
-                new Map([[1, focuser1], [2, focuser2], [3, focuser3], [4, focuser4]]),
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                    [3, focuser3],
+                    [4, focuser4],
+                ]),
             ).enableCycle();
 
             expect(tr.focusNext(1)).toBe(true);
@@ -570,9 +699,15 @@ describe('TabRegistry', () => {
 
         test('when cycling all disabled focusers, does not infinitely recurse, but just returns false', () => {
             const disabled = getNotFocuser();
-            const tr = TabRegistry.fromMap(new Map([['disabled1', disabled], ['disabled2', disabled]]), {
-                cycle: true,
-            });
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    ['disabled1', disabled],
+                    ['disabled2', disabled],
+                ]),
+                {
+                    cycle: true,
+                },
+            );
             expect(tr.focusNext('disabled2')).toBe(false);
         });
     });
@@ -722,7 +857,12 @@ describe('TabRegistry', () => {
         test('focusing a key that exists returns what the focuser returns', () => {
             const successFocuser = getSuccessFocuser();
             const notFocuser = getNotFocuser();
-            const tr = TabRegistry.fromMap(new Map([['not-focus', notFocuser], ['focus', successFocuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    ['not-focus', notFocuser],
+                    ['focus', successFocuser],
+                ]),
+            );
 
             expect(tr.focusLast()).toBe(true);
             expect(successFocuser).toHaveBeenCalledTimes(1);
@@ -734,7 +874,12 @@ describe('TabRegistry', () => {
         test('focusing a key that returns false, executes next focuser, stop on success and return true', () => {
             const successFocuser = getSuccessFocuser();
             const notFocuser = getNotFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, successFocuser], [2, notFocuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, successFocuser],
+                    [2, notFocuser],
+                ]),
+            );
             expect(tr.focusLast()).toBe(true);
             expect(notFocuser).toHaveBeenCalledTimes(1);
             expect(successFocuser).toHaveBeenCalledTimes(1);
@@ -743,7 +888,12 @@ describe('TabRegistry', () => {
         test('a set with only *not* focuser, will run through the whole set and return false', () => {
             const notFocuser = getNotFocuser();
             const tr = TabRegistry.fromMap(
-                new Map([[1, notFocuser], [2, notFocuser], [3, notFocuser], [4, notFocuser]]),
+                new Map([
+                    [1, notFocuser],
+                    [2, notFocuser],
+                    [3, notFocuser],
+                    [4, notFocuser],
+                ]),
             );
 
             expect(tr.focusLast()).toBe(false);
@@ -753,7 +903,12 @@ describe('TabRegistry', () => {
         test('a set with only *not* focuser will return even if cycle is enabled', () => {
             const notFocuser = getNotFocuser();
             const tr = TabRegistry.fromMap(
-                new Map([[1, notFocuser], [2, notFocuser], [3, notFocuser], [4, notFocuser]]),
+                new Map([
+                    [1, notFocuser],
+                    [2, notFocuser],
+                    [3, notFocuser],
+                    [4, notFocuser],
+                ]),
             ).enableCycle();
 
             expect(tr.focusLast()).toBe(false);
@@ -851,7 +1006,14 @@ describe('TabRegistry', () => {
             const focuser3 = getNotFocuser();
             const focuser4 = getSuccessFocuser();
 
-            const tr = TabRegistry.fromMap(new Map([[1, focuser1], [2, focuser2], [3, focuser3], [4, focuser4]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                    [3, focuser3],
+                    [4, focuser4],
+                ]),
+            );
 
             expect(tr.focusPrev(4)).toBe(false);
             expect(focuser1).toHaveBeenCalledTimes(1);
@@ -867,7 +1029,12 @@ describe('TabRegistry', () => {
             const focuser4 = getSuccessFocuser();
 
             const tr = TabRegistry.fromMap(
-                new Map([[1, focuser1], [2, focuser2], [3, focuser3], [4, focuser4]]),
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                    [3, focuser3],
+                    [4, focuser4],
+                ]),
             ).enableCycle();
 
             expect(tr.focusPrev(4)).toBe(true);
@@ -879,9 +1046,15 @@ describe('TabRegistry', () => {
 
         test('when cycling all disabled focusers, does not end in infinitely recurse, but just returns false', () => {
             const disabled = getNotFocuser();
-            const tr = TabRegistry.fromMap(new Map([['disabled1', disabled], ['disabled2', disabled]]), {
-                cycle: true,
-            });
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    ['disabled1', disabled],
+                    ['disabled2', disabled],
+                ]),
+                {
+                    cycle: true,
+                },
+            );
             expect(tr.focusPrev('disabled1')).toBe(false);
         });
     });
@@ -1045,7 +1218,12 @@ describe('TabRegistry', () => {
         test('getting a focuser next to a key that exists should return that focuser', () => {
             const focuser1 = getSuccessFocuser();
             const focuser2 = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser1], [2, focuser2]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                ]),
+            );
             expect(tr.getNext(1)).toBe(focuser2);
         });
 
@@ -1066,7 +1244,12 @@ describe('TabRegistry', () => {
         test('getting a focuser prev to a key that exists should return that focuser', () => {
             const focuser1 = getSuccessFocuser();
             const focuser2 = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser1], [2, focuser2]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser1],
+                    [2, focuser2],
+                ]),
+            );
             expect(tr.getPrev(2)).toBe(focuser1);
         });
 
@@ -1173,7 +1356,12 @@ describe('TabRegistry', () => {
 
         test('has next returns true if next of key exists', () => {
             const focuser = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser], [2, focuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser],
+                    [2, focuser],
+                ]),
+            );
             expect(tr.hasNext(1)).toBe(true);
         });
     });
@@ -1192,7 +1380,12 @@ describe('TabRegistry', () => {
 
         test('has prev returns true if next of key exists', () => {
             const focuser = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser], [2, focuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser],
+                    [2, focuser],
+                ]),
+            );
             expect(tr.hasPrev(2)).toBe(true);
         });
     });
@@ -1200,7 +1393,13 @@ describe('TabRegistry', () => {
     describe('.moveNext()', () => {
         test('moving the last key has no effect', () => {
             const focuser = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser], [2, focuser], [3, focuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser],
+                    [2, focuser],
+                    [3, focuser],
+                ]),
+            );
             expect(Array.from(tr.keys())).toEqual([1, 2, 3]);
             tr.moveNext(3);
             expect(Array.from(tr.keys())).toEqual([1, 2, 3]);
@@ -1213,7 +1412,13 @@ describe('TabRegistry', () => {
 
         test('moving a key actually moves the key in the registry', () => {
             const focuser = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser], [3, focuser], [2, focuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser],
+                    [3, focuser],
+                    [2, focuser],
+                ]),
+            );
             expect(Array.from(tr.keys())).toEqual([1, 3, 2]);
             tr.moveNext(3);
             expect(Array.from(tr.keys())).toEqual([1, 2, 3]);
@@ -1223,7 +1428,13 @@ describe('TabRegistry', () => {
     describe('.movePrev()', () => {
         test('moving the first key has no effect', () => {
             const focuser = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[1, focuser], [2, focuser], [3, focuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [1, focuser],
+                    [2, focuser],
+                    [3, focuser],
+                ]),
+            );
             expect(Array.from(tr.keys())).toEqual([1, 2, 3]);
             tr.movePrev(1);
             expect(Array.from(tr.keys())).toEqual([1, 2, 3]);
@@ -1236,7 +1447,13 @@ describe('TabRegistry', () => {
 
         test('moving a key actually moves the key in the registry', () => {
             const focuser = getSuccessFocuser();
-            const tr = TabRegistry.fromMap(new Map([[2, focuser], [1, focuser], [3, focuser]]));
+            const tr = TabRegistry.fromMap(
+                new Map([
+                    [2, focuser],
+                    [1, focuser],
+                    [3, focuser],
+                ]),
+            );
             expect(Array.from(tr.keys())).toEqual([2, 1, 3]);
             tr.movePrev(1);
             expect(Array.from(tr.keys())).toEqual([1, 2, 3]);

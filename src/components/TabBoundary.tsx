@@ -133,7 +133,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
         }
     }
 
-    private filterPropKeys = (propKey: (keyof ComponentProps<TComp>) | 'parentRegistry') => {
+    private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'parentRegistry') => {
         switch (propKey) {
             case 'as':
             case 'boundaryKey':

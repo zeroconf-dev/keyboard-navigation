@@ -2,7 +2,7 @@ import { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegist
 import { FocuserOptions, TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import * as React from 'react';
 
-export const useFocusable = (
+export const useFocusable = <TElement extends HTMLElement = HTMLElement>(
     focusKey: string | undefined,
     focus: TabRegistry | ((opts: FocuserOptions) => boolean),
 ) => {
@@ -19,6 +19,7 @@ export const useFocusable = (
     }, [tabRegistry, focusKey, focus]);
 
     return {
+        'data-focuskey': focusKey,
         tabIndex: -1,
-    } as React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    } as React.DetailedHTMLProps<React.HTMLAttributes<TElement>, TElement>;
 };

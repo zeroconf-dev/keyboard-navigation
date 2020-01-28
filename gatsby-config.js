@@ -8,6 +8,6 @@ module.exports = {
                 allExtensions: true,
             },
         },
-        'gatsby-theme-docz',
+        'gatsby-plugin-sass',
     ],
 };

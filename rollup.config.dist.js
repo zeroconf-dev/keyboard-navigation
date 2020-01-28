@@ -3,7 +3,6 @@ import commonjs from 'rollup-plugin-commonjs';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import ts from 'rollup-plugin-typescript';
-// import typescript from 'typescript';
 
 const tsconfig = JSON.parse(fs.readFileSync('./tsconfig.json').toString());
 
@@ -16,6 +15,7 @@ export default {
             file: 'package/dist/keyboard-navigation.amd.js',
             format: 'amd',
             globals: {
+                '@zeroconf/keyboard-navigation/hotkeys/parser': 'parser',
                 'prop-types': 'PropTypes',
                 react: 'React',
                 'react-dom': 'ReactDOM',
@@ -26,6 +26,7 @@ export default {
             file: 'package/dist/keyboard-navigation.umd.js',
             format: 'umd',
             globals: {
+                '@zeroconf/keyboard-navigation/hotkeys/parser': 'parser',
                 'prop-types': 'PropTypes',
                 react: 'React',
                 'react-dom': 'ReactDOM',
@@ -34,13 +35,8 @@ export default {
         },
     ],
     plugins: [
-        resolve(),
-        commonjs({
-            include: 'src/hotkeys/_parser.js',
-            namedExports: {
-                'src/hotkeys/_parser': ['parse', 'parser', 'Parser'],
-            },
-        }),
+        resolve({}),
+        commonjs(),
         replace({
             'process.env.NODE_ENV': JSON.stringify('production'),
         }),

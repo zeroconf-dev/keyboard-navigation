@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
-import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
 import { Input } from '@zeroconf/keyboard-navigation/components/Tabbable';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import * as React from 'react';
 
