@@ -11,8 +11,11 @@ const scopes = {
 	readonly local: unique symbol;
 };
 
-type HotkeyPublicScope = typeof scopes.local | 'string';
-
+interface EventBubbleControl {
+	preventDefault: () => void;
+	stopPropagation: () => void;
+}
+type HotkeyPublicScope = typeof scopes.local | string;
 type HotkeyScope = HotkeyPublicScope | typeof scopes.global;
 
 let globalRegistry: HotkeyRegistry | null = null;
@@ -27,7 +30,7 @@ interface HotkeyRegistryOptions {
 	crossLocalBoundary?: boolean;
 }
 
-class HotkeyRegistry {
+export class HotkeyRegistry {
 	private readonly hotkeys: Map<HotkeyID, [HotkeyID, string, HotKey, (() => boolean)]> = new Map();
 	public readonly crossGlobalBoundary: boolean;
 	public readonly crossLocalBoundary: boolean;
@@ -35,15 +38,26 @@ class HotkeyRegistry {
 	public readonly scope: HotkeyScope;
 	public readonly scopes: Map<string, Set<HotkeyRegistry>> = new Map();
 
+	public static for(parent: HotkeyRegistry, options?: HotkeyRegistryOptions): HotkeyRegistry;
 	public static for(
-		scope: HotkeyPublicScope,
 		parent: HotkeyRegistry,
+		scope?: HotkeyPublicScope,
+		options?: HotkeyRegistryOptions,
+	): HotkeyRegistry;
+	public static for(
+		parent: HotkeyRegistry,
+		scope: HotkeyPublicScope | HotkeyRegistryOptions = {
+			crossGlobalBoundary: true,
+			crossLocalBoundary: true,
+		},
 		options: HotkeyRegistryOptions = {
 			crossGlobalBoundary: true,
 			crossLocalBoundary: true,
 		},
 	) {
-		return new HotkeyRegistry(scope, parent, options);
+		const newScope = typeof scope === 'object' ? scopes.local : scope;
+		const newOptions = typeof scope === 'object' ? scope : options;
+		return new HotkeyRegistry(newScope, parent, newOptions);
 	}
 
 	public static get global() {
@@ -85,46 +99,68 @@ class HotkeyRegistry {
 		return hotkeyId;
 	}
 
-	public iterLocal = function*(this: HotkeyRegistry): Generator<HotkeyRegistry, void, undefined> {
-		yield this;
-
-		if (this.crossLocalBoundary) {
-			if (this.parent !== this.global) {
-				yield* this.parent.iterLocal();
+	public iterLocal = function*(this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
+		let reg = this;
+		while (true) {
+			if (reg === this.global || reg == null) {
+				return; // never yield global from iterLocal
 			}
+			yield reg;
+			if (!reg.crossLocalBoundary) {
+				return;
+			}
+			reg = reg.parent;
 		}
+	};
 
-		if (this.crossGlobalBoundary) {
+	private getCrossGlobalBoundary() {
+		let reg: HotkeyRegistry = this;
+		while (true) {
+			if (reg === this.global || reg == null) {
+				return true;
+			}
+			if (!reg.crossGlobalBoundary) {
+				return false;
+			}
+			reg = reg.parent;
+		}
+	}
+
+	public [Symbol.iterator] = function*(this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
+		yield* this.iterLocal();
+		if (this.getCrossGlobalBoundary()) {
 			yield this.global;
 		}
-
 		return;
 	};
 
 	public iterScope = function*(this: HotkeyRegistry, scope: string): Generator<HotkeyRegistry, void, undefined> {
-		const registries = this.scopes.get(scope);
-
+		const registries = this.global.scopes.get(scope);
 		if (registries != null) {
 			for (const registry of registries) {
-				if (this.scope !== scope && registry !== this) {
+				if (this.scope !== scope || registry !== this) {
 					yield registry;
 				}
 			}
 		}
 
 		if (this.scope === scope) {
-			yield* this.iterLocal();
+			yield* this;
 		}
 
 		return;
 	};
 
-	public run(e: HotKeyEvent): boolean {
+	public run(e: HotKeyEvent & Partial<EventBubbleControl>): boolean {
 		for (const hotkey of this.hotkeys.values()) {
 			if (isHotkeyMatching(hotkey[2], e)) {
 				if (hotkey[3]()) {
-					(e as any).preventDefault();
-					(e as any).stopPropagation();
+					if (typeof e.preventDefault === 'function') {
+						e.preventDefault();
+					}
+					if (typeof e.stopPropagation === 'function') {
+						e.stopPropagation();
+					}
 					return true;
 				}
 			}
@@ -132,11 +168,28 @@ class HotkeyRegistry {
 		return false;
 	}
 
-	public runCurrent(e: HotKeyEvent): boolean {
+	public runCurrent(e: HotKeyEvent & Partial<EventBubbleControl>): boolean {
 		return this.runFor(e, this.scope);
 	}
 
-	public runFor(e: HotKeyEvent, scope: HotkeyScope) {
+	public iterLocalHotkeys = function*(this: HotkeyRegistry): Generator<HotKey, void, void> {
+		for (const reg of this.iterLocal()) {
+			for (const hotkey of reg.hotkeys.values()) {
+				yield hotkey[2];
+			}
+		}
+		return;
+	};
+
+	public iterHotkeys = function*(this: HotkeyRegistry): Generator<HotKey, void, void> {
+		for (const reg of this) {
+			for (const hotkey of reg.hotkeys.values()) {
+				yield hotkey[2];
+			}
+		}
+	};
+
+	public runFor(e: HotKeyEvent & Partial<EventBubbleControl>, scope: HotkeyScope) {
 		if (scope === scopes.global) {
 			return this.runGlobal(e);
 		} else if (scope === scopes.local) {
@@ -148,12 +201,12 @@ class HotkeyRegistry {
 		}
 	}
 
-	private runGlobal(e: HotKeyEvent): boolean {
+	private runGlobal(e: HotKeyEvent & Partial<EventBubbleControl>): boolean {
 		return this.global.run(e);
 	}
 
-	private runLocal(e: HotKeyEvent): boolean {
-		for (const registry of this.iterLocal()) {
+	private runLocal(e: HotKeyEvent & Partial<EventBubbleControl>): boolean {
+		for (const registry of this) {
 			if (registry.run(e)) {
 				return true;
 			}
@@ -161,7 +214,7 @@ class HotkeyRegistry {
 		return false;
 	}
 
-	private runScope(e: HotKeyEvent, scope: string): boolean {
+	private runScope(e: HotKeyEvent & Partial<EventBubbleControl>, scope: string): boolean {
 		for (const registry of this.iterScope(scope)) {
 			if (registry.run(e)) {
 				return true;
@@ -185,6 +238,9 @@ class HotkeyRegistry {
 				registries.delete(this);
 			}
 		}
+		if (this.scope === scopes.global) {
+			globalRegistry = null;
+		}
 	}
 }
 
@@ -203,7 +259,7 @@ export const HotkeyBoundary = (props: React.PropsWithChildren<HotkeyBoundaryProp
 	const parentRegistry = useHotkeyRegistry();
 	const registry = useMemo(
 		() =>
-			HotkeyRegistry.for(scope, parentRegistry, {
+			HotkeyRegistry.for(parentRegistry, scope, {
 				crossGlobalBoundary,
 				crossLocalBoundary,
 			}),
