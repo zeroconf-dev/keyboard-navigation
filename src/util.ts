@@ -3,7 +3,7 @@ import { ControlProps } from '@zeroconf/keyboard-navigation/components/Focuser';
 export function getTargetFocusKey(obj: any): string | null {
     /* istanbul ignore next */
     return typeof obj === 'object' && obj != null
-        ? typeof obj.name === 'string'
+        ? typeof obj.name === 'string' && obj.name !== ''
             ? obj.name
             : typeof obj.dataset === 'object'
             ? obj.dataset.focuskey || null
