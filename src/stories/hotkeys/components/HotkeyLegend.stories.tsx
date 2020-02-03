@@ -2,12 +2,12 @@ import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import { HotkeyLegend } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyLegend';
 import { useHotkey } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyContext';
-import { HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import * as React from 'react';
 import { useCallback } from 'react';
 import { hotkeyToText } from '../../../hotkeys/components/__tests__/__helpers__/hotkeyToText';
 
-const renderHotkey = (hotkey: HotKey) => {
+const renderHotkey = (hotkey: Hotkey) => {
     const hotkeyText = hotkeyToText(hotkey);
     return <div key={hotkeyText}>{hotkeyText}</div>;
 };

@@ -1,4 +1,4 @@
-import { parse, HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import * as React from 'react';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -6,7 +6,7 @@ export type HotkeyContextScope = 'global' | 'local' | string;
 export type HotkeyHandler = () => boolean;
 
 class HotkeyRegistry {
-    private hotkeyMap: Map<HotKey, HotkeyHandler>;
+    private hotkeyMap: Map<Hotkey, HotkeyHandler>;
     private subscriptions: (() => void)[];
     public readonly scope: HotkeyContextScope;
     public constructor(scope: HotkeyContextScope) {
@@ -19,7 +19,7 @@ class HotkeyRegistry {
         this.subscriptions.forEach(cb => cb());
     }
 
-    public add(hotkey: HotKey, handler: HotkeyHandler, _scope?: HotkeyContextScope): void {
+    public add(hotkey: Hotkey, handler: HotkeyHandler, _scope?: HotkeyContextScope): void {
         if (this.hotkeyMap.has(hotkey)) {
             throw new Error('Hotkey is already defined for this scope.');
         } else {
@@ -28,15 +28,15 @@ class HotkeyRegistry {
         }
     }
 
-    public getGlobalHotkeys(): readonly HotKey[] {
+    public getGlobalHotkeys(): readonly Hotkey[] {
         return [];
     }
 
-    public getHotkeys(): readonly HotKey[] {
+    public getHotkeys(): readonly Hotkey[] {
         return Array.from(this.hotkeyMap.keys());
     }
 
-    public remove(hotkey: HotKey, _handler: HotkeyHandler, _scope?: HotkeyContextScope) {
+    public remove(hotkey: Hotkey, _handler: HotkeyHandler, _scope?: HotkeyContextScope) {
         if (!this.hotkeyMap.has(hotkey)) {
             throw new Error('Hotkey was not found in this scope.');
         } else {

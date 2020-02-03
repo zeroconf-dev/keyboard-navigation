@@ -1,5 +1,16 @@
 import { ControlProps } from '@zeroconf/keyboard-navigation/components/Focuser';
 
+export function getTargetFocusKey(obj: any): string | null {
+    /* istanbul ignore next */
+    return typeof obj === 'object' && obj != null
+        ? typeof obj.name === 'string'
+            ? obj.name
+            : typeof obj.dataset === 'object'
+            ? obj.dataset.focuskey || null
+            : null
+        : null;
+}
+
 /**
  * Helper for type-wise asserting that passing an object of type never
  * if however anything is passed to the function it will throw

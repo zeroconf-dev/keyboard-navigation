@@ -2,19 +2,13 @@ import { NavigationContext } from '@zeroconf/keyboard-navigation/components/Navi
 import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
 import { useNewTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useNewTabRegistry';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
-import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '@zeroconf/keyboard-navigation/util';
+import {
+    assertNeverNonThrow,
+    filterPropKeys,
+    getTargetFocusKey,
+    UnpackedHTMLElement,
+} from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
-
-function getTargetFocusKey(obj: any): string | null {
-    /* istanbul ignore next */
-    return typeof obj === 'object' && obj != null
-        ? typeof obj.name === 'string'
-            ? obj.name
-            : typeof obj.dataset === 'object'
-            ? obj.dataset.focusKey || null
-            : null
-        : null;
-}
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**

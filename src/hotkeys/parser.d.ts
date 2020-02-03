@@ -1,4 +1,4 @@
-interface HotKey {
+interface Hotkey {
     alt?: boolean;
     cmd?: boolean;
     ctrl?: boolean;
@@ -16,10 +16,10 @@ declare class lexer {
 export class Parser {
     public readonly Parser: new () => Parser;
     public readonly lexer: lexer;
-    public parse(hotkey: string): HotKey;
+    public parse(hotkey: string): Hotkey;
     public parseError(text: string, hash: string): void;
 }
 
 export const parser: Parser;
 
-export function parse(hotkey: string): HotKey;
+export function parse(hotkey: string): Hotkey;

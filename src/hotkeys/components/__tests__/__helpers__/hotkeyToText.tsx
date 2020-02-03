@@ -1,5 +1,5 @@
-import { HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
-export const hotkeyToText = (hotkey: HotKey) => {
+import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+export const hotkeyToText = (hotkey: Hotkey) => {
     const res = [] as string[];
     if (hotkey.cmd) {
         res.push('⌘');

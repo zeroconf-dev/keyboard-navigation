@@ -5,7 +5,7 @@ import {
     useHotkey,
     HotkeyBoundary,
     HotkeyRegistry,
-} from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyBoundary';
+} from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyBoundaryLegacy';
 import * as React from 'react';
 import { createRef, useCallback } from 'react';
 

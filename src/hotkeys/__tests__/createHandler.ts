@@ -1,5 +1,5 @@
-import { isKeyMatching, isModifierMatching, HotKeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import { HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { isKeyMatching, isModifierMatching, HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
+import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 
 type Modifier = 'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey';
 const modifiers: Modifier[] = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'];
@@ -21,7 +21,7 @@ const keys: string[] = [
     'Meta', 'Escape', 'Enter',
 ];
 
-const noModifiers: HotKeyEvent = {
+const noModifiers: HotkeyEvent = {
     altKey: false,
     ctrlKey: false,
     key: '',
@@ -30,8 +30,8 @@ const noModifiers: HotKeyEvent = {
 };
 
 function iterateModifiers(
-    fn: (event: HotKeyEvent, mods: Modifier[]) => void,
-    current: HotKeyEvent = {
+    fn: (event: HotkeyEvent, mods: Modifier[]) => void,
+    current: HotkeyEvent = {
         altKey: false,
         ctrlKey: false,
         key: '',
@@ -59,94 +59,94 @@ function iterateModifiers(
 describe('isModifierMatching', () => {
     describe('strict', () => {
         test('alt', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 strict: true,
             };
 
-            iterateModifiers((event: HotKeyEvent, mods: Modifier[]) => {
+            iterateModifiers((event: HotkeyEvent, mods: Modifier[]) => {
                 expect(isModifierMatching(hotkey, event)).toBe(mods.length === 1 && event.altKey);
             });
         });
 
         test('ctrl', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 ctrl: true,
                 strict: true,
             };
 
-            iterateModifiers((event: HotKeyEvent, mods: Modifier[]) => {
+            iterateModifiers((event: HotkeyEvent, mods: Modifier[]) => {
                 expect(isModifierMatching(hotkey, event)).toBe(mods.length === 1 && event.ctrlKey);
             });
         });
 
         test('meta', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 meta: true,
                 strict: true,
             };
 
-            iterateModifiers((event: HotKeyEvent, mods: Modifier[]) => {
+            iterateModifiers((event: HotkeyEvent, mods: Modifier[]) => {
                 expect(isModifierMatching(hotkey, event)).toBe(mods.length === 1 && event.metaKey);
             });
         });
 
         test('shift', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 shift: true,
                 strict: true,
             };
 
-            iterateModifiers((event: HotKeyEvent, mods: Modifier[]) => {
+            iterateModifiers((event: HotkeyEvent, mods: Modifier[]) => {
                 expect(isModifierMatching(hotkey, event)).toBe(mods.length === 1 && event.shiftKey);
             });
         });
 
         test('alt+ctrl', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 ctrl: true,
                 strict: true,
             };
 
-            iterateModifiers((event: HotKeyEvent, mods: Modifier[]) => {
+            iterateModifiers((event: HotkeyEvent, mods: Modifier[]) => {
                 expect(isModifierMatching(hotkey, event)).toBe(mods.length === 2 && event.altKey && event.ctrlKey);
             });
         });
 
         test('alt+meta', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 meta: true,
                 strict: true,
             };
 
-            iterateModifiers((event: HotKeyEvent, mods: Modifier[]) => {
+            iterateModifiers((event: HotkeyEvent, mods: Modifier[]) => {
                 expect(isModifierMatching(hotkey, event)).toBe(mods.length === 2 && event.altKey && event.metaKey);
             });
         });
 
         test('alt+shift', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 shift: true,
                 strict: true,
             };
 
-            iterateModifiers((event: HotKeyEvent, mods: Modifier[]) => {
+            iterateModifiers((event: HotkeyEvent, mods: Modifier[]) => {
                 expect(isModifierMatching(hotkey, event)).toBe(mods.length === 2 && event.altKey && event.shiftKey);
             });
         });
 
         test('alt+ctrl+meta', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 ctrl: true,
                 meta: true,
                 strict: true,
             };
 
-            iterateModifiers((event: HotKeyEvent, mods: Modifier[]) => {
+            iterateModifiers((event: HotkeyEvent, mods: Modifier[]) => {
                 expect(isModifierMatching(hotkey, event)).toBe(
                     mods.length === 3 && event.altKey && event.ctrlKey && event.metaKey,
                 );
@@ -154,14 +154,14 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl+shift', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 ctrl: true,
                 shift: true,
                 strict: true,
             };
 
-            iterateModifiers((event: HotKeyEvent, mods: Modifier[]) => {
+            iterateModifiers((event: HotkeyEvent, mods: Modifier[]) => {
                 expect(isModifierMatching(hotkey, event)).toBe(
                     mods.length === 3 && event.altKey && event.ctrlKey && event.shiftKey,
                 );
@@ -169,7 +169,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl+meta+shift', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 ctrl: true,
                 meta: true,
@@ -187,111 +187,111 @@ describe('isModifierMatching', () => {
 
     describe('non-strict', () => {
         test('alt', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(event.altKey);
             });
         });
 
         test('ctrl', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 ctrl: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(event.ctrlKey);
             });
         });
 
         test('meta', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 meta: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(event.metaKey);
             });
         });
 
         test('shift', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 shift: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(event.shiftKey);
             });
         });
 
         test('alt+ctrl', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 ctrl: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(event.altKey && event.ctrlKey);
             });
         });
 
         test('alt+meta', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 meta: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(event.altKey && event.metaKey);
             });
         });
 
         test('alt+shift', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 shift: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(event.altKey && event.shiftKey);
             });
         });
 
         test('alt+ctrl+meta', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 ctrl: true,
                 meta: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(event.altKey && event.ctrlKey && event.metaKey);
             });
         });
 
         test('alt+ctrl+shift', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 ctrl: true,
                 shift: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(event.altKey && event.ctrlKey && event.shiftKey);
             });
         });
 
         test('alt+ctrl+meta+shift', () => {
-            const hotkey: HotKey = {
+            const hotkey: Hotkey = {
                 alt: true,
                 ctrl: true,
                 meta: true,
                 shift: true,
             };
 
-            iterateModifiers((event: HotKeyEvent) => {
+            iterateModifiers((event: HotkeyEvent) => {
                 expect(isModifierMatching(hotkey, event)).toBe(
                     event.altKey && event.ctrlKey && event.metaKey && event.shiftKey,
                 );
@@ -305,7 +305,7 @@ describe('isKeyMatching', () => {
         keys.forEach(key => {
             iterateModifiers(
                 event => {
-                    const hotkey: HotKey = {
+                    const hotkey: Hotkey = {
                         key: key.length !== 1 ? null : key,
                         strict: true,
                     };
@@ -326,7 +326,7 @@ describe('isKeyMatching', () => {
         keys.forEach(key => {
             iterateModifiers(
                 event => {
-                    const hotkey: HotKey = {
+                    const hotkey: Hotkey = {
                         key: key.length !== 1 ? null : key,
                     };
 
