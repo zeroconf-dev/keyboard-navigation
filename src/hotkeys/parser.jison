@@ -30,7 +30,7 @@
 'tab'|'⭾'|'↹'|'⇥'                            return 'T_KEY_TAB';
 
 '+'                                          return 'T_OP_PLUS';
-'!'                                          return 'T_OP_STRICT';
+'!'                                          return 'T_OP_NON_STRICT';
 
 .                                            return 'T_KEY_LITERAL';
 
@@ -41,16 +41,16 @@
 /* operator associations and precedence */
 
 %left 'T_OP_PLUS'
-%right 'T_OP_STRICT'
+%right 'T_OP_NON_STRICT'
 
 %start expressions
 
 %% /* language grammar */
 
 expressions
-    : T_OP_STRICT hotkey_expr T_EOF {
+    : T_OP_NON_STRICT hotkey_expr T_EOF {
         $$ = $2;
-        $$.strict = true;
+        $$.nonStrict = true;
         return $$;
     }
     | hotkey_expr T_EOF {
@@ -88,7 +88,7 @@ special_key
 key
     : T_KEY_LITERAL      { $$ = $1.toLowerCase() }
     | T_OP_PLUS
-    | T_OP_STRICT
+    | T_OP_NON_STRICT
     | special_key
     ;
 

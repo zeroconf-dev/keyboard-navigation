@@ -25,31 +25,31 @@ export interface HotkeyEvent {
 export type HotkeyEventHandler = (e: HotkeyEvent & EventBubbleControl) => void;
 
 export function isModifierMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
-    if (hotkey.strict) {
-        return (
-            Boolean(hotkey.alt) === event.altKey &&
-            Boolean(hotkey.ctrl) === event.ctrlKey &&
-            Boolean(hotkey.meta) === event.metaKey &&
-            Boolean(hotkey.shift) === event.shiftKey
-        );
-    } else {
+    if (hotkey.nonStrict) {
         return (
             (event.altKey || !hotkey.alt) &&
             (event.ctrlKey || !hotkey.ctrl) &&
             (event.metaKey || !hotkey.meta) &&
             (event.shiftKey || !hotkey.shift)
         );
+    } else {
+        return (
+            Boolean(hotkey.alt) === event.altKey &&
+            Boolean(hotkey.ctrl) === event.ctrlKey &&
+            Boolean(hotkey.meta) === event.metaKey &&
+            Boolean(hotkey.shift) === event.shiftKey
+        );
     }
 }
 
 export function isKeyMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
-    if (hotkey.strict) {
+    if (hotkey.nonStrict) {
+        return hotkey.key == null || hotkey.key === (event.key.length === 1 ? event.key.toLowerCase() : event.key);
+    } else {
         return (
             (hotkey.key == null && event.key.length !== 1) ||
             hotkey.key === (event.key.length === 1 ? event.key.toLowerCase() : event.key)
         );
-    } else {
-        return hotkey.key == null || hotkey.key === (event.key.length === 1 ? event.key.toLowerCase() : event.key);
     }
 }
 

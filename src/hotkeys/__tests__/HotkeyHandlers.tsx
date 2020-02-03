@@ -10,7 +10,7 @@ describe('Handlers', () => {
         const ctrlF = jest.fn();
 
         const onKeyDown = createHandler({
-            'ctrl+f': ctrlF,
+            '!ctrl+f': ctrlF,
             f: f,
         });
 
@@ -29,7 +29,7 @@ describe('Handlers', () => {
         });
 
         expect(ctrlF).toHaveBeenCalled();
-        expect(f).toHaveBeenCalledTimes(2);
+        expect(f).toHaveBeenCalledTimes(1);
     });
 
     test('strict', () => {
@@ -37,8 +37,8 @@ describe('Handlers', () => {
         const ctrlF = jest.fn();
 
         const onKeyDown = createHandler({
-            '!ctrl+f': ctrlF,
-            '!f': f,
+            'ctrl+f': ctrlF,
+            f: f,
         });
 
         const { container } = render(<Input name="input" onKeyDown={onKeyDown} />);
@@ -91,8 +91,6 @@ describe('Handlers', () => {
         assertCalls();
 
         fireEvent.keyDown(input, { altKey: true, key: '!' });
-        counters['!']++;
-        counters.alt++;
         counters['alt+!']++;
         assertCalls();
 
@@ -102,8 +100,6 @@ describe('Handlers', () => {
         assertCalls();
 
         fireEvent.keyDown(input, { altKey: true, key: '+' });
-        counters['+']++;
-        counters.alt++;
         counters['alt++']++;
         counters['!alt++']++;
         assertCalls();
@@ -114,7 +110,6 @@ describe('Handlers', () => {
         assertCalls();
 
         fireEvent.keyDown(input, { altKey: true, ctrlKey: true, key: 'Control' });
-        counters.alt++;
         assertCalls();
     });
 });

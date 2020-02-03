@@ -6,7 +6,7 @@ interface Hotkey {
     meta?: boolean;
     mod?: boolean;
     shift?: boolean;
-    strict?: boolean;
+    nonStrict?: boolean;
 }
 
 declare class lexer {
