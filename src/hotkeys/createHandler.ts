@@ -65,7 +65,7 @@ export function createHandler(hotkeys: HotkeysObject | HotkeyWithHandler[]): Hot
                 .forEach(hotkeyObj => {
                     e.stopPropagation();
                     e.preventDefault();
-                    hotkeyObj.handler();
+                    hotkeyObj.handler(e);
                 });
         };
     } else {

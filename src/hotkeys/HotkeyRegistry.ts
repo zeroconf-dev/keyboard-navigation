@@ -1,5 +1,5 @@
 import { isHotkeyMatching, EventBubbleControl, HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 
 let globalRegistry: HotkeyRegistry | null = null;
 let currentLocalRegistry: HotkeyRegistry | null = null;
@@ -15,8 +15,11 @@ export const scopes = Object.freeze({
 export type HotkeyPublicScope = typeof localScope | string;
 export type HotkeyScope = HotkeyPublicScope | typeof globalScope;
 
-export type HotkeyHandler = () => boolean;
+export type HotkeyHandler = (e: HotkeyEvent) => boolean;
 type HotkeyTuppleWithID = [HotkeyID, string, Hotkey, HotkeyHandler];
+export type HotkeyMap = {
+    [hotkey: string]: HotkeyHandler | null | undefined | false;
+};
 
 interface HotkeyRegistryOptions {
     crossGlobalBoundary?: boolean;
@@ -29,7 +32,7 @@ const defaultOptions: HotkeyRegistryOptions = {
 };
 
 enum HotkeyIDBrand {}
-type HotkeyID = HotkeyIDBrand & number;
+export type HotkeyID = HotkeyIDBrand & number;
 let _hotkeyId = 0 as HotkeyID;
 const nextHotkeyId = () => _hotkeyId++;
 
@@ -182,10 +185,20 @@ export class HotkeyRegistry {
         return;
     };
 
-    public add(hotkeyStr: string, hotkey: Hotkey, handler: () => boolean): HotkeyID {
+    public add(hotkeyStr: string, hotkey: Hotkey, handler: HotkeyHandler): HotkeyID {
         const hotkeyId = nextHotkeyId();
         this.hotkeys.set(hotkeyId, [hotkeyId, hotkeyStr, hotkey, handler]);
         return hotkeyId;
+    }
+
+    public addAll(hotkeyMap: HotkeyMap): HotkeyID[] {
+        return Object.keys(hotkeyMap).reduce((carry, hotkeyStr) => {
+            const handler = hotkeyMap[hotkeyStr];
+            if (handler != null && handler !== false) {
+                carry.push(this.add(hotkeyStr, parse(hotkeyStr), handler));
+            }
+            return carry;
+        }, [] as HotkeyID[]);
     }
 
     public dispose() {
@@ -221,10 +234,14 @@ export class HotkeyRegistry {
         this.hotkeys.delete(hotkeyId);
     }
 
+    public removeAll(hotkeyIds: HotkeyID[]) {
+        hotkeyIds.forEach(hotkeyId => this.remove(hotkeyId));
+    }
+
     public run(e: HotkeyEvent & Partial<EventBubbleControl>): boolean {
         for (const hotkey of this.hotkeys.values()) {
             if (isHotkeyMatching(hotkey[2], e)) {
-                if (hotkey[3]()) {
+                if (hotkey[3](e)) {
                     if (typeof e.preventDefault === 'function') {
                         e.preventDefault();
                     }
