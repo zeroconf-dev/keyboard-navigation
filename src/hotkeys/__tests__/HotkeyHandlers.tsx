@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { Input } from '@zeroconf/keyboard-navigation/components/Tabbable';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
-import { createHandler, HotKeysObject } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
+import { createHandler, HotkeysObject } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import * as React from 'react';
 
 describe('Handlers', () => {
@@ -71,7 +71,7 @@ describe('Handlers', () => {
             alt: jest.fn(),
             'alt+!': jest.fn(),
             'alt++': jest.fn(),
-        } as HotKeysObject;
+        } as HotkeysObject;
 
         const counters = Object.keys(handlers).reduce((c, k) => ({ ...c, [k]: 0 }), {}) as {
             [K in keyof typeof handlers]: number;

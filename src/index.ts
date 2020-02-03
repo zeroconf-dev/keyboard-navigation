@@ -71,16 +71,16 @@ export type FocusOrigin = FocusOriginImport;
 export type TabRegistryOptions = TabRegistryOptionsImport;
 
 import {
-    HotKeysObject as HotKeysObjectImport,
-    HotKeyEvent as HotKeyEventImport,
-    HotKeyHandler as HotKeyHandlerImport,
-    HotKeyWithHandler as HotKeyWithHandlerImport,
+    HotkeysObject as HotkeysObjectImport,
+    HotkeyEvent as HotkeyEventImport,
+    HotkeyEventHandler as HotkeyEventHandlerImport,
+    HotkeyWithHandler as HotkeyWithHandlerImport,
 } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 export { createHandler as createHotkeyHandler } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-export type HotKeysObject = HotKeysObjectImport;
-export type HotKeyEvent = HotKeyEventImport;
-export type HotKeyHandler = HotKeyHandlerImport;
-export type HotKeyWithHandler = HotKeyWithHandlerImport;
+export type HotkeysObject = HotkeysObjectImport;
+export type HotkeyEvent = HotkeyEventImport;
+export type HotkeyEventHandler = HotkeyEventHandlerImport;
+export type HotkeyWithHandler = HotkeyWithHandlerImport;
 
-import { HotKey as HotKeyImport } from '@zeroconf/keyboard-navigation/hotkeys/parser';
-export type HotKey = HotKeyImport;
+import { Hotkey as HotkeyImport } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+export type Hotkey = HotkeyImport;

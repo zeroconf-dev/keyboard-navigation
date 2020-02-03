@@ -1,14 +1,20 @@
-import { parse, HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { HotkeyHandler } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
+import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 
-export interface HotKeysObject {
-    [hotkey: string]: () => void;
+export interface HotkeysObject {
+    [hotkey: string]: HotkeyHandler;
 }
 
-export interface HotKeyWithHandler extends HotKey {
-    handler: () => void;
+export interface EventBubbleControl {
+    preventDefault: () => void;
+    stopPropagation: () => void;
 }
 
-export interface HotKeyEvent {
+export interface HotkeyWithHandler extends Hotkey {
+    handler: HotkeyHandler;
+}
+
+export interface HotkeyEvent {
     altKey: boolean;
     ctrlKey: boolean;
     key: string;
@@ -16,9 +22,9 @@ export interface HotKeyEvent {
     shiftKey: boolean;
 }
 
-export type HotKeyHandler = (e: HotKeyEvent & { preventDefault: () => void; stopPropagation: () => void }) => void;
+export type HotkeyEventHandler = (e: HotkeyEvent & EventBubbleControl) => void;
 
-export function isModifierMatching(hotkey: HotKey, event: HotKeyEvent): boolean {
+export function isModifierMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
     if (hotkey.strict) {
         return (
             Boolean(hotkey.alt) === event.altKey &&
@@ -36,7 +42,7 @@ export function isModifierMatching(hotkey: HotKey, event: HotKeyEvent): boolean 
     }
 }
 
-export function isKeyMatching(hotkey: HotKey, event: HotKeyEvent): boolean {
+export function isKeyMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
     if (hotkey.strict) {
         return (
             (hotkey.key == null && event.key.length !== 1) ||
@@ -47,29 +53,29 @@ export function isKeyMatching(hotkey: HotKey, event: HotKeyEvent): boolean {
     }
 }
 
-export function isHotkeyMatching(hotkey: HotKey, event: HotKeyEvent): boolean {
+export function isHotkeyMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
     return isModifierMatching(hotkey, event) && isKeyMatching(hotkey, event);
 }
 
-export function createHandler(hotkeys: HotKeysObject | HotKeyWithHandler[]): HotKeyHandler {
+export function createHandler(hotkeys: HotkeysObject | HotkeyWithHandler[]): HotkeyEventHandler {
     if (Array.isArray(hotkeys)) {
-        return (e: HotKeyEvent & { preventDefault: () => void; stopPropagation: () => void }) => {
+        return (e: HotkeyEvent & EventBubbleControl) => {
             hotkeys
                 .filter(hotkey => isHotkeyMatching(hotkey, e))
                 .forEach(hotkeyObj => {
                     e.stopPropagation();
                     e.preventDefault();
-                    hotkeyObj.handler();
+                    hotkeyObj.handler(e);
                 });
         };
     } else {
         return createHandler(
             Object.keys(hotkeys).reduce((carry, hotkey) => {
-                const r = parse(hotkey) as HotKeyWithHandler;
+                const r = parse(hotkey) as HotkeyWithHandler;
                 r.handler = hotkeys[hotkey];
                 carry.push(r);
                 return carry;
-            }, [] as HotKeyWithHandler[]),
+            }, [] as HotkeyWithHandler[]),
         );
     }
 }

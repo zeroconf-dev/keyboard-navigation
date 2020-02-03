@@ -1,14 +1,17 @@
-import { useHotkeyContext } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyContext';
-import { HotKey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
+import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 
 interface HotkeyLegendProps {
     // tslint:disable-next-line:no-reserved-keywords
     as?: keyof JSX.IntrinsicElements;
     includeGlobal?: boolean;
-    renderHotkey: (hotkey: HotKey) => JSX.Element;
+    renderHotkey: (hotkey: Hotkey) => JSX.Element;
 }
 export const HotkeyLegend: React.FC<HotkeyLegendProps> = props => {
-    const context = useHotkeyContext();
-    return <>{context.getHotkeys().map(hotkey => props.renderHotkey(hotkey))}</>;
+    const context = useHotkeyRegistry();
+    const [, setUpdater] = useState(0);
+    useEffect(() => context.subscribe(() => setUpdater(s => s + 1)), [context]);
+    return <>{Array.from(context.iterHotkeys()).map(hotkey => props.renderHotkey(hotkey))}</>;
 };
