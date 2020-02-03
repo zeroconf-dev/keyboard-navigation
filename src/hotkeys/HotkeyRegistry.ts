@@ -3,6 +3,7 @@ import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 
 let globalRegistry: HotkeyRegistry | null = null;
 let currentLocalRegistry: HotkeyRegistry | null = null;
+const subscriptions: Set<(registry: HotkeyRegistry | null) => void> = new Set();
 
 const localScope: unique symbol = Symbol('local');
 const globalScope: unique symbol = Symbol('global');
@@ -37,19 +38,19 @@ let _hotkeyId = 0 as HotkeyID;
 const nextHotkeyId = () => _hotkeyId++;
 
 export class HotkeyRegistry {
+    public get currentLocalRegistry() {
+        return currentLocalRegistry;
+    }
+
+    public set currentLocalRegistry(registry: HotkeyRegistry | null) {
+        currentLocalRegistry = registry;
+        subscriptions.forEach(handler => handler(registry));
+    }
     public static get global() {
         if (globalRegistry == null) {
             globalRegistry = new HotkeyRegistry(globalScope, null);
         }
         return globalRegistry;
-    }
-
-    public static get currentLocalRegistry() {
-        return currentLocalRegistry;
-    }
-
-    public static set currentLocalRegistry(registry: HotkeyRegistry | null) {
-        currentLocalRegistry = registry;
     }
 
     public get global() {
@@ -269,5 +270,12 @@ export class HotkeyRegistry {
         } else {
             throw TypeError('Invalid scope, only [Symbol global, [Symbol local] and strings are allowed');
         }
+    }
+
+    public subscribe(handler: (registry: HotkeyRegistry | null) => void) {
+        subscriptions.add(handler);
+        return () => {
+            subscriptions.delete(handler);
+        };
     }
 }
