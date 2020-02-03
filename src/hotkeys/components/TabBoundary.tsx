@@ -3,6 +3,7 @@ import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hooks';
 import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
 import { useNewTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useNewTabRegistry';
 import { HotkeyContextProvider } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyContext';
+import { EventBubbleControl } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
 import { HotkeyPublicScope, HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
@@ -129,12 +130,16 @@ export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(props: Pr
     useEffect(() => {
         const hotkeyIds = registry.addAll({
             esc: props.focusParentOnEscape ? () => tabRegistry.focusParent() : null,
-            'shift+tab': (e: HotkeyEvent) => {
-                const focusKey = getTargetFocusKey(e);
+            'shift+tab': (e: HotkeyEvent & Partial<EventBubbleControl>) => {
+                e.preventDefault?.();
+                e.stopPropagation?.();
+                const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
                 return focusKey == null ? false : tabRegistry.focusPrev(focusKey);
             },
-            tab: (e: HotkeyEvent) => {
-                const focusKey = getTargetFocusKey(e);
+            tab: (e: HotkeyEvent & Partial<EventBubbleControl>) => {
+                e.preventDefault?.();
+                e.stopPropagation?.();
+                const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
                 return focusKey == null ? false : tabRegistry.focusNext(focusKey);
             },
         });

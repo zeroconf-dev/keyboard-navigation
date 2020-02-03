@@ -16,7 +16,7 @@ export const scopes = Object.freeze({
 export type HotkeyPublicScope = typeof localScope | string;
 export type HotkeyScope = HotkeyPublicScope | typeof globalScope;
 
-export type HotkeyHandler = (e: HotkeyEvent) => boolean;
+export type HotkeyHandler = (e: HotkeyEvent & Partial<EventBubbleControl>) => boolean;
 type HotkeyTuppleWithID = [HotkeyID, string, Hotkey, HotkeyHandler];
 export type HotkeyMap = {
     [hotkey: string]: HotkeyHandler | null | undefined | false;
