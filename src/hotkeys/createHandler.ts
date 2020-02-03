@@ -38,9 +38,12 @@ export function isModifierMatching(hotkey: HotKey, event: HotKeyEvent): boolean 
 
 export function isKeyMatching(hotkey: HotKey, event: HotKeyEvent): boolean {
     if (hotkey.strict) {
-        return (hotkey.key == null && event.key.length !== 1) || hotkey.key === event.key;
+        return (
+            (hotkey.key == null && event.key.length !== 1) ||
+            hotkey.key === (event.key.length === 1 ? event.key.toLowerCase() : event.key)
+        );
     } else {
-        return hotkey.key == null || hotkey.key === event.key;
+        return hotkey.key == null || hotkey.key === (event.key.length === 1 ? event.key.toLowerCase() : event.key);
     }
 }
 
