@@ -16,7 +16,7 @@ export function assertNever(_obj: never, msg: string): never {
  * of type never, this is useful for exhausting union types,
  * but not throwing an error when called.
  */
-export function assertNeverNonThrow(obj: never): never {
+export function assertNeverNonThrow(obj: never): void {
     return obj;
 }
 
