@@ -5,8 +5,6 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 interface HotkeyLegendProps {
-    // tslint:disable-next-line:no-reserved-keywords
-    as?: keyof JSX.IntrinsicElements;
     includeGlobal?: boolean;
     renderHotkey: (hotkey: Hotkey) => JSX.Element;
 }

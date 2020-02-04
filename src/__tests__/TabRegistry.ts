@@ -500,7 +500,7 @@ describe('TabRegistry', () => {
 
     describe('.focusFirstIn()', () => {
         test("focus nested registry that doesn't exist will return false", () => {
-            const tr = new TabRegistry();
+            const tr = new TabRegistry<number>();
             expect(tr.focusIn([2])).toBe(false);
         });
 
@@ -563,7 +563,7 @@ describe('TabRegistry', () => {
 
     describe('.focusIn()', () => {
         test("focus nested registry that doesn't exist will return false", () => {
-            const tr = new TabRegistry();
+            const tr = new TabRegistry<number>();
             expect(tr.focusIn([1, 2])).toBe(false);
         });
 
@@ -599,25 +599,25 @@ describe('TabRegistry', () => {
             const focuser = getSuccessFocuser();
             const tr5 = TabRegistry.fromMap(new Map([[1, focuser]]));
             const tr4 = TabRegistry.fromMap(
-                new Map<number, FocuserFn | TabRegistry>([
+                new Map<number, FocuserFn | TabRegistry<number>>([
                     [1, focuser],
                     [2, tr5],
                 ]),
             );
             const tr3 = TabRegistry.fromMap(
-                new Map<number, FocuserFn | TabRegistry>([
+                new Map<number, FocuserFn | TabRegistry<number>>([
                     [1, focuser],
                     [2, tr4],
                 ]),
             );
             const tr2 = TabRegistry.fromMap(
-                new Map<number, FocuserFn | TabRegistry>([
+                new Map<number, FocuserFn | TabRegistry<number>>([
                     [1, focuser],
                     [2, tr3],
                 ]),
             );
             const tr1 = TabRegistry.fromMap(
-                new Map<number, FocuserFn | TabRegistry>([
+                new Map<number, FocuserFn | TabRegistry<number>>([
                     [1, focuser],
                     [2, tr2],
                 ]),
@@ -1406,7 +1406,7 @@ describe('TabRegistry', () => {
         });
 
         test("moving a key that doesn't exist throws", () => {
-            const tr = new TabRegistry();
+            const tr = new TabRegistry<number>();
             expect(() => tr.moveNext(1)).toThrowErrorMatchingSnapshot();
         });
 
@@ -1441,7 +1441,7 @@ describe('TabRegistry', () => {
         });
 
         test("moving a key that doesn't exist throws", () => {
-            const tr = new TabRegistry();
+            const tr = new TabRegistry<number>();
             expect(() => tr.movePrev(1)).toThrowErrorMatchingSnapshot();
         });
 

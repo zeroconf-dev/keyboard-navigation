@@ -168,7 +168,7 @@ function focusUp(
  */
 export function createNavigationHandler(
     navigationMap: NavigationMap,
-    getTabRegistry: TabRegistryFetcher | React.RefObject<TabRegistry | null>,
+    getTabRegistry: TabRegistryFetcher | React.RefObject<TabRegistry<string> | null>,
     tabDirectionAxis: 'x' | 'y' = 'x',
 ): NavigationKeyHandler {
     const maxY = navigationMap.length - 1;

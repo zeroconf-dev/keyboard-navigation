@@ -71,7 +71,7 @@ export class HotkeyRegistry {
         scope: HotkeyPublicScope | HotkeyRegistryOptions = defaultOptions,
         options: HotkeyRegistryOptions = defaultOptions,
     ) {
-        const newScope = typeof scope === 'object' ? localScope : scope;
+        const newScope = typeof scope === 'object' ? (scopes.local as typeof localScope) : scope;
         const newOptions = typeof scope === 'object' ? scope : options;
 
         return new HotkeyRegistry(newScope, parent, newOptions);
@@ -263,7 +263,7 @@ export class HotkeyRegistry {
     public runFor(e: HotkeyEvent & Partial<EventBubbleControl>, scope: HotkeyScope) {
         if (scope === globalScope) {
             return this.runGlobal(e);
-        } else if (scope === localScope) {
+        } else if (scope === scopes.local) {
             return this.runLocal(e);
         } else if (typeof scope === 'string') {
             return this.runScope(e, scope);

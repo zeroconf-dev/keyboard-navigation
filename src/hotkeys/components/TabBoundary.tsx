@@ -2,6 +2,7 @@ import { NavigationContext } from '@zeroconf/keyboard-navigation/components/Navi
 import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hooks';
 import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
 import { useNewTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useNewTabRegistry';
+import { scopes } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyBoundaryLegacy';
 import { HotkeyContextProvider } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyContext';
 import { EventBubbleControl } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
@@ -36,13 +37,13 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
      * Whether or not the tab boundary should cycle when attempting
      * to tab boyond the boundary.
      */
-    cycle?: boolean;
+    cycle: boolean;
 
     /**
      * Whether ot not to focus the first element if gaining focus
      * to the boundary from focus origin `next`.
      */
-    focusFirstOnNextOrigin?: boolean;
+    focusFirstOnNextOrigin: boolean;
 
     /**
      * When set to `true` and a child focuses the boundary,
@@ -60,7 +61,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
      *   <Section focusKey="inner3" />
      * </TabBoundary>
      */
-    focusParentOnChildOrigin?: boolean;
+    focusParentOnChildOrigin: boolean;
 
     /**
      * Set this to `true` to focus the parent of the boundary if exists
@@ -75,7 +76,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
      *   </TabBoundary>
      * </TabBoundary>
      */
-    focusParentOnEscape?: boolean;
+    focusParentOnEscape: boolean;
 
     scope: HotkeyPublicScope;
 
@@ -109,7 +110,9 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
     }
 };
 
-export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(props: Props<TComp>) => {
+export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(
+    props: React.PropsWithChildren<Props<TComp>>,
+) => {
     const { crossGlobalBoundary, crossLocalBoundary, scope } = props;
     const parentRegistry = useHotkeyRegistry();
     const registry = useMemo(
@@ -122,7 +125,7 @@ export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(props: Pr
     );
     useEffect(() => () => registry.dispose(), [registry]);
 
-    const tabRegistry = useNewTabRegistry(props) as TabRegistry<string>;
+    const tabRegistry = useNewTabRegistry(props) as TabRegistry;
     useFocusable(props.boundaryKey, tabRegistry);
 
     const childProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
@@ -161,4 +164,14 @@ export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(props: Pr
             <NavigationContext.Provider children={children} value={tabRegistry} />
         </HotkeyContextProvider>
     );
+};
+
+TabBoundary.defaultProps = {
+    crossGlobalBoundary: true,
+    crossLocalBoundary: false,
+    cycle: false,
+    focusFirstOnNextOrigin: false,
+    focusParentOnChildOrigin: false,
+    focusParentOnEscape: false,
+    scope: scopes.local,
 };

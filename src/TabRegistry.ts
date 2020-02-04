@@ -49,7 +49,7 @@ const focusOriginChild: FocuserOptions = { focusOrigin: 'child' };
 /**
  * Library class for controlling complex nested linked structures.
  */
-export class TabRegistry<E = any> {
+export class TabRegistry<E = string> {
     public get first(): FocuserType<E> | null {
         const first = this.firstKey;
         if (first == null) {

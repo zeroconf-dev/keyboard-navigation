@@ -180,6 +180,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
 
         if (
             this.props.boundaryKey !== nextProps.boundaryKey &&
+            this.props.boundaryKey != null &&
             this.props.parentRegistry != null &&
             this.props.parentRegistry.has(this.props.boundaryKey)
         ) {
