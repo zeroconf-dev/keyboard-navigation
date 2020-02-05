@@ -193,13 +193,16 @@ export class HotkeyRegistry {
     }
 
     public addAll(hotkeyMap: HotkeyMap): HotkeyID[] {
-        return Object.keys(hotkeyMap).reduce((carry, hotkeyStr) => {
-            const handler = hotkeyMap[hotkeyStr];
-            if (handler != null && handler !== false) {
-                carry.push(this.add(hotkeyStr, parse(hotkeyStr), handler));
-            }
-            return carry;
-        }, [] as HotkeyID[]);
+        return Object.keys(hotkeyMap).reduce(
+            (carry, hotkeyStr) => {
+                const handler = hotkeyMap[hotkeyStr];
+                if (handler != null && handler !== false) {
+                    carry.push(this.add(hotkeyStr, parse(hotkeyStr), handler));
+                }
+                return carry;
+            },
+            [] as HotkeyID[],
+        );
     }
 
     public dispose() {
