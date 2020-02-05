@@ -10,6 +10,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     as?: TComp;
     crossGlobalBoundary: boolean;
     crossLocalBoundary: boolean;
+    hotkeyRegistryRef?: React.RefObject<HotkeyRegistry>;
     scope: HotkeyPublicScope;
 }
 export type HotkeyBoundaryProps<TComp extends keyof JSX.IntrinsicElements = 'div'> = React.HTMLAttributes<
@@ -22,6 +23,7 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
         case 'as':
         case 'crossGlobalBoundary':
         case 'crossLocalBoundary':
+        case 'hotkeyRegistryRef':
         case 'scope':
             return false;
         default:
@@ -33,7 +35,7 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
 export const HotkeyBoundary = <TComp extends keyof JSX.IntrinsicElements>(
     props: React.PropsWithChildren<HotkeyBoundaryProps<TComp>>,
 ) => {
-    const { crossGlobalBoundary, crossLocalBoundary, scope } = props;
+    const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
     const parentRegistry = useHotkeyRegistry();
     const registry = useMemo(
         () =>
@@ -43,7 +45,17 @@ export const HotkeyBoundary = <TComp extends keyof JSX.IntrinsicElements>(
             }),
         [scope, parentRegistry, crossGlobalBoundary, crossLocalBoundary],
     );
+
     useEffect(() => () => registry.dispose(), [registry]);
+    useEffect(() => {
+        if (hotkeyRegistryRef != null) {
+            (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = registry;
+            return () => {
+                (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = null;
+            }
+        }
+        return;
+    }, [registry, hotkeyRegistryRef])
 
     const onKeyDown = useCallback(
         (e: React.KeyboardEvent<HTMLDivElement>) => {

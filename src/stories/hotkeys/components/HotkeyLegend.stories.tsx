@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import { HotkeyLegend } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyLegend';
-import { useHotkey } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyContext';
+import { useHotkey } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkey';
 import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import * as React from 'react';
 import { useCallback } from 'react';
@@ -30,8 +30,8 @@ storiesOf('HotkeyLegend', module)
     .add('Empty legend', () => <HotkeyLegend renderHotkey={renderHotkey} />)
     .add('Legend with simple content', () => (
         <>
-            <FocusByKey hotkey="!ctrl" />
-            <FocusByKey hotkey="!s" />
+            <FocusByKey hotkey="ctrl" />
+            <FocusByKey hotkey="s" />
             <HotkeyLegend renderHotkey={renderHotkey} />
         </>
     ));

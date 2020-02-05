@@ -86,12 +86,12 @@ type PropsWithTabRegistry<TComp extends keyof JSX.IntrinsicElements> = Props<TCo
     tabRegistry: TabRegistry | null;
 };
 
-interface State {}
+interface State { }
 
 class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
     PropsWithTabRegistry<TComp>,
     State
-> {
+    > {
     public static defaultProps = {
         focusOnClick: 'section',
     };
@@ -144,9 +144,12 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
     };
 
     private navigationHandler = (_: string, navKey: NavigationKey, modifierKeys: ModifierKeys) => {
-        if (this.props.navigationHandler != null) {
-            this.props.navigationHandler(this.props.focusKey, navKey, modifierKeys);
+        if (this.props.navigationHandler == null) {
+            return false;
+        } else {
+            return this.props.navigationHandler(this.props.focusKey, navKey, modifierKeys);
         }
+
     };
 
     private onClick = (e: React.MouseEvent<Element>) => {
@@ -259,7 +262,7 @@ type PropsWithForwardRef<TComp extends keyof JSX.IntrinsicElements> = Props<TCom
 };
 class SectionWithForwardRef<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
     PropsWithForwardRef<TComp>
-> {
+    > {
     public static displayName = 'TabRegistry(Section)';
 
     private renderChildren = (tabRegistry: TabRegistry | null) => {
@@ -276,9 +279,9 @@ const forwardRef = <TComp extends keyof JSX.IntrinsicElements = 'div'>() =>
     React.forwardRef<SectionWithTabRegistry<TComp>, Props<TComp>>((props, ref) => (
         <SectionWithForwardRef {...props} forwardedRef={ref} />
     )) as React.ComponentClass<Props<TComp>> &
-        React.ForwardRefExoticComponent<
-            React.PropsWithoutRef<Props<TComp>> & React.RefAttributes<SectionWithTabRegistry<TComp>>
-        >;
+    React.ForwardRefExoticComponent<
+        React.PropsWithoutRef<Props<TComp>> & React.RefAttributes<SectionWithTabRegistry<TComp>>
+    >;
 
 /**
  * Container component, where you can group focusable elements
