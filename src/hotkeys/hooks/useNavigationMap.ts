@@ -1,13 +1,16 @@
 import { createNavigationHandler, HotkeyEvent, NavigationMap, TabRegistry } from '@zeroconf/keyboard-navigation/hooks';
-import { useHotkeys } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeys';
+import { useHotkeysInRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeys';
+import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { getTargetFocusKey } from '@zeroconf/keyboard-navigation/util';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 
 export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(
     navigationMap: NavigationMap,
-    tabRegistryRef: React.RefObject<TabRegistry>,
     tabDirectionAxix?: 'x' | 'y',
-): void => {
+) => {
+    const tabRegistryRef = useRef<TabRegistry>(null);
+    const hotkeyRegistryRef = useRef<HotkeyRegistry>(null);
+
     const navigationHandler = useMemo(() => {
         return createNavigationHandler(navigationMap, tabRegistryRef, tabDirectionAxix);
     }, [navigationMap, tabRegistryRef, tabDirectionAxix]);
@@ -60,5 +63,10 @@ export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(
         [navigationHandler, tabRegistryRef],
     );
 
-    useHotkeys(hotkeyMap);
+    useHotkeysInRegistry(hotkeyRegistryRef, hotkeyMap);
+
+    return {
+        hotkeyRegistryRef,
+        tabRegistryRef,
+    };
 };
