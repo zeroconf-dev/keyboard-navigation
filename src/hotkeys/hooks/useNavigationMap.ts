@@ -17,30 +17,21 @@ export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(
 
     const hotkeyMap = useMemo(
         () => ({
-            down: (e: HotkeyEvent) => {
-                const focusKey = getTargetFocusKey((e as React.KeyboardEvent<TElement>).target);
-                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowDown', e);
-            },
             left: (e: HotkeyEvent) => {
                 const focusKey = getTargetFocusKey((e as React.KeyboardEvent<TElement>).target);
                 return focusKey == null ? false : navigationHandler(focusKey, 'ArrowLeft', e);
+            },
+            down: (e: HotkeyEvent) => {
+                const focusKey = getTargetFocusKey((e as React.KeyboardEvent<TElement>).target);
+                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowDown', e);
             },
             right: (e: HotkeyEvent) => {
                 const focusKey = getTargetFocusKey((e as React.KeyboardEvent<TElement>).target);
                 return focusKey == null ? false : navigationHandler(focusKey, 'ArrowRight', e);
             },
-            'shift+tab': (e: HotkeyEvent) => {
+            up: (e: HotkeyEvent) => {
                 const focusKey = getTargetFocusKey((e as React.KeyboardEvent<TElement>).target);
-                const tabRegistry = tabRegistryRef.current;
-                if (focusKey == null) {
-                    return false;
-                }
-
-                if (tabRegistry == null) {
-                    return navigationHandler(focusKey, 'Tab', e);
-                } else {
-                    return tabRegistry.focusPrev(focusKey);
-                }
+                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowUp', e);
             },
             tab: (e: HotkeyEvent) => {
                 const focusKey = getTargetFocusKey((e as React.KeyboardEvent<TElement>).target);
@@ -55,9 +46,18 @@ export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(
                     return tabRegistry.focusNext(focusKey);
                 }
             },
-            up: (e: HotkeyEvent) => {
+            'shift+tab': (e: HotkeyEvent) => {
                 const focusKey = getTargetFocusKey((e as React.KeyboardEvent<TElement>).target);
-                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowUp', e);
+                const tabRegistry = tabRegistryRef.current;
+                if (focusKey == null) {
+                    return false;
+                }
+
+                if (tabRegistry == null) {
+                    return navigationHandler(focusKey, 'Tab', e);
+                } else {
+                    return tabRegistry.focusPrev(focusKey);
+                }
             },
         }),
         [navigationHandler, tabRegistryRef],

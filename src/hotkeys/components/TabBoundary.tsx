@@ -143,19 +143,19 @@ export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(
 
     useEffect(() => {
         const hotkeyIds = registry.addAll({
-            esc: props.focusParentOnEscape ? () => tabRegistry.focusParent() : null,
-            'shift+tab': (e: HotkeyEvent & Partial<EventBubbleControl>) => {
-                e.preventDefault?.();
-                e.stopPropagation?.();
-                const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
-                return focusKey == null ? false : tabRegistry.focusPrev(focusKey);
-            },
             tab: (e: HotkeyEvent & Partial<EventBubbleControl>) => {
                 e.preventDefault?.();
                 e.stopPropagation?.();
                 const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
                 return focusKey == null ? false : tabRegistry.focusNext(focusKey);
             },
+            'shift+tab': (e: HotkeyEvent & Partial<EventBubbleControl>) => {
+                e.preventDefault?.();
+                e.stopPropagation?.();
+                const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
+                return focusKey == null ? false : tabRegistry.focusPrev(focusKey);
+            },
+            esc: props.focusParentOnEscape ? () => tabRegistry.focusParent() : null,
         });
         return () => registry.removeAll(hotkeyIds);
     }, [tabRegistry, registry, props.focusParentOnEscape]);
