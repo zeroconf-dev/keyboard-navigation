@@ -52,10 +52,10 @@ export const HotkeyBoundary = <TComp extends keyof JSX.IntrinsicElements>(
             (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = registry;
             return () => {
                 (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = null;
-            }
+            };
         }
         return;
-    }, [registry, hotkeyRegistryRef])
+    }, [registry, hotkeyRegistryRef]);
 
     const onKeyDown = useCallback(
         (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -73,6 +73,6 @@ export const HotkeyBoundary = <TComp extends keyof JSX.IntrinsicElements>(
 
 HotkeyBoundary.defaultProps = {
     crossGlobalBoundary: true,
-    crossLocalBoundary: true,
+    crossLocalBoundary: false,
     scope: scopes.local,
 };

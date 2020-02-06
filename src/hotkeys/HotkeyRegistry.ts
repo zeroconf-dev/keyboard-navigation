@@ -29,10 +29,10 @@ interface HotkeyRegistryOptions {
 
 const defaultOptions: HotkeyRegistryOptions = {
     crossGlobalBoundary: true,
-    crossLocalBoundary: true,
+    crossLocalBoundary: false,
 };
 
-enum HotkeyIDBrand { }
+enum HotkeyIDBrand {}
 export type HotkeyID = HotkeyIDBrand & number;
 let _hotkeyId = 0 as HotkeyID;
 const nextHotkeyId = () => _hotkeyId++;
@@ -48,7 +48,10 @@ export class HotkeyRegistry {
     }
     public static get global() {
         if (globalRegistry == null) {
-            globalRegistry = new HotkeyRegistry(globalScope, null);
+            globalRegistry = new HotkeyRegistry(globalScope, null, {
+                crossGlobalBoundary: false,
+                crossLocalBoundary: false,
+            });
         }
         return globalRegistry;
     }
@@ -77,6 +80,7 @@ export class HotkeyRegistry {
         return new HotkeyRegistry(newScope, parent, newOptions);
     }
 
+    private disposed = false;
     private readonly hotkeys: Map<HotkeyID, HotkeyTuppleWithID> = new Map();
 
     public readonly crossGlobalBoundary: boolean;
@@ -115,7 +119,7 @@ export class HotkeyRegistry {
     private getCrossGlobalBoundary() {
         let reg: HotkeyRegistry = this;
         while (true) {
-            if (reg === this.global || reg == null) {
+            if ((this.scope !== scopes.global && reg === this.global) || reg == null) {
                 return true;
             }
             if (!reg.crossGlobalBoundary) {
@@ -125,10 +129,10 @@ export class HotkeyRegistry {
         }
     }
 
-    private iterLocal = function* (this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
+    private iterLocal = function*(this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
         let reg = this;
         while (true) {
-            if (reg === this.global || reg == null) {
+            if ((this.scope !== scopes.global && reg === this.global) || reg == null) {
                 return; // never yield global from iterLocal
             }
             yield reg;
@@ -139,7 +143,7 @@ export class HotkeyRegistry {
         }
     };
 
-    private iterScope = function* (this: HotkeyRegistry, scope: string): Generator<HotkeyRegistry, void, undefined> {
+    private iterScope = function*(this: HotkeyRegistry, scope: string): Generator<HotkeyRegistry, void, undefined> {
         const registries = this.global.scopes.get(scope);
         if (registries != null) {
             for (const registry of registries) {
@@ -178,7 +182,7 @@ export class HotkeyRegistry {
         return false;
     }
 
-    public [Symbol.iterator] = function* (this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
+    public [Symbol.iterator] = function*(this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
         yield* this.iterLocal();
         if (this.getCrossGlobalBoundary()) {
             yield this.global;
@@ -193,19 +197,21 @@ export class HotkeyRegistry {
     }
 
     public addAll(hotkeyMap: HotkeyMap): HotkeyID[] {
-        return Object.keys(hotkeyMap).reduce(
-            (carry, hotkeyStr) => {
-                const handler = hotkeyMap[hotkeyStr];
-                if (handler != null && handler !== false) {
-                    carry.push(this.add(hotkeyStr, parse(hotkeyStr), handler));
-                }
-                return carry;
-            },
-            [] as HotkeyID[],
-        );
+        return Object.keys(hotkeyMap).reduce((carry, hotkeyStr) => {
+            const handler = hotkeyMap[hotkeyStr];
+            if (handler != null && handler !== false) {
+                carry.push(this.add(hotkeyStr, parse(hotkeyStr), handler));
+            }
+            return carry;
+        }, [] as HotkeyID[]);
     }
 
     public dispose() {
+        if (this.disposed) {
+            return;
+        }
+        this.disposed = true;
+
         if (typeof this.scope === 'string') {
             const registries = this.global.scopes.get(this.scope);
             if (registries != null) {
@@ -221,7 +227,7 @@ export class HotkeyRegistry {
         }
     }
 
-    public iterHotkeys = function* (this: HotkeyRegistry): Generator<Hotkey, void, void> {
+    public iterHotkeys = function*(this: HotkeyRegistry): Generator<Hotkey, void, void> {
         for (const reg of this) {
             for (const hotkey of reg.hotkeys.values()) {
                 yield hotkey[2];
@@ -229,7 +235,7 @@ export class HotkeyRegistry {
         }
     };
 
-    public iterLocalHotkeys = function* (this: HotkeyRegistry): Generator<Hotkey, void, void> {
+    public iterLocalHotkeys = function*(this: HotkeyRegistry): Generator<Hotkey, void, void> {
         for (const reg of this.iterLocal()) {
             for (const hotkey of reg.hotkeys.values()) {
                 yield hotkey[2];

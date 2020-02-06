@@ -2,8 +2,11 @@ import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/u
 import { parse } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import { useEffect, useMemo } from 'react';
 
-export const useHotkey = (hotkeyStr: string, handler: () => boolean) => {
-    const registry = useHotkeyRegistry();
+export const useHotkey = (hotkeyStr: string, handler: () => boolean, isGlobalHotkey = false) => {
+    let registry = useHotkeyRegistry();
+    if (isGlobalHotkey) {
+        registry = registry.global;
+    }
     const hotkey = useMemo(() => parse(hotkeyStr), [hotkeyStr]);
     useEffect(() => {
         const hotkeyId = registry.add(hotkeyStr, hotkey, handler);

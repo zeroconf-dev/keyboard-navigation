@@ -130,7 +130,7 @@ export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(
             (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = registry;
             return () => {
                 (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = null;
-            }
+            };
         }
         return;
     }, [registry, hotkeyRegistryRef]);

@@ -149,7 +149,7 @@ export interface Props extends ControlProps {
     focusKey: string;
 }
 
-interface State { }
+interface State {}
 
 const styles: React.CSSProperties = {
     border: 'none',

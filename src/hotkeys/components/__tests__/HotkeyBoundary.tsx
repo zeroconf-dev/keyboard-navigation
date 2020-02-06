@@ -1,25 +1,15 @@
 import { act, cleanup, render } from '@testing-library/react';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
-import {
-    HotkeyBoundary,
-} from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyBoundary';
-import {
-    GlobalHotkeyBoundary,
-} from '@zeroconf/keyboard-navigation/hotkeys/components/GlobalHotkeyBoundary';
-import {
-    HotkeyRegistry,
-    scopes,
-} from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
+import { Hotkey } from '@zeroconf/keyboard-navigation/hooks';
+import { GlobalHotkeyBoundary } from '@zeroconf/keyboard-navigation/hotkeys/components/GlobalHotkeyBoundary';
+import { HotkeyBoundary } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyBoundary';
 import { useHotkey } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkey';
+import { scopes, HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import * as React from 'react';
 import { createRef, useCallback } from 'react';
-import { Hotkey } from '@zeroconf/keyboard-navigation/hooks';
-
-beforeEach(() => {
-    HotkeyRegistry.global.dispose();
-});
 
 afterEach(() => {
+    HotkeyRegistry.global.dispose();
     cleanup();
 });
 
@@ -35,7 +25,7 @@ test('render unscoped root boundary is providing global hotkey registry', () => 
         </GlobalHotkeyBoundary>,
     );
 
-    const rootRegistry = expectHotkeyRegistry(rootRegistryRef.current)
+    const rootRegistry = expectHotkeyRegistry(rootRegistryRef.current);
     expect(rootRegistry).toBeInstanceOf(HotkeyRegistry);
     expect(rootRegistry.scope).toBe(scopes.global);
     expect(rootRegistry).toBe(rootRegistry.global);
@@ -50,8 +40,8 @@ test('unscoped second level boundary is local scope', async () => {
         </GlobalHotkeyBoundary>,
     );
 
-    const rootRegistry = expectHotkeyRegistry(rootRegistryRef.current)
-    const localRegistry = expectHotkeyRegistry(localRegistryRef.current)
+    const rootRegistry = expectHotkeyRegistry(rootRegistryRef.current);
+    const localRegistry = expectHotkeyRegistry(localRegistryRef.current);
     expect(rootRegistry.scope).toBe(scopes.global);
     expect(localRegistry.scope).toBe(scopes.local);
 });
@@ -60,7 +50,7 @@ test('scoped first level boundary is child of global', () => {
     const registryRef = createRef<HotkeyRegistry>();
     render(<HotkeyBoundary hotkeyRegistryRef={registryRef} scope="mainmenu" />);
 
-    const registry = expectHotkeyRegistry(registryRef.current)
+    const registry = expectHotkeyRegistry(registryRef.current);
     expect(registry.scope).toBe('mainmenu');
     expect(registry.parent.scope).toBe(scopes.global);
 });
@@ -75,8 +65,8 @@ test('changing scope names removes old scope, and creating a new', async () => {
         </GlobalHotkeyBoundary>,
     );
 
-    const rootRegistry = expectHotkeyRegistry(rootRegistryRef.current)
-    expect(rootRegistry.scopes.size).toBe(3 + 1);
+    const rootRegistry = expectHotkeyRegistry(rootRegistryRef.current);
+    expect(rootRegistry.scopes.size).toBe(3);
     expect(Array.from(rootRegistry.scopes.keys()).map(scope => String(scope))).toMatchObject([
         'scope1',
         'scope2',
@@ -93,7 +83,7 @@ test('changing scope names removes old scope, and creating a new', async () => {
         );
     });
 
-    expect(rootRegistry.scopes.size).toBe(3 + 1);
+    expect(rootRegistry.scopes.size).toBe(3);
     expect(Array.from(rootRegistry.scopes.keys()).map(scope => String(scope))).toMatchObject([
         'scope1',
         'scope2',
@@ -102,6 +92,7 @@ test('changing scope names removes old scope, and creating a new', async () => {
 });
 
 interface FocusByKeyProps {
+    global?: boolean;
     hotkey: string;
     onHotkey: () => boolean;
 }
@@ -109,11 +100,11 @@ const HotkeyMonitor: React.FC<FocusByKeyProps> = props => {
     const handler = useCallback(() => {
         return props.onHotkey();
     }, [props.hotkey, props.onHotkey]);
-    useHotkey(props.hotkey, handler);
+    useHotkey(props.hotkey, handler, props.global);
     return null;
 };
 
-test.skip('hotkeys of boundaries with same scope are merged', async () => {
+test('hotkeys of boundaries with same scope are merged', async () => {
     const mainRegistryRef = createRef<HotkeyRegistry>();
     const handler = jest.fn(() => true);
 
@@ -133,11 +124,14 @@ test.skip('hotkeys of boundaries with same scope are merged', async () => {
         );
     });
 
-    const mainRegistry = expectHotkeyRegistry(mainRegistryRef.current)
-    const hotkeyMap = Array.from(mainRegistry.global.scopes.get('main')!.values()).reduce((c, r) => c.concat(Array.from(r.iterLocalHotkeys())), [] as Hotkey[]);
+    const mainRegistry = expectHotkeyRegistry(mainRegistryRef.current);
+    const hotkeyMap = Array.from(mainRegistry.global.scopes.get('main')!.values()).reduce(
+        (c, r) => c.concat(Array.from(r.iterLocalHotkeys())),
+        [] as Hotkey[],
+    );
 
     expect(hotkeyMap.length).toBe(2);
-    expect(Array.from(hotkeyMap.keys())).toMatchInlineSnapshot(`
+    expect(Array.from(hotkeyMap.values())).toMatchInlineSnapshot(`
         Array [
           Object {
             "key": "ArrowRight",
@@ -149,41 +143,35 @@ test.skip('hotkeys of boundaries with same scope are merged', async () => {
     `);
 });
 
-test.skip('global keys at multiple levels are merged', async () => {
-    const mainRegistryRef = createRef<HotkeyRegistry>();
+test('global keys at multiple levels are merged', async () => {
+    const globalRegistryRef = createRef<HotkeyRegistry>();
     const handler = jest.fn(() => true);
 
     act(() => {
         render(
-            <GlobalHotkeyBoundary hotkeyRegistryRef={mainRegistryRef}>
+            <GlobalHotkeyBoundary hotkeyRegistryRef={globalRegistryRef}>
                 <HotkeyMonitor hotkey="esc" onHotkey={handler} />
                 <HotkeyBoundary scope="main">
                     <HotkeyBoundary scope="search">
-                        <HotkeyBoundary scope="global">
-                            <HotkeyMonitor hotkey="mod+f" onHotkey={handler} />
-                        </HotkeyBoundary>
+                        <HotkeyMonitor global={true} hotkey="mod+f" onHotkey={handler} />
                     </HotkeyBoundary>
                 </HotkeyBoundary>
                 <HotkeyBoundary scope="menu">
-                    <HotkeyBoundary scope="global">
-                        <HotkeyMonitor hotkey="m" onHotkey={handler} />
-                    </HotkeyBoundary>
+                    <HotkeyMonitor global={true} hotkey="m" onHotkey={handler} />
                     <HotkeyMonitor hotkey="enter" onHotkey={handler} />
                 </HotkeyBoundary>
                 <HotkeyBoundary scope="main">
-                    <HotkeyBoundary scope="global">
-                        <HotkeyMonitor hotkey="a" onHotkey={handler} />
-                    </HotkeyBoundary>
+                    <HotkeyMonitor global={true} hotkey="a" onHotkey={handler} />
                 </HotkeyBoundary>
             </GlobalHotkeyBoundary>,
         );
     });
 
-    const mainRegistry = expectHotkeyRegistry(mainRegistryRef.current)
-    const hotkeyMap = Array.from(mainRegistry.global.iterLocalHotkeys());
+    const globalRegistry = expectHotkeyRegistry(globalRegistryRef.current);
+    const hotkeyMap = Array.from(globalRegistry.iterLocalHotkeys());
 
     expect(hotkeyMap.length).toBe(4);
-    expect(Array.from(hotkeyMap.keys())).toMatchInlineSnapshot(`
+    expect(Array.from(hotkeyMap.values())).toMatchInlineSnapshot(`
         Array [
           Object {
             "key": "Escape",
