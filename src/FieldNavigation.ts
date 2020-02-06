@@ -183,12 +183,12 @@ export function createNavigationHandler(
             modifierKeys.metaKey ||
             (navigationKey !== 'Tab' && modifierKeys.shiftKey)
         ) {
-            return; // don't act on modifier keys except when tabbing.
+            return false; // don't act on modifier keys except when tabbing.
         }
 
         const coordinates = findFieldCoordinates(navigationMap, focusKey, maxX, maxY);
         if (coordinates == null) {
-            return;
+            return false;
         }
 
         const x = coordinates[0];

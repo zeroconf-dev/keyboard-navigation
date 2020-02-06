@@ -28,7 +28,7 @@ export type ArrowKeyHandler = (focusKey: string, arrowKey: ArrowKey, modifierKey
 export type BlurEventHandler = (e: React.FocusEvent<HTMLInputElement>, focusKey: string) => void;
 export type FocusEventHandler = (opts: FocuserOptions, focusKey: string) => void;
 export type KeyboardEventHandler = (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => void;
-export type NavigationKeyHandler = (focusKey: string, navKey: NavigationKey, modifierKyes: ModifierKeys) => void;
+export type NavigationKeyHandler = (focusKey: string, navKey: NavigationKey, modifierKyes: ModifierKeys) => boolean;
 
 const emptyChangeHandler = () => {
     return;

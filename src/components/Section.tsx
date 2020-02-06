@@ -144,8 +144,10 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
     };
 
     private navigationHandler = (_: string, navKey: NavigationKey, modifierKeys: ModifierKeys) => {
-        if (this.props.navigationHandler != null) {
-            this.props.navigationHandler(this.props.focusKey, navKey, modifierKeys);
+        if (this.props.navigationHandler == null) {
+            return false;
+        } else {
+            return this.props.navigationHandler(this.props.focusKey, navKey, modifierKeys);
         }
     };
 

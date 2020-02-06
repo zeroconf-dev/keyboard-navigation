@@ -127,8 +127,10 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
 
     const navHandler = React.useCallback(
         (_: string, navKey: NavigationKey, modifierKeys: ModifierKeys) => {
-            if (props.navigationHandler != null) {
-                props.navigationHandler(props.focusKey, navKey, modifierKeys);
+            if (props.navigationHandler == null) {
+                return false;
+            } else {
+                return props.navigationHandler(props.focusKey, navKey, modifierKeys);
             }
         },
         [props.navigationHandler, props.focusKey],

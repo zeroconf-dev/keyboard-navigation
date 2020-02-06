@@ -77,6 +77,8 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
      */
     focusParentOnEscape: boolean;
 
+    hotkeyRegistryRef?: React.RefObject<HotkeyRegistry>;
+
     scope: HotkeyPublicScope;
 
     /**
@@ -100,6 +102,7 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
         case 'focusFirstOnNextOrigin':
         case 'focusParentOnEscape':
         case 'focusParentOnChildOrigin':
+        case 'hotkeyRegistryRef':
         case 'scope':
         case 'tabRegistryRef':
             return false;
@@ -112,7 +115,7 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
 export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(
     props: React.PropsWithChildren<Props<TComp>>,
 ) => {
-    const { crossGlobalBoundary, crossLocalBoundary, scope } = props;
+    const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
     const parentRegistry = useHotkeyRegistry();
     const registry = useMemo(
         () =>
@@ -122,6 +125,15 @@ export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(
             }),
         [scope, parentRegistry, crossGlobalBoundary, crossLocalBoundary],
     );
+    useEffect(() => {
+        if (hotkeyRegistryRef != null) {
+            (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = registry;
+            return () => {
+                (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = null;
+            };
+        }
+        return;
+    }, [registry, hotkeyRegistryRef]);
     useEffect(() => () => registry.dispose(), [registry]);
 
     const tabRegistry = useNewTabRegistry(props) as TabRegistry;
