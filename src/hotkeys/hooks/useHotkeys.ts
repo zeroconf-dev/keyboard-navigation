@@ -26,15 +26,14 @@ export const useHotkeysInRegistry = (
         [hotkeyMap],
     );
 
-    const resolvedRegistry = Object.prototype.hasOwnProperty.call(registry, 'current')
-        ? (registry as React.RefObject<HotkeyRegistry>).current
-        : (registry as HotkeyRegistry);
-
     useEffect(() => {
+        const resolvedRegistry = Object.prototype.hasOwnProperty.call(registry, 'current')
+            ? (registry as React.RefObject<HotkeyRegistry>).current
+            : (registry as HotkeyRegistry);
         if (resolvedRegistry != null) {
             const hotkeyIds = hotkeys.map(hotkey => resolvedRegistry.add(hotkey[0], hotkey[1], hotkey[2]));
             return () => hotkeyIds.forEach(hotkeyId => resolvedRegistry.remove(hotkeyId));
         }
         return;
-    }, [resolvedRegistry, hotkeys]);
+    }, [registry, hotkeys]);
 };
