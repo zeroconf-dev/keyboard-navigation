@@ -1,6 +1,8 @@
-import { ControlProps } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { ControlProps } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
+import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
+import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 
-export function getTargetFocusKey(obj: any): string | null {
+export const getTargetFocusKey = (obj: any): string | null => {
     /* istanbul ignore next */
     return typeof obj === 'object' && obj != null
         ? typeof obj.name === 'string' && obj.name !== ''
@@ -9,7 +11,7 @@ export function getTargetFocusKey(obj: any): string | null {
             ? obj.dataset.focuskey || null
             : null
         : null;
-}
+};
 
 /**
  * Helper for type-wise asserting that passing an object of type never
@@ -17,19 +19,19 @@ export function getTargetFocusKey(obj: any): string | null {
  * with the message of `msg`.
  */
 // tslint:disable-next-line:variable-name
-export function assertNever(_obj: never, msg: string): never {
+export const assertNever = (_obj: never, msg: string): never => {
     /* istanbul ignore next */
     throw new Error(msg);
-}
+};
 
 /**
  * Helper for type-wise asserting that passing an object
  * of type never, this is useful for exhausting union types,
  * but not throwing an error when called.
  */
-export function assertNeverNonThrow(obj: never): void {
+export const assertNeverNonThrow = (obj: never): void => {
     return obj;
-}
+};
 
 export type UnpackedHTMLElement<T> = T extends React.DetailedHTMLProps<React.HTMLAttributes<infer U>, infer U>
     ? U
@@ -43,11 +45,14 @@ export type UnpackedHTMLAttributes<TComp extends keyof JSX.IntrinsicElements> = 
  * Filtering componet props from DOM compatible props
  * of type `TComp`.
  */
-export function filterPropKeys<
+export const filterPropKeys = <
     U extends {},
     TComp extends keyof JSX.IntrinsicElements,
     TProps extends UnpackedHTMLAttributes<TComp> & U
->(props: TProps, filterFn: (propKey: keyof U) => boolean): UnpackedHTMLAttributes<TComp> {
+>(
+    props: TProps,
+    filterFn: (propKey: keyof U) => boolean,
+): UnpackedHTMLAttributes<TComp> => {
     const propKeys = Object.keys(props) as (keyof TProps)[];
     return propKeys
         .filter((propKey: keyof TProps) => {
@@ -58,12 +63,12 @@ export function filterPropKeys<
             carry[intrinsicProp] = props[intrinsicProp];
             return carry;
         }, {} as UnpackedHTMLAttributes<TComp>);
-}
+};
 
 /**
  * Capture the control props, and return an object only containing those.
  */
-export function spreadControlProps<Props extends ControlProps>(props: Props): ControlProps {
+export const spreadControlProps = <Props extends ControlProps>(props: Props): ControlProps => {
     return (Object.keys(props) as (keyof ControlProps)[])
         .filter(key => {
             /* istanbul ignore next */
@@ -95,8 +100,12 @@ export function spreadControlProps<Props extends ControlProps>(props: Props): Co
             (carry as any)[item] = props[item];
             return carry;
         }, {} as ControlProps);
-}
+};
 
+/**
+ * Test if element/event target is an element that can have focus
+ * without setting tabIndex
+ */
 export const isNativeFocusable = (
     target: any,
 ): target is
@@ -105,17 +114,25 @@ export const isNativeFocusable = (
     | HTMLIFrameElement
     | HTMLInputElement
     | HTMLSelectElement
-    | HTMLTextAreaElement => {
+    | HTMLTextAreaElement
+    | { focus: () => void } => {
     return (
         target instanceof HTMLAnchorElement ||
         target instanceof HTMLButtonElement ||
         target instanceof HTMLIFrameElement ||
         target instanceof HTMLInputElement ||
         target instanceof HTMLSelectElement ||
-        target instanceof HTMLTextAreaElement
+        target instanceof HTMLTextAreaElement ||
+        (target instanceof HTMLElement &&
+            target.getAttribute('tabIndex') != null &&
+            Number(target.getAttribute('tabIndex')) === -1) ||
+        Number(target.getAttribute('tabIndex')) > 0
     );
 };
 
+/**
+ * Test if an event target is a native input element.
+ */
 export const isNativeInput = (
     target: unknown,
 ): target is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement => {
@@ -124,4 +141,45 @@ export const isNativeInput = (
         target instanceof HTMLSelectElement ||
         target instanceof HTMLTextAreaElement
     );
+};
+
+export function isModifierMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
+    if (hotkey.nonStrict) {
+        return (
+            (event.altKey || !hotkey.alt) &&
+            (event.ctrlKey || !hotkey.ctrl) &&
+            (event.metaKey || !hotkey.meta) &&
+            (event.shiftKey || !hotkey.shift)
+        );
+    } else {
+        return (
+            Boolean(hotkey.alt) === event.altKey &&
+            Boolean(hotkey.ctrl) === event.ctrlKey &&
+            Boolean(hotkey.meta) === event.metaKey &&
+            Boolean(hotkey.shift) === event.shiftKey
+        );
+    }
+}
+
+export function isKeyMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
+    if (hotkey.nonStrict) {
+        return hotkey.key == null || hotkey.key === (event.key.length === 1 ? event.key.toLowerCase() : event.key);
+    } else {
+        return (
+            (hotkey.key == null && event.key.length !== 1) ||
+            hotkey.key === (event.key.length === 1 ? event.key.toLowerCase() : event.key)
+        );
+    }
+}
+
+export const isSpecialKey = (event: HotkeyEvent): boolean => {
+    return event.key.length !== 1;
+};
+
+export function isHotkeyMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
+    return isModifierMatching(hotkey, event) && isKeyMatching(hotkey, event);
+}
+
+export const hasModifierKey = (event: HotkeyEvent): boolean => {
+    return event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 };

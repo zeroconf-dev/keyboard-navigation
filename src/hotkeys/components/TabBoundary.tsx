@@ -14,7 +14,7 @@ import {
     UnpackedHTMLElement,
 } from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
-import { forwardRef, useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**

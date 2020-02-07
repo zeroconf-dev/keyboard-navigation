@@ -1,4 +1,6 @@
-import { createNavigationHandler, ModifierKeys, NavigationMap, TabRegistry } from '@zeroconf/keyboard-navigation/hooks';
+import { createNavigationHandler, NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { ModifierKeys } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import { useCallback, useMemo } from 'react';
 
 export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(

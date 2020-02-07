@@ -1,5 +1,6 @@
-import { isHotkeyMatching, EventBubbleControl, HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
+import { EventBubbleControl, HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { isHotkeyMatching } from '@zeroconf/keyboard-navigation/util';
 
 let globalRegistry: HotkeyRegistry | null = null;
 let currentLocalRegistry: HotkeyRegistry | null = null;
