@@ -1,5 +1,6 @@
 import { HotkeyHandler } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { isNativeInput } from '@zeroconf/keyboard-navigation/util';
 
 export interface HotkeysObject {
     [hotkey: string]: HotkeyHandler;
@@ -22,7 +23,7 @@ export interface HotkeyEvent {
     shiftKey: boolean;
 }
 
-export type HotkeyEventHandler = (e: HotkeyEvent & EventBubbleControl) => void;
+export type HotkeyEventHandler = (e: HotkeyEvent & EventBubbleControl & { target: HTMLElement }) => void;
 
 export function isModifierMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
     if (hotkey.nonStrict) {
@@ -53,13 +54,27 @@ export function isKeyMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
     }
 }
 
+export const isSpecialKey = (event: HotkeyEvent): boolean => {
+    return event.key.length !== 1;
+};
+
 export function isHotkeyMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
     return isModifierMatching(hotkey, event) && isKeyMatching(hotkey, event);
 }
 
-export function createHandler(hotkeys: HotkeysObject | HotkeyWithHandler[]): HotkeyEventHandler {
+export const hasModifierKey = (event: HotkeyEvent): boolean => {
+    return event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
+};
+
+const shouldHandleHotkey = (event: HotkeyEvent & { target: HTMLElement }) =>
+    hasModifierKey(event) || !isNativeInput(event.target);
+
+export const createHandler = (hotkeys: HotkeysObject | HotkeyWithHandler[]): HotkeyEventHandler => {
     if (Array.isArray(hotkeys)) {
-        return (e: HotkeyEvent & EventBubbleControl) => {
+        return (e: HotkeyEvent & EventBubbleControl & { target: HTMLElement }) => {
+            if (!shouldHandleHotkey(e)) {
+                return;
+            }
             hotkeys
                 .filter(hotkey => isHotkeyMatching(hotkey, e))
                 .forEach(hotkeyObj => {
@@ -78,4 +93,4 @@ export function createHandler(hotkeys: HotkeysObject | HotkeyWithHandler[]): Hot
             }, [] as HotkeyWithHandler[]),
         );
     }
-}
+};

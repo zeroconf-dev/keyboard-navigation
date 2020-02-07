@@ -97,13 +97,31 @@ export function spreadControlProps<Props extends ControlProps>(props: Props): Co
         }, {} as ControlProps);
 }
 
-export function isNativeFocusable(target: any): boolean {
+export const isNativeFocusable = (
+    target: any,
+): target is
+    | HTMLAnchorElement
+    | HTMLButtonElement
+    | HTMLIFrameElement
+    | HTMLInputElement
+    | HTMLSelectElement
+    | HTMLTextAreaElement => {
     return (
         target instanceof HTMLAnchorElement ||
-        target instanceof HTMLAreaElement ||
         target instanceof HTMLButtonElement ||
         target instanceof HTMLIFrameElement ||
         target instanceof HTMLInputElement ||
-        target instanceof HTMLSelectElement
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLTextAreaElement
     );
-}
+};
+
+export const isNativeInput = (
+    target: unknown,
+): target is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement => {
+    return (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLTextAreaElement
+    );
+};

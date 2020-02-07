@@ -76,3 +76,5 @@ HotkeyBoundary.defaultProps = {
     crossLocalBoundary: false,
     scope: scopes.local,
 };
+
+HotkeyBoundary.displayName = 'hotkeys(HotkeyBoundary)';

@@ -63,3 +63,5 @@ export const GlobalHotkeyBoundary = <TComp extends keyof JSX.IntrinsicElements>(
 
     return <HotkeyContextProvider value={registry}>{children}</HotkeyContextProvider>;
 };
+
+GlobalHotkeyBoundary.displayName = 'hotkeys(GlobalHotkeyBoundary)';

@@ -14,7 +14,7 @@ import {
     UnpackedHTMLElement,
 } from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**
@@ -112,8 +112,10 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
     }
 };
 
-export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(
-    props: React.PropsWithChildren<Props<TComp>>,
+export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements = 'div'>(
+    props: React.PropsWithChildren<Props<TComp>> & {
+        forwardRef?: React.Ref<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>;
+    },
 ) => {
     const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
     const parentRegistry = useHotkeyRegistry();
@@ -168,7 +170,7 @@ export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(
     );
 
     const comp = props.as == null ? 'div' : props.as;
-    const children = React.createElement(comp, { ...childProps, onKeyDown }, props.children);
+    const children = React.createElement(comp, { ...childProps, onKeyDown, ref: props.forwardRef }, props.children);
 
     return (
         <HotkeyContextProvider value={registry}>
@@ -184,5 +186,7 @@ TabBoundary.defaultProps = {
     focusFirstOnNextOrigin: false,
     focusParentOnChildOrigin: false,
     focusParentOnEscape: false,
-    scope: scopes.local,
+    scope: (scopes.local as any) as string,
 };
+
+TabBoundary.displayName = 'hotkeys(TabBoundary)';
