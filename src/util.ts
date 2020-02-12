@@ -1,6 +1,7 @@
 import { ControlProps } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { WeakValidationMap } from 'react';
 
 export const getTargetFocusKey = (obj: any): string | null => {
     /* istanbul ignore next */
@@ -40,6 +41,15 @@ export type UnpackedHTMLElement<T> = T extends React.DetailedHTMLProps<React.HTM
 export type UnpackedHTMLAttributes<TComp extends keyof JSX.IntrinsicElements> = React.HTMLAttributes<
     UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>
 >;
+
+export type HTMLType<T extends keyof JSX.IntrinsicElements> = UnpackedHTMLElement<JSX.IntrinsicElements[T]>;
+export type ForwardRefProps<T, P> = React.PropsWithoutRef<P> & React.RefAttributes<T>;
+export type ForwardRefComponent<P = {}, D extends Partial<P> = {}> = {
+    readonly $$typeof: symbol;
+    defaultProps: D;
+    displayName?: string;
+    propTypes?: WeakValidationMap<P>;
+};
 
 /**
  * Filtering componet props from DOM compatible props

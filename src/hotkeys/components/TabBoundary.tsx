@@ -11,10 +11,13 @@ import {
     assertNeverNonThrow,
     filterPropKeys,
     getTargetFocusKey,
+    ForwardRefComponent,
+    ForwardRefProps,
+    HTMLType,
     UnpackedHTMLElement,
 } from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**
@@ -29,20 +32,20 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
      */
     boundaryKey?: string;
 
-    crossGlobalBoundary: boolean;
-    crossLocalBoundary: boolean;
+    crossGlobalBoundary?: boolean;
+    crossLocalBoundary?: boolean;
 
     /**
      * Whether or not the tab boundary should cycle when attempting
      * to tab boyond the boundary.
      */
-    cycle: boolean;
+    cycle?: boolean;
 
     /**
      * Whether ot not to focus the first element if gaining focus
      * to the boundary from focus origin `next`.
      */
-    focusFirstOnNextOrigin: boolean;
+    focusFirstOnNextOrigin?: boolean;
 
     /**
      * When set to `true` and a child focuses the boundary,
@@ -60,7 +63,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
      *   <Section focusKey="inner3" />
      * </TabBoundary>
      */
-    focusParentOnChildOrigin: boolean;
+    focusParentOnChildOrigin?: boolean;
 
     /**
      * Set this to `true` to focus the parent of the boundary if exists
@@ -75,11 +78,11 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
      *   </TabBoundary>
      * </TabBoundary>
      */
-    focusParentOnEscape: boolean;
+    focusParentOnEscape?: boolean;
 
     hotkeyRegistryRef?: React.RefObject<HotkeyRegistry>;
 
-    scope: HotkeyPublicScope;
+    scope?: HotkeyPublicScope;
 
     /**
      * Take a ref to the tab registry this boundary creates.
@@ -112,74 +115,82 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
     }
 };
 
-export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements = 'div'>(
-    props: React.PropsWithChildren<Props<TComp>> & {
-        forwardRef?: React.Ref<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>;
+export const TabBoundary = forwardRef(
+    <TComp extends keyof JSX.IntrinsicElements = 'div'>(
+        props: React.PropsWithChildren<Props<TComp>>,
+        ref?: React.Ref<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>,
+    ) => {
+        const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
+        const parentRegistry = useHotkeyRegistry();
+        const registry = useMemo(
+            () =>
+                HotkeyRegistry.for(parentRegistry, scope, {
+                    crossGlobalBoundary,
+                    crossLocalBoundary,
+                }),
+            [scope, parentRegistry, crossGlobalBoundary, crossLocalBoundary],
+        );
+        useEffect(() => {
+            if (hotkeyRegistryRef != null) {
+                (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = registry;
+                return () => {
+                    (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = null;
+                };
+            }
+            return;
+        }, [registry, hotkeyRegistryRef]);
+        useEffect(() => () => registry.dispose(), [registry]);
+
+        const tabRegistry = useNewTabRegistry(props) as TabRegistry;
+        useFocusable(props.boundaryKey, tabRegistry);
+
+        const childProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
+
+        useEffect(() => {
+            const hotkeyIds = registry.addAll({
+                tab: (e: HotkeyEvent & Partial<EventBubbleControl>) => {
+                    e.preventDefault?.();
+                    e.stopPropagation?.();
+                    const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
+                    return focusKey == null ? false : tabRegistry.focusNext(focusKey);
+                },
+                'shift+tab': (e: HotkeyEvent & Partial<EventBubbleControl>) => {
+                    e.preventDefault?.();
+                    e.stopPropagation?.();
+                    const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
+                    return focusKey == null ? false : tabRegistry.focusPrev(focusKey);
+                },
+                esc: props.focusParentOnEscape ? () => tabRegistry.focusParent() : null,
+            });
+            return () => registry.removeAll(hotkeyIds);
+        }, [tabRegistry, registry, props.focusParentOnEscape]);
+
+        const onKeyDown = useCallback(
+            (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
+                registry.runCurrent(e);
+                if (props.onKeyDown != null) {
+                    props.onKeyDown.call(null, e);
+                }
+            },
+            [registry, props.onKeyDown],
+        );
+
+        const comp = props.as == null ? 'div' : props.as;
+        const children = React.createElement(comp, { ...childProps, onKeyDown, ref: ref }, props.children);
+
+        return (
+            <HotkeyContextProvider value={registry}>
+                <NavigationContext.Provider children={children} value={tabRegistry} />
+            </HotkeyContextProvider>
+        );
     },
-) => {
-    const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
-    const parentRegistry = useHotkeyRegistry();
-    const registry = useMemo(
-        () =>
-            HotkeyRegistry.for(parentRegistry, scope, {
-                crossGlobalBoundary,
-                crossLocalBoundary,
-            }),
-        [scope, parentRegistry, crossGlobalBoundary, crossLocalBoundary],
-    );
-    useEffect(() => {
-        if (hotkeyRegistryRef != null) {
-            (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = registry;
-            return () => {
-                (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = null;
-            };
-        }
-        return;
-    }, [registry, hotkeyRegistryRef]);
-    useEffect(() => () => registry.dispose(), [registry]);
-
-    const tabRegistry = useNewTabRegistry(props) as TabRegistry;
-    useFocusable(props.boundaryKey, tabRegistry);
-
-    const childProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
-
-    useEffect(() => {
-        const hotkeyIds = registry.addAll({
-            tab: (e: HotkeyEvent & Partial<EventBubbleControl>) => {
-                e.preventDefault?.();
-                e.stopPropagation?.();
-                const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
-                return focusKey == null ? false : tabRegistry.focusNext(focusKey);
-            },
-            'shift+tab': (e: HotkeyEvent & Partial<EventBubbleControl>) => {
-                e.preventDefault?.();
-                e.stopPropagation?.();
-                const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
-                return focusKey == null ? false : tabRegistry.focusPrev(focusKey);
-            },
-            esc: props.focusParentOnEscape ? () => tabRegistry.focusParent() : null,
-        });
-        return () => registry.removeAll(hotkeyIds);
-    }, [tabRegistry, registry, props.focusParentOnEscape]);
-
-    const onKeyDown = useCallback(
-        (e: React.KeyboardEvent<HTMLDivElement>) => {
-            registry.runCurrent(e);
-        },
-        [registry],
-    );
-
-    const comp = props.as == null ? 'div' : props.as;
-    const children = React.createElement(comp, { ...childProps, onKeyDown, ref: props.forwardRef }, props.children);
-
-    return (
-        <HotkeyContextProvider value={registry}>
-            <NavigationContext.Provider children={children} value={tabRegistry} />
-        </HotkeyContextProvider>
-    );
-};
+) as (<TComp extends keyof JSX.IntrinsicElements = 'div'>(
+    props: ForwardRefProps<HTMLType<TComp>, Props<TComp>>,
+) => JSX.Element) &
+    ForwardRefComponent<Props<keyof JSX.IntrinsicElements>>;
 
 TabBoundary.defaultProps = {
+    as: 'div',
     crossGlobalBoundary: true,
     crossLocalBoundary: false,
     cycle: false,
@@ -187,6 +198,6 @@ TabBoundary.defaultProps = {
     focusParentOnChildOrigin: false,
     focusParentOnEscape: false,
     scope: (scopes.local as any) as string,
-};
+} as const;
 
 TabBoundary.displayName = 'hotkeys(TabBoundary)';

@@ -7,7 +7,9 @@ import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tes
 import { escape, shiftTab, space, tab } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
 import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { TabBoundary as TabBoundaryHooks } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
+import { TabBoundary as TabBoundaryHotkeys } from '@zeroconf/keyboard-navigation/hotkeys/components/TabBoundary';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
+import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/__helpers__/errorBoundary';
 import * as React from 'react';
 import { act as domAct } from 'react-dom/test-utils';
 
@@ -20,29 +22,23 @@ import { act as domAct } from 'react-dom/test-utils';
         Focuser: FocuserHooks,
         TabBoundary: TabBoundaryHooks,
     },
+    {
+        Focuser: FocuserHooks,
+        TabBoundary: TabBoundaryHotkeys,
+    },
 ].forEach(components => {
     const Focuser = components.Focuser as typeof FocuserClassic;
     const TabBoundary = components.TabBoundary as typeof TabBoundaryClassic;
 
-    const suiteName = Focuser === FocuserClassic ? 'Classic' : 'Hooks';
+    const suiteName =
+        TabBoundary === TabBoundaryClassic ? 'Classic' : TabBoundary === TabBoundaryHooks ? 'Hooks' : 'Hotkeys';
 
     describe(`TabBoundary.${suiteName}`, () => {
+        const createErrorBoundary = installErrorBoundary();
+
         afterEach(cleanup);
         test('duplicate focus keys within same boundary throws', () => {
-            jest.spyOn(console, 'error').mockImplementation(() => {
-                return;
-            });
-
-            const errorRef = React.createRef() as React.MutableRefObject<any>;
-            class ErrorBoundary extends React.Component {
-                public componentDidCatch(error: any) {
-                    errorRef.current = error;
-                }
-                public render() {
-                    return this.props.children;
-                }
-            }
-
+            const [ErrorBoundary, errorRef] = createErrorBoundary();
             testAct(() => {
                 render(
                     <ErrorBoundary>

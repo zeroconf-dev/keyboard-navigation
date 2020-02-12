@@ -6,7 +6,7 @@ import { useEffect, useMemo } from 'react';
 type HotkeyTupple = [string, Hotkey, HotkeyHandler];
 
 export const useHotkeys = (hotkeyMap: { [hotkeyStr: string]: HotkeyHandler }, isGlobalHotkeys = false) => {
-    let registry = useHotkeyRegistry();
+    let registry = (useHotkeyRegistry as (calledFromHotkey: boolean) => HotkeyRegistry)(true as any);
     if (isGlobalHotkeys) {
         registry = registry.global;
     }

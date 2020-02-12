@@ -3,19 +3,9 @@ import { NavigationContext } from '@zeroconf/keyboard-navigation/components/Navi
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
 import { FocuserFn, TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
+import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/__helpers__/errorBoundary';
 import { useLayoutEffect } from 'react';
 import * as React from 'react';
-
-beforeAll(() => {
-    jest.spyOn(console, 'error').mockImplementation(() => {
-        return;
-    });
-});
-
-afterAll(() => {
-    // tslint:disable-next-line:no-console
-    (console.error as any).mockRestore();
-});
 
 const useTabRegistry = () => {
     const context = React.useContext(NavigationContext);
@@ -40,44 +30,6 @@ const useFocusable = (focusKey: string, focus: TabRegistry | FocuserFn) => {
     };
 };
 
-interface ErrorBoundaryProps {
-    errorRef: React.RefObject<Error>;
-}
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, { hasError: boolean }> {
-    public static getDerivedStateFromError = (error: any) => ({
-        hasError: error != null,
-    });
-
-    public constructor(props: ErrorBoundaryProps) {
-        super(props);
-        this.state = {
-            hasError: false,
-        };
-    }
-
-    private tryAgain = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.setState({ hasError: false });
-    };
-
-    public componentDidCatch(error: any) {
-        (this.props.errorRef as any).current = error;
-    }
-
-    public render() {
-        if (this.state.hasError) {
-            return (
-                <div>
-                    <div role="alert">There was a problem.</div> <button onClick={this.tryAgain}>Try again?</button>
-                </div>
-            );
-        } else {
-            return this.props.children;
-        }
-    }
-}
-
 describe('Focusable', () => {
     afterEach(cleanup);
     // test('1', () => {
@@ -92,23 +44,31 @@ describe('Focusable', () => {
     //     expect(app).toBeInstanceOf(HTMLDivElement);
     // });
 
+    const createErrorBoundary = installErrorBoundary();
+
     test('rendering a focusable outside NavigationContext throws', () => {
         const Focusable = () => {
             useFocusable('test', () => true);
             return <div />;
         };
 
-        act(() => {
-            const errorRef = React.createRef<Error>();
-            render(
-                <ErrorBoundary errorRef={errorRef}>
-                    <Focusable />
-                </ErrorBoundary>,
-            );
+        const [ErrorBoundary, errorRef] = createErrorBoundary();
+        render(
+            <ErrorBoundary>
+                <Focusable />
+            </ErrorBoundary>,
+        );
 
-            expect(errorRef.current).toBeDefined();
-            expect(errorRef.current!.message).toBe('A focusable must be rendered inside NavigationContext');
-        });
+        expect(errorRef.current).toMatchInlineSnapshot(`
+            Object {
+              "error": [Error: A focusable must be rendered inside NavigationContext],
+              "errorInfo": Object {
+                "componentStack": "
+                in Focusable
+                in ErrorBoundary",
+              },
+            }
+        `);
     });
 
     test(`Rending a focusable inside context doesn't throw`, () => {

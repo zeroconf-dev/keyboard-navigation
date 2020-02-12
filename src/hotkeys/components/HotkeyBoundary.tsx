@@ -1,13 +1,20 @@
 import { HotkeyContextProvider } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyContext';
 import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
 import { scopes, HotkeyPublicScope, HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
-import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLElement } from '@zeroconf/keyboard-navigation/util';
+import {
+    assertNeverNonThrow,
+    filterPropKeys,
+    ForwardRefComponent,
+    ForwardRefProps,
+    HTMLType,
+    UnpackedHTMLElement,
+} from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     // tslint:disable-next-line:no-reserved-keywords
-    as?: TComp;
+    as: TComp;
     crossGlobalBoundary: boolean;
     crossLocalBoundary: boolean;
     hotkeyRegistryRef?: React.RefObject<HotkeyRegistry>;
@@ -32,49 +39,69 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
     }
 };
 
-export const HotkeyBoundary = <TComp extends keyof JSX.IntrinsicElements>(
-    props: React.PropsWithChildren<HotkeyBoundaryProps<TComp>>,
-) => {
-    const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
-    const parentRegistry = useHotkeyRegistry();
-    const registry = useMemo(
-        () =>
-            HotkeyRegistry.for(parentRegistry, scope, {
-                crossGlobalBoundary,
-                crossLocalBoundary,
-            }),
-        [scope, parentRegistry, crossGlobalBoundary, crossLocalBoundary],
-    );
-
-    useEffect(() => () => registry.dispose(), [registry]);
-    useEffect(() => {
-        if (hotkeyRegistryRef != null) {
-            (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = registry;
-            return () => {
-                (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = null;
-            };
-        }
-        return;
-    }, [registry, hotkeyRegistryRef]);
-
-    const onKeyDown = useCallback(
-        (e: React.KeyboardEvent<HTMLDivElement>) => {
-            registry.runCurrent(e);
-        },
-        [registry],
-    );
-
-    const comp = props.as == null ? 'div' : props.as;
-    const childProps = filterPropKeys<ComponentProps<TComp>, TComp, HotkeyBoundaryProps<TComp>>(props, filterProps);
-    const children = React.createElement(comp, { ...childProps, onKeyDown }, props.children);
-
-    return <HotkeyContextProvider value={registry}>{children}</HotkeyContextProvider>;
-};
-
-HotkeyBoundary.defaultProps = {
+const defaultProps = {
+    as: 'div',
     crossGlobalBoundary: true,
     crossLocalBoundary: false,
-    scope: scopes.local,
-};
+    scope: (scopes.local as unknown) as string,
+} as const;
+
+export const HotkeyBoundary = forwardRef(
+    <TComp extends keyof JSX.IntrinsicElements = 'div'>(
+        props: React.PropsWithChildren<HotkeyBoundaryProps<TComp>>,
+        ref?: React.Ref<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>,
+    ) => {
+        const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
+        const parentRegistry = useHotkeyRegistry();
+        const registry = useMemo(
+            () =>
+                HotkeyRegistry.for(parentRegistry, scope, {
+                    crossGlobalBoundary,
+                    crossLocalBoundary,
+                }),
+            [scope, parentRegistry, crossGlobalBoundary, crossLocalBoundary],
+        );
+
+        useEffect(() => () => registry.dispose(), [registry]);
+        useEffect(() => {
+            if (hotkeyRegistryRef != null) {
+                (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = registry;
+                return () => {
+                    (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = null;
+                };
+            }
+            return;
+        }, [registry, hotkeyRegistryRef]);
+
+        const onKeyDown = useCallback(
+            (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
+                registry.runCurrent(e);
+            },
+            [registry],
+        );
+
+        const onFocus = useCallback(
+            (e: React.FocusEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
+                e.stopPropagation();
+                registry.currentLocalRegistry = registry;
+                if (typeof props.onFocus === 'function') {
+                    props.onFocus.call(undefined, e);
+                }
+            },
+            [registry, props.onFocus],
+        );
+
+        const comp = props.as == null ? 'div' : props.as;
+        const childProps = filterPropKeys<ComponentProps<TComp>, TComp, HotkeyBoundaryProps<TComp>>(props, filterProps);
+        const children = React.createElement(comp, { ...childProps, onFocus, onKeyDown, ref }, props.children);
+
+        return <HotkeyContextProvider value={registry}>{children}</HotkeyContextProvider>;
+    },
+) as (<TComp extends keyof JSX.IntrinsicElements = 'div'>(
+    props: ForwardRefProps<HTMLType<TComp>, HotkeyBoundaryProps<TComp>>,
+) => JSX.Element) &
+    ForwardRefComponent<HotkeyBoundaryProps<keyof JSX.IntrinsicElements>, typeof defaultProps>;
+
+HotkeyBoundary.defaultProps = defaultProps;
 
 HotkeyBoundary.displayName = 'hotkeys(HotkeyBoundary)';

@@ -1,5 +1,44 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TabBoundary.Classic duplicate focus keys within same boundary throws 1`] = `[SetError: The value focuser does not exist]`;
+exports[`TabBoundary.Classic duplicate focus keys within same boundary throws 1`] = `
+Object {
+  "error": [SetError: The value focuser does not exist],
+  "errorInfo": Object {
+    "componentStack": "
+    in Focuser (created by Context.Consumer)
+    in TabRegistry(Focuser) (created by ForwardRef)
+    in ForwardRef
+    in div (created by TabBoundary)
+    in TabBoundary (created by Context.Consumer)
+    in TabRegistry(TabBoundary) (created by ForwardRef)
+    in ForwardRef
+    in ErrorBoundary",
+  },
+}
+`;
 
-exports[`TabBoundary.Hooks duplicate focus keys within same boundary throws 1`] = `[SetError: The value: focuser already exists]`;
+exports[`TabBoundary.Hooks duplicate focus keys within same boundary throws 1`] = `
+Object {
+  "error": [SetError: The value: focuser already exists],
+  "errorInfo": Object {
+    "componentStack": "
+    in ForwardRef
+    in div
+    in Unknown
+    in ErrorBoundary",
+  },
+}
+`;
+
+exports[`TabBoundary.Hotkeys duplicate focus keys within same boundary throws 1`] = `
+Object {
+  "error": [SetError: The value: focuser already exists],
+  "errorInfo": Object {
+    "componentStack": "
+    in ForwardRef
+    in div (created by hotkeys(TabBoundary))
+    in hotkeys(TabBoundary)
+    in ErrorBoundary",
+  },
+}
+`;
