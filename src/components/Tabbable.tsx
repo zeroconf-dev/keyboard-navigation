@@ -90,6 +90,7 @@ export function Tabbable<TComp extends Component>(
         }
 
         public render() {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { tabRegistry, ...props } = this.props;
             return <Comp {...props} onFocus={this.onFocus} ref={this.setComponentRef} />;
         }
