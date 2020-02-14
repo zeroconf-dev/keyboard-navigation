@@ -2,6 +2,7 @@ import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
 import { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
 import { FocuserOptions } from '@zeroconf/keyboard-navigation/TabRegistry';
 import * as React from 'react';
+import { useImperativeHandle } from 'react';
 
 // tslint:disable:react-unused-props-and-state
 
@@ -189,7 +190,7 @@ export const Focuser = React.forwardRef((props: Props, ref: React.Ref<FocuserRef
 
     useFocusable(props.focusKey, focus);
 
-    React.useImperativeHandle(
+    useImperativeHandle(
         ref,
         () => ({
             focus: focus,
@@ -399,3 +400,5 @@ export const Focuser = React.forwardRef((props: Props, ref: React.Ref<FocuserRef
         />
     );
 });
+
+Focuser.displayName = 'Focuser';

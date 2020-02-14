@@ -95,9 +95,9 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
     public UNSAFE_componentWillReceiveProps(nextProps: Props<TComp>) {
         if (this.props.navigationMap !== nextProps.navigationMap) {
             /* istanbul ignore next */
-            this.setState(_ => ({
+            this.setState({
                 navigationHandler: createNavigationHandler(nextProps.navigationMap, this.tabRegistryRef),
-            }));
+            });
         }
     }
 

@@ -31,6 +31,8 @@ export const Button = React.forwardRef((props: ButtonProps, ref: React.Ref<HTMLB
     return <button {...props} ref={buttonRef} />;
 });
 
+Button.displayName = 'Button';
+
 type InputProps = JSX.IntrinsicElements['input'] & TabbableProps;
 export const Input = React.forwardRef((props: InputProps, ref: React.Ref<HTMLInputElement>) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -54,6 +56,8 @@ export const Input = React.forwardRef((props: InputProps, ref: React.Ref<HTMLInp
 
     return <input {...props} ref={inputRef} />;
 });
+
+Input.displayName = 'Input';
 
 type SelectProps = JSX.IntrinsicElements['select'] & TabbableProps;
 export const Select = React.forwardRef((props: SelectProps, ref: React.Ref<HTMLSelectElement>) => {
@@ -79,6 +83,8 @@ export const Select = React.forwardRef((props: SelectProps, ref: React.Ref<HTMLS
     return <select {...props} ref={selectRef} />;
 });
 
+Select.displayName = 'Select';
+
 type TextAreaProps = JSX.IntrinsicElements['textarea'] & TabbableProps;
 export const TextArea = React.forwardRef((props: TextAreaProps, ref: React.Ref<HTMLTextAreaElement>) => {
     const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -102,3 +108,5 @@ export const TextArea = React.forwardRef((props: TextAreaProps, ref: React.Ref<H
 
     return <textarea {...props} ref={textAreaRef} />;
 });
+
+TextArea.displayName = 'TextArea';

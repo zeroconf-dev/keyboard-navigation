@@ -52,6 +52,32 @@ function findFieldCoordinates(
     return null;
 }
 
+function focusUp(
+    fieldMap: NavigationMap,
+    getTabRegistry: TabRegistryFetcher,
+    x: number,
+    y: number,
+    maxX: number,
+    maxY: number,
+    origin: FocuserOptions,
+): boolean {
+    const tabRegistry = getTabRegistry();
+    const prevOverflow = y === 0 && origin === originNext;
+
+    if (tabRegistry == null || (!prevOverflow && y === 0)) {
+        return false;
+    }
+
+    const yCandidate = prevOverflow && x !== 0 ? maxY : Math.max(0, y - 1);
+    const xCandidate = prevOverflow ? Math.max(0, x - 1) : x;
+    const nextField = fieldMap[yCandidate][xCandidate];
+
+    return (
+        (nextField != null && tabRegistry.focus(nextField, origin)) ||
+        focusUp(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin)
+    );
+}
+
 function focusDown(
     fieldMap: NavigationMap,
     getTabRegistry: TabRegistryFetcher,
@@ -131,32 +157,6 @@ function focusRight(
         focusUp(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin) ||
         focusDown(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin) ||
         focusRight(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin)
-    );
-}
-
-function focusUp(
-    fieldMap: NavigationMap,
-    getTabRegistry: TabRegistryFetcher,
-    x: number,
-    y: number,
-    maxX: number,
-    maxY: number,
-    origin: FocuserOptions,
-): boolean {
-    const tabRegistry = getTabRegistry();
-    const prevOverflow = y === 0 && origin === originNext;
-
-    if (tabRegistry == null || (!prevOverflow && y === 0)) {
-        return false;
-    }
-
-    const yCandidate = prevOverflow && x !== 0 ? maxY : Math.max(0, y - 1);
-    const xCandidate = prevOverflow ? Math.max(0, x - 1) : x;
-    const nextField = fieldMap[yCandidate][xCandidate];
-
-    return (
-        (nextField != null && tabRegistry.focus(nextField, origin)) ||
-        focusUp(fieldMap, getTabRegistry, xCandidate, yCandidate, maxX, maxY, origin)
     );
 }
 

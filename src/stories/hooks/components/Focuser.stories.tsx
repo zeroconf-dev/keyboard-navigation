@@ -113,9 +113,9 @@ storiesOf('hooks/useFocusable', module)
     .add('navigating between fields', () => (
         <TabBoundary>
             <Card autoFocus={true} focusKey="field1">
-                Press 'Tab' to focus next card.
+                Press &apos;Tab&apos; to focus next card.
             </Card>
-            <Card focusKey="field2">Press 'Shift + Tab' to focus previous card.</Card>
+            <Card focusKey="field2">Press &apos;Shift + Tab&apos; to focus previous card.</Card>
         </TabBoundary>
     ))
     .add('programtically focus card', () => (

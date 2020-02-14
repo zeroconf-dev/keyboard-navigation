@@ -1,4 +1,5 @@
-import { createNavigationHandler, HotkeyEvent, NavigationMap, TabRegistry } from '@zeroconf/keyboard-navigation/hooks';
+import { createNavigationHandler, NavigationMap, TabRegistry } from '@zeroconf/keyboard-navigation/hooks';
+import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import { useHotkeysInRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeys';
 import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { getTargetFocusKey } from '@zeroconf/keyboard-navigation/util';

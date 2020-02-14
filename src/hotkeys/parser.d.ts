@@ -9,6 +9,7 @@ interface Hotkey {
     nonStrict?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 declare class lexer {
     parseError(text: string, hash: string): void;
 }

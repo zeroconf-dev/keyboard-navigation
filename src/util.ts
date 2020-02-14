@@ -1,6 +1,6 @@
 import { ControlProps } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys';
 import { WeakValidationMap } from 'react';
 
 export const getTargetFocusKey = (obj: any): string | null => {

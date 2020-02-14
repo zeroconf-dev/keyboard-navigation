@@ -22,7 +22,7 @@ Object {
   "error": [SetError: The value: focuser already exists],
   "errorInfo": Object {
     "componentStack": "
-    in ForwardRef
+    in Focuser
     in div
     in Unknown
     in ErrorBoundary",
@@ -35,7 +35,7 @@ Object {
   "error": [SetError: The value: focuser already exists],
   "errorInfo": Object {
     "componentStack": "
-    in ForwardRef
+    in Focuser
     in div (created by hotkeys(TabBoundary))
     in hotkeys(TabBoundary)
     in ErrorBoundary",

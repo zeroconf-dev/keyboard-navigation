@@ -1,9 +1,8 @@
 import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
-import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hooks';
 import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
 import { useNewTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useNewTabRegistry';
 import { HotkeyContextProvider } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyContext';
-import { EventBubbleControl } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
+import { EventBubbleControl, HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
 import { scopes, HotkeyPublicScope, HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';

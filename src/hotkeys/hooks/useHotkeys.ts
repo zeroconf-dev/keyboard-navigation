@@ -5,14 +5,6 @@ import { useEffect, useMemo } from 'react';
 
 type HotkeyTupple = [string, Hotkey, HotkeyHandler];
 
-export const useHotkeys = (hotkeyMap: { [hotkeyStr: string]: HotkeyHandler }, isGlobalHotkeys = false) => {
-    let registry = (useHotkeyRegistry as (calledFromHotkey: boolean) => HotkeyRegistry)(true as any);
-    if (isGlobalHotkeys) {
-        registry = registry.global;
-    }
-    useHotkeysInRegistry(registry, hotkeyMap);
-};
-
 export const useHotkeysInRegistry = (
     registry: HotkeyRegistry | React.RefObject<HotkeyRegistry>,
     hotkeyMap: { [hotkeyStr: string]: HotkeyHandler },
@@ -36,4 +28,12 @@ export const useHotkeysInRegistry = (
         }
         return;
     }, [registry, hotkeys]);
+};
+
+export const useHotkeys = (hotkeyMap: { [hotkeyStr: string]: HotkeyHandler }, isGlobalHotkeys = false) => {
+    let registry = (useHotkeyRegistry as (calledFromHotkey: boolean) => HotkeyRegistry)(true as any);
+    if (isGlobalHotkeys) {
+        registry = registry.global;
+    }
+    useHotkeysInRegistry(registry, hotkeyMap);
 };

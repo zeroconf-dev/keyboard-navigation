@@ -116,6 +116,7 @@ describe('Focusable', () => {
             const props = useFocusable(p.focusKey, focus);
             return <div {...props} ref={ref} />;
         });
+        Focusable.displayName = 'Focusable';
 
         const tabRegistryRef = React.createRef<TabRegistry>();
         const field2Ref = React.createRef<HTMLDivElement>();

@@ -31,7 +31,11 @@ import { act as domAct } from 'react-dom/test-utils';
     const TabBoundary = components.TabBoundary as typeof TabBoundaryClassic;
 
     const suiteName =
-        TabBoundary === TabBoundaryClassic ? 'Classic' : TabBoundary === TabBoundaryHooks ? 'Hooks' : 'Hotkeys';
+        (TabBoundary as any) === (TabBoundaryClassic as any)
+            ? 'Classic'
+            : (TabBoundary as any) === (TabBoundaryHooks as any)
+            ? 'Hooks'
+            : 'Hotkeys';
 
     describe(`TabBoundary.${suiteName}`, () => {
         const createErrorBoundary = installErrorBoundary();

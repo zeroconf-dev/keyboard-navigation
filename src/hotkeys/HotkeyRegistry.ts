@@ -118,7 +118,7 @@ export class HotkeyRegistry {
     }
 
     private getCrossGlobalBoundary() {
-        let reg: HotkeyRegistry = this;
+        let reg = this as HotkeyRegistry;
         while (true) {
             if ((this.scope !== scopes.global && reg === this.global) || reg == null) {
                 return true;
@@ -131,7 +131,7 @@ export class HotkeyRegistry {
     }
 
     private iterLocal = function*(this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
-        let reg = this;
+        let reg = this as HotkeyRegistry;
         while (true) {
             if ((this.scope !== scopes.global && reg === this.global) || reg == null) {
                 return; // never yield global from iterLocal

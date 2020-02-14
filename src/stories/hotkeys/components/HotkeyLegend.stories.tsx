@@ -6,6 +6,7 @@ import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import * as React from 'react';
 import { useCallback } from 'react';
 import { hotkeyToText } from '../../../hotkeys/components/__tests__/__helpers__/hotkeyToText';
+import { GlobalHotkeyBoundary } from '@zeroconf/keyboard-navigation/hotkeys/components';
 
 const renderHotkey = (hotkey: Hotkey) => {
     const hotkeyText = hotkeyToText(hotkey);
@@ -29,9 +30,9 @@ const FocusByKey: React.FC<FocusByKeyProps> = props => {
 storiesOf('HotkeyLegend', module)
     .add('Empty legend', () => <HotkeyLegend renderHotkey={renderHotkey} />)
     .add('Legend with simple content', () => (
-        <>
+        <GlobalHotkeyBoundary>
             <FocusByKey hotkey="ctrl" />
             <FocusByKey hotkey="s" />
             <HotkeyLegend renderHotkey={renderHotkey} />
-        </>
+        </GlobalHotkeyBoundary>
     ));

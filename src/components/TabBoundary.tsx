@@ -77,11 +77,11 @@ export type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = React.HTM
 > &
     ComponentProps<TComp>;
 
-interface State {}
-
 type PropsWithTabRegistry<TComp extends keyof JSX.IntrinsicElements> = Props<TComp> & {
     parentRegistry: TabRegistry | null;
 };
+
+interface State {}
 
 class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
     PropsWithTabRegistry<TComp>,

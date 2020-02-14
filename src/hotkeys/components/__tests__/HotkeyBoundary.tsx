@@ -125,7 +125,8 @@ test('hotkeys of boundaries with same scope are merged', async () => {
     });
 
     const mainRegistry = expectHotkeyRegistry(mainRegistryRef.current);
-    const hotkeyMap = Array.from(mainRegistry.global.scopes.get('main')!.values()).reduce(
+    const mainScopeRegistries = expectInstanceOf(mainRegistry.global.scopes.get('main'), Set) as Set<HotkeyRegistry>;
+    const hotkeyMap = Array.from(mainScopeRegistries.values()).reduce(
         (c, r) => c.concat(Array.from(r.iterLocalHotkeys())),
         [] as Hotkey[],
     );

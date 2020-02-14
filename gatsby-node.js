@@ -1,3 +1,5 @@
+// @ts-nocheck
+// eslint-disable-next-line
 const TSPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 exports.onCreateWebpackConfig = ({ actions }) => {

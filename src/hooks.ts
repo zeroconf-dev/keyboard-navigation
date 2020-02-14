@@ -23,13 +23,6 @@ import { Props as SectionPropsImport } from '@zeroconf/keyboard-navigation/hooks
 import { TabbableProps as TabbablePropsImport } from '@zeroconf/keyboard-navigation/hooks/components/Tabbable';
 import { Props as TabBoundaryPropsImport } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
 import {
-    HotkeysObject as HotkeysObjectImport,
-    HotkeyEvent as HotkeyEventImport,
-    HotkeyEventHandler as HotkeyEventHandlerImport,
-    HotkeyWithHandler as HotkeyWithHandlerImport,
-} from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import { Hotkey as HotkeyImport } from '@zeroconf/keyboard-navigation/hotkeys/parser';
-import {
     FocuserFn as FocuserFnImport,
     FocuserOptions as FocuserOptionsImport,
     FocuserType as FocuserTypeImport,
@@ -38,7 +31,6 @@ import {
 } from '@zeroconf/keyboard-navigation/TabRegistry';
 
 export { Button, Input, Select, TextArea } from '@zeroconf/keyboard-navigation/hooks/components/Tabbable';
-export { createHandler as createHotkeyHandler } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 export { createNavigationHandler } from '@zeroconf/keyboard-navigation/FieldNavigation';
 export { Field } from '@zeroconf/keyboard-navigation/hooks/components/Field';
 export { Focuser } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
@@ -46,10 +38,10 @@ export { Grid } from '@zeroconf/keyboard-navigation/hooks/components/Grid';
 export { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 export { Section } from '@zeroconf/keyboard-navigation/hooks/components/Section';
 export { TabBoundary } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
-export { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 export { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
 export { useNavigationMap } from '@zeroconf/keyboard-navigation/hooks/useNavigationMap';
 export { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
+export { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 
 export type ArrowKey = ArrowKeyImport;
 export type ArrowKeyHandler = ArrowKeyHandlerImport;
@@ -66,11 +58,6 @@ export type FocuserType = FocuserTypeImport;
 export type FocusEventHandler = FocusEventHandlerImport;
 export type FocusOrigin = FocusOriginImport;
 export type GridProps<TComp extends keyof JSX.IntrinsicElements> = GridPropsImport<TComp>;
-export type Hotkey = HotkeyImport;
-export type HotkeyEvent = HotkeyEventImport;
-export type HotkeyEventHandler = HotkeyEventHandlerImport;
-export type HotkeysObject = HotkeysObjectImport;
-export type HotkeyWithHandler = HotkeyWithHandlerImport;
 export type KeyboardEventHandler = KeyboardEventHandlerImport;
 export type ModifierKeys = ModifierKeysImport;
 export type NavigationKey = NavigationKeyImport;

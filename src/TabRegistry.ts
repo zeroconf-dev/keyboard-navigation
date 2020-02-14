@@ -114,7 +114,7 @@ export class TabRegistry<E = string> {
      * If `this` registry has no parent return itself.
      */
     public get rootRegistry(): TabRegistry<E> | this {
-        let registry: TabRegistry<E> = this;
+        let registry = this as TabRegistry<E>;
         while (registry.parentRegistry != null) {
             registry = registry.parentRegistry;
         }
@@ -147,7 +147,7 @@ export class TabRegistry<E = string> {
      * When this is true, the registry won't jump boundries
      * but just focus the opposite end of the tab registry.
      */
-    private cycle: boolean = false;
+    private cycle = false;
 
     /**
      * Indicator for if focus cycle is running.
@@ -232,7 +232,7 @@ export class TabRegistry<E = string> {
      */
     public [Symbol.iterator] = function*(
         this: TabRegistry<E>,
-        includeRegistries: boolean = false,
+        includeRegistries = false,
     ): IterableIterator<FocuserType<E>> {
         if (this.isEmpty) {
             return;
@@ -398,12 +398,12 @@ export class TabRegistry<E = string> {
      * the first key will be the root identifier.
      */
     public focusIn(keys: ReadonlyArray<E>, options?: FocuserOptions): boolean {
-        // tslint:disable-next-line: prefer-const
+        // eslint-disable-next-line prefer-const
         let [key, ...nextKeys] = keys;
         if (key == null) {
             return false;
         }
-        let registry: TabRegistry<E> = this;
+        let registry = this as TabRegistry<E>;
         while (registry.has(key)) {
             const focuser = registry.get(key);
             if (focuser == null) {
@@ -751,12 +751,12 @@ export class TabRegistry<E = string> {
      * from the first key exist.
      */
     public hasIn(keys: ReadonlyArray<E>): boolean {
-        // tslint:disable-next-line: prefer-const
+        // eslint-disable-next-line prefer-const
         let [key, ...nextKeys] = keys;
         if (key == null) {
             return false;
         }
-        let registry: TabRegistry<E> = this;
+        let registry = this as TabRegistry<E>;
         while (registry.has(key)) {
             const focuser = registry.get(key);
             if (focuser == null) {
@@ -819,7 +819,7 @@ export class TabRegistry<E = string> {
      * Returns an iterator of all the `keys` in this
      * and all nested registries.
      */
-    public keysRecursive = function*(this: TabRegistry<E>, includeRegistries: boolean = true): IterableIterator<E> {
+    public keysRecursive = function*(this: TabRegistry<E>, includeRegistries = true): IterableIterator<E> {
         if (this.registry.isEmpty) {
             return;
         }
