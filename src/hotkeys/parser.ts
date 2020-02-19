@@ -89,10 +89,11 @@ declare class lexer {
 }
 
 export interface Parser {
-    public readonly Parser: new () => Parser;
-    public readonly lexer: lexer;
-    public parse(hotkey: string): Hotkey;
-    public parseError(text: string, hash: string): void;
+    new (): Parser;
+    readonly Parser: new () => Parser;
+    readonly lexer: lexer;
+    parse(hotkey: string): Hotkey;
+    parseError(text: string, hash: string): void;
 }
 
 export const parser: Parser = (function() {
