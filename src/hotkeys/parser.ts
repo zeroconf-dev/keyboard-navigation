@@ -72,7 +72,30 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-export const parser = (function() {
+
+export interface Hotkey {
+    alt?: boolean;
+    cmd?: boolean;
+    ctrl?: boolean;
+    key?: string | null;
+    meta?: boolean;
+    mod?: boolean;
+    shift?: boolean;
+    nonStrict?: boolean;
+}
+
+declare class lexer {
+    parseError(text: string, hash: string): void;
+}
+
+export declare class Parser {
+    public readonly Parser: new () => Parser;
+    public readonly lexer: lexer;
+    public parse(hotkey: string): Hotkey;
+    public parseError(text: string, hash: string): void;
+}
+
+export const parser: Parser = (function() {
     const o = function(k, v, o, l) {
             for (o = o || {}, l = k.length; l--; o[k[l]] = v);
             return o;
@@ -1135,33 +1158,7 @@ export const parser = (function() {
     return new Parser();
 })();
 
-export interface Hotkey {
-    alt?: boolean;
-    cmd?: boolean;
-    ctrl?: boolean;
-    key?: string | null;
-    meta?: boolean;
-    mod?: boolean;
-    shift?: boolean;
-    nonStrict?: boolean;
-}
-
-declare class lexer {
-    parseError(text: string, hash: string): void;
-}
-
-export declare class Parser {
-    public readonly Parser: new () => Parser;
-    public readonly lexer: lexer;
-    public parse(hotkey: string): Hotkey;
-    public parseError(text: string, hash: string): void;
-}
-
-export declare const parser: Parser;
-export declare function parse(hotkey: string): Hotkey;
-
-
 export const Parser = parser.Parser;
-export const parse = function() {
-    return parser.parse.apply(parser, arguments);
+export const parse = (hotkey: string) => {
+    return parser.parse.call(parser, hotkey);
 };
