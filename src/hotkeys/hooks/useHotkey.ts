@@ -1,4 +1,4 @@
-import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys';
+import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
 import { parse } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import { useEffect, useMemo } from 'react';

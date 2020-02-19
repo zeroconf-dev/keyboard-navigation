@@ -1,17 +1,58 @@
-import fs from 'fs';
+import path from 'path';
+import ts from 'typescript';
+
 import commonjs from 'rollup-plugin-commonjs';
+import nodeResolve from 'rollup-plugin-node-resolve';
+import prettier from 'rollup-plugin-prettier';
 import replace from 'rollup-plugin-replace';
-import resolve from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-ts';
 
-const tsconfig = JSON.parse(fs.readFileSync('./tsconfig.json').toString());
 const tsconfigOverride = {
     compilerOptions: {
         declaration: true,
-        module: 'es2015',
-        target: 'es2018',
+        module: ts.ModuleKind.ES2015,
+        target: ts.ScriptTarget.ES2015,
     },
-    exclude: ['**/__tests__/*', '.docz', 'build', 'docs', 'examples', 'node_modules', 'package', 'reports'],
+    include: ['src/**/*.ts', 'src/**/*.tsx'],
+    exclude: ['**/__tests__/*', '.docz', 'docs', 'examples', '**/node_modules/*', 'package', 'reports', 'src/stories'],
+};
+
+const plugins = [
+    prettier({
+        parser: 'typescript',
+    }),
+    replace({
+        'process.env.NODE_ENV': JSON.stringify('production'),
+    }),
+    typescript({
+        transpiler: 'typescript',
+        tsconfig: {
+            fileName: './tsconfig.json',
+            hook: resolvedConfig => ({
+                ...resolvedConfig,
+                ...tsconfigOverride.compilerOptions,
+            }),
+        },
+        exclude: tsconfigOverride.exclude,
+        include: tsconfigOverride.include,
+    }),
+    nodeResolve({ browser: true }),
+    commonjs(),
+];
+
+const outputOptions = {
+    banner: '// @ts-nocheck',
+    preferConst: true,
+    // sourcemap: true,
+    // sourcemapExcludeSources: true,
+    strict: true,
+    sourcemapPathTransform: relativePath => {
+        if (relativePath.indexOf('/node_modules/') !== 1) {
+            return path.relative('../../', relativePath);
+        } else {
+            return path.relative('../../src/', relativePath);
+        }
+    },
 };
 
 export default [
@@ -20,26 +61,12 @@ export default [
         input: 'src/util.ts',
         output: [
             {
-                file: 'build/util.js',
+                file: 'package/build/util.js',
                 name: '@zeroconf/keyboard-navigation/util',
-                preferConst: true,
-                strict: true,
+                ...outputOptions,
             },
         ],
-        plugins: [
-            resolve({}),
-            commonjs(),
-            replace({
-                'process.env.NODE_ENV': JSON.stringify('production'),
-            }),
-            typescript({
-                tsconfig: {
-                    ...tsconfig.compilerOptions,
-                    ...tsconfigOverride.compilerOptions,
-                },
-                exclude: tsconfigOverride.exclude,
-            }),
-        ],
+        plugins: plugins,
         treeshake: {
             moduleSideEffects: false,
         },
@@ -50,60 +77,13 @@ export default [
         input: 'src/index.ts',
         output: [
             {
-                file: 'build/index.js',
-                name: '@zeroconf/keyboard-navigation',
-                preferConst: true,
-                strict: true,
-            },
-        ],
-        plugins: [
-            resolve({}),
-            commonjs(),
-            replace({
-                'process.env.NODE_ENV': JSON.stringify('production'),
-            }),
-            typescript({
-                tsconfig: {
-                    ...tsconfig.compilerOptions,
-                    ...tsconfigOverride.compilerOptions,
-                },
-                exclude: tsconfigOverride.exclude,
-            }),
-        ],
-        treeshake: {
-            moduleSideEffects: false,
-        },
-    },
-    {
-        context: 'window',
-        external: ['react', 'react-dom', '@zeroconf/keyboard-navigation/util'],
-        input: 'src/hotkeys.ts',
-        output: [
-            {
-                file: 'build/hotkeys.js',
+                banner: '// @ts-nocheck',
+                file: 'package/build/index.js',
                 name: '@zeroconf/keyboard-navigation/hotkeys',
-                preferConst: true,
-                strict: true,
+                ...outputOptions,
             },
         ],
-        plugins: [
-            replace({
-                'process.env.NODE_ENV': JSON.stringify('production'),
-            }),
-            typescript({
-                exclude: tsconfigOverride.exclude,
-                include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.js'],
-                tsconfig: {
-                    ...tsconfig.compilerOptions,
-                    ...tsconfigOverride.compilerOptions,
-                    allowJs: true,
-                },
-            }),
-            resolve({
-                browser: true,
-            }),
-            commonjs(),
-        ],
+        plugins: plugins,
         treeshake: {
             moduleSideEffects: false,
         },
@@ -114,26 +94,30 @@ export default [
         input: 'src/hooks.ts',
         output: [
             {
-                file: 'build/hooks.js',
+                banner: '// @ts-nocheck',
+                file: 'package/build/hooks.js',
                 name: '@zeroconf/keyboard-navigation/hooks',
-                preferConst: true,
-                strict: true,
+                ...outputOptions,
             },
         ],
-        plugins: [
-            resolve(),
-            commonjs(),
-            replace({
-                'process.env.NODE_ENV': JSON.stringify('production'),
-            }),
-            typescript({
-                tsconfig: {
-                    ...tsconfig.compilerOptions,
-                    ...tsconfigOverride.compilerOptions,
-                },
-                exclude: tsconfigOverride.exclude,
-            }),
+        plugins: plugins,
+        treeshake: {
+            moduleSideEffects: false,
+        },
+    },
+    {
+        context: 'window',
+        external: ['react', 'react-dom', '@zeroconf/keyboard-navigation/util'],
+        input: 'src/classic.ts',
+        output: [
+            {
+                banner: '// @ts-nocheck',
+                file: 'package/build/classic.js',
+                name: '@zeroconf/keyboard-navigation',
+                ...outputOptions,
+            },
         ],
+        plugins: plugins,
         treeshake: {
             moduleSideEffects: false,
         },

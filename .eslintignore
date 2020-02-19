@@ -1,1 +1,12 @@
+/.circleci/
+/.docz/
+/.storybook/
+/.vscode/
+/build/
+/docs/
+/examples/
+/package/
+/reports/
+/scripts/
 /src/hotkeys/parser.js
+/src/hotkeys/parser.ts

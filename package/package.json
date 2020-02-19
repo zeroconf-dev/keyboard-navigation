@@ -8,14 +8,11 @@
         "url": "https://github.com/zeroconf-dev/keyboard-navigation/issues/new"
     },
     "dependencies": {
-        "@secoya/collection.ts": "3.1.0",
         "tslib": "1.10.0"
     },
     "description": "Keyboard navigation library for React, providing primitives for building web applications with keyboard navigation support.",
-    "esnext": "index.esnext",
     "license": "BSD-3-Clause",
     "main": "index.js",
-    "module": "index.mjs",
     "name": "@zeroconf/keyboard-navigation",
     "peerDependencies": {
         "react": ">=16.8.6",
@@ -25,6 +22,7 @@
         "type": "git",
         "url": "https://github.com/zeroconf-dev/keyboard-navigation"
     },
+    "sideEffects": false,
     "types": "index.d.ts",
     "version": "4.0.0-alpha.24"
 }

@@ -19,49 +19,11 @@ moveBuild() {
     )
 }
 
-buildLib() {
+build() {
     (
         cd "$DIR" && \
-        yarn tsc -p tsconfig.lib.json && \
+        ./node_modules/.bin/rollup -c rollup.config.dist.js &&
         moveBuild
-    )
-}
-
-buildLib2015() {
-    (
-        cd "$DIR" && \
-        yarn tsc -p tsconfig.lib2015.json && \
-        perl -p -i -e 's|(^//# sourceMappingURL=.*).js.map$|$1.mjs.map|' package/build/*.js package/build/**/*.js && \
-        perl -p -i -e 's|^import \* as tslib|import tslib|' package/build/*.js package/build/**/*.js && \
-        for f in $(find package/build -type f -name '*.js'); do
-            mv "$f" "$(dirname "$f")/$(basename "$f" .js).mjs"
-        done && \
-        for f in $(find package/build -type f -name '*.js.map'); do
-            mv "$f" "$(dirname "$f")/$(basename "$f" .js.map).mjs.map"
-        done && \
-        moveBuild
-    )
-}
-
-buildLibNext() {
-    (
-        cd "$DIR" && \
-        yarn tsc -p tsconfig.libnext.json && \
-        perl -p -i -e 's|(^//# sourceMappingURL=.*).js.map$|$1.esnext.mjs.map|' package/build/*.js package/build/**/*.js && \
-        for f in $(find package/build -type f -name '*.js'); do
-            mv "$f" "$(dirname "$f")/$(basename "$f" .js).esnext.mjs"
-        done && \
-        for f in $(find package/build -type f -name '*.js.map'); do
-            mv "$f" "$(dirname "$f")/$(basename "$f" .js.map).esnext.mjs.map"
-        done && \
-        moveBuild
-    )
-}
-
-buildUmd() {
-    (
-        cd "$DIR" && \
-        ./node_modules/.bin/rollup -c rollup.config.dist.js
     )
 }
 
@@ -69,7 +31,7 @@ copySource() {
     local d
     (
         cd "$DIR" && \
-        for f in $(find src -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' \) | grep -v __tests__); do
+        for f in $(find src -type f \( -name '*.ts' -o -name '*.tsx' \) | grep -v '__tests__' | grep -v '/stories/' ); do
             d="$(dirname "${f/src/package}")"
             [ ! -d "$d" ] && mkdir -p "$d"
             cp "$f" "${f/src/package}"
@@ -85,9 +47,6 @@ copyStatic() {
 }
 
 clean
-buildLib
-buildLib2015
-# buildLibNext
-buildUmd
+build
 copySource
 copyStatic

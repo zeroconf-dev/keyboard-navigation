@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "target": "es2015",
-        "module": "commonjs",
+        "target": "es2018",
+        "module": "es2015",
         "jsx": "react",
+        "esModuleInterop": true,
         "importHelpers": true,
         "skipLibCheck": true,
         "strict": true,
@@ -13,8 +14,9 @@
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
         "rootDir": "./src",
-        "lib": ["dom", "es2015"],
+        "lib": ["dom", "es2018", "ES2020"],
         "typeRoots": ["./node_modules/@types"],
+        "sourceRoot": "src",
         "paths": {
             "@zeroconf/keyboard-navigation/*": ["src/*"],
             "@zeroconf/keyboard-navigation": ["src/index"]

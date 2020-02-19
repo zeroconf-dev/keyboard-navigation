@@ -13,6 +13,7 @@ module.exports = {
             jsx: true,
         },
     },
+    root: true,
     rules: {
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
