@@ -1,8 +1,7 @@
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
-import { useTabRegistry, Button, FocuserOptions } from '@zeroconf/keyboard-navigation/hooks';
-import { TabBoundary } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
-import { FocuserFn } from '@zeroconf/keyboard-navigation/TabRegistry';
+import { Button, TabBoundary, useTabRegistry } from '@zeroconf/keyboard-navigation/hooks';
+import { FocuserFn, FocuserOptions } from '@zeroconf/keyboard-navigation/TabRegistry';
 import * as React from 'react';
 import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 

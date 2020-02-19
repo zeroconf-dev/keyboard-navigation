@@ -194,6 +194,9 @@ export class HotkeyRegistry {
     public add(hotkeyStr: string, hotkey: Hotkey, handler: HotkeyHandler): HotkeyID {
         const hotkeyId = nextHotkeyId();
         this.hotkeys.set(hotkeyId, [hotkeyId, hotkeyStr, hotkey, handler]);
+        if (this.currentLocalRegistry === this) {
+            subscriptions.forEach(handler => handler(this));
+        }
         return hotkeyId;
     }
 
