@@ -174,6 +174,17 @@ export const TabBoundary = forwardRef(
             [registry, props.onKeyDown],
         );
 
+        const onBlur = useCallback(
+            (e: React.FocusEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
+                e.stopPropagation();
+                registry.currentLocalRegistry = null;
+                if (typeof props.onBlur === 'function') {
+                    props.onBlur.call(undefined, e);
+                }
+            },
+            [registry, props.onBlur],
+        );
+
         const onFocus = useCallback(
             (e: React.FocusEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
                 e.stopPropagation();
@@ -186,7 +197,11 @@ export const TabBoundary = forwardRef(
         );
 
         const comp = props.as == null ? 'div' : props.as;
-        const children = React.createElement(comp, { ...childProps, onFocus, onKeyDown, ref: ref }, props.children);
+        const children = React.createElement(
+            comp,
+            { ...childProps, onBlur, onFocus, onKeyDown, ref: ref },
+            props.children,
+        );
 
         return (
             <HotkeyContextProvider value={registry}>

@@ -63,6 +63,17 @@ export const GlobalHotkeyBoundary = forwardRef(
             [registry],
         );
 
+        const onBlur = useCallback(
+            (e: React.FocusEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
+                e.stopPropagation();
+                registry.currentLocalRegistry = null;
+                if (typeof props.onBlur === 'function') {
+                    props.onBlur.call(undefined, e);
+                }
+            },
+            [registry, props.onBlur],
+        );
+
         const onFocus = useCallback(
             (e: React.FocusEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
                 e.stopPropagation();
@@ -79,7 +90,7 @@ export const GlobalHotkeyBoundary = forwardRef(
             props,
             filterProps,
         );
-        const children = React.createElement(comp, { ...childProps, onFocus, onKeyDown, ref }, props.children);
+        const children = React.createElement(comp, { ...childProps, onBlur, onFocus, onKeyDown, ref }, props.children);
 
         return <HotkeyContextProvider value={registry}>{children}</HotkeyContextProvider>;
     },
