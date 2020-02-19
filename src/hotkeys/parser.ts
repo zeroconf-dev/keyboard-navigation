@@ -88,7 +88,7 @@ declare class lexer {
     parseError(text: string, hash: string): void;
 }
 
-export declare class Parser {
+export interface Parser {
     public readonly Parser: new () => Parser;
     public readonly lexer: lexer;
     public parse(hotkey: string): Hotkey;
