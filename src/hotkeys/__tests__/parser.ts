@@ -1,4 +1,4 @@
-import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { parse, HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 
 test('parse with empty string throws', () => {
     expect(() => parse('')).toThrow();
@@ -7,7 +7,7 @@ test('parse with empty string throws', () => {
 test('parse single char, returns Hotkey with no modifiers', () => {
     expect(parse('c')).toEqual({
         key: 'c',
-    } as Hotkey);
+    } as HotkeyObject);
 });
 
 describe('parse modifiers', () => {
@@ -168,7 +168,7 @@ describe('simple keys', () => {
 });
 
 describe('modifier and special key combinations', () => {
-    type ModifierKeys = keyof Hotkey;
+    type ModifierKeys = keyof HotkeyObject;
     // prettier-ignore
     const allModifiers: ModifierKeys[] = [
         'ctrl', 'cmd', 'alt',
@@ -234,20 +234,20 @@ describe('modifier and special key combinations', () => {
 
     test('modifier keys combinations', () => {
         expect.assertions(209);
-        forEachCombinations<Hotkey>(allModifiers, (modifiers, hotkey) => {
+        forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
             expect(parse(modifiers.join('+'))).toEqual(hotkey);
         });
     });
 
     test('modifier keys combinations with strict operator', () => {
         expect.assertions(209);
-        forEachCombinations<Hotkey>(allModifiers, (modifiers, hotkey) => {
+        forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
             expect(parse('!' + modifiers.join('+'))).toEqual({ ...hotkey, strict: true });
         });
     });
 
     test('modifier and simple keys combinations', () => {
-        forEachCombinations<Hotkey>(allModifiers, (modifiers, hotkey) => {
+        forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
             simpleKeys.forEach(key => {
                 expect(parse(`${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,
@@ -258,7 +258,7 @@ describe('modifier and special key combinations', () => {
     });
 
     test('modifier and simple keys combinations with strict operator', () => {
-        forEachCombinations<Hotkey>(allModifiers, (modifiers, hotkey) => {
+        forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
             simpleKeys.forEach(key => {
                 expect(parse(`!${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,
@@ -270,7 +270,7 @@ describe('modifier and special key combinations', () => {
     });
 
     test('modifier and special keys combinations', () => {
-        forEachCombinations<Hotkey>(allModifiers, (modifiers, hotkey) => {
+        forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
             Object.keys(specialKeysMap).forEach(key => {
                 expect(parse(`${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,
@@ -281,7 +281,7 @@ describe('modifier and special key combinations', () => {
     });
 
     test('modifier and special keys combinations with strict operator', () => {
-        forEachCombinations<Hotkey>(allModifiers, (modifiers, hotkey) => {
+        forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
             Object.keys(specialKeysMap).forEach(key => {
                 expect(parse(`!${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,

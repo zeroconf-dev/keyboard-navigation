@@ -1,6 +1,6 @@
 import { ControlProps } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import { Hotkey } from '@zeroconf/keyboard-navigation';
+import { HotkeyObject } from '@zeroconf/keyboard-navigation';
 import { WeakValidationMap } from 'react';
 
 export const getTargetFocusKey = (obj: any): string | null => {
@@ -149,11 +149,12 @@ export const isNativeInput = (
     return (
         target instanceof HTMLInputElement ||
         target instanceof HTMLSelectElement ||
-        target instanceof HTMLTextAreaElement
+        target instanceof HTMLTextAreaElement ||
+        (target instanceof HTMLElement && target.getAttribute('contenteditable') === 'true')
     );
 };
 
-export function isModifierMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
+export function isModifierMatching(hotkey: HotkeyObject, event: HotkeyEvent): boolean {
     if (hotkey.nonStrict) {
         return (
             (event.altKey || !hotkey.alt) &&
@@ -171,7 +172,7 @@ export function isModifierMatching(hotkey: Hotkey, event: HotkeyEvent): boolean 
     }
 }
 
-export function isKeyMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
+export function isKeyMatching(hotkey: HotkeyObject, event: HotkeyEvent): boolean {
     if (hotkey.nonStrict) {
         return hotkey.key == null || hotkey.key === (event.key.length === 1 ? event.key.toLowerCase() : event.key);
     } else {
@@ -186,10 +187,55 @@ export const isSpecialKey = (event: HotkeyEvent): boolean => {
     return event.key.length !== 1;
 };
 
-export function isHotkeyMatching(hotkey: Hotkey, event: HotkeyEvent): boolean {
+export function isHotkeyMatching(hotkey: HotkeyObject, event: HotkeyEvent): boolean {
     return isModifierMatching(hotkey, event) && isKeyMatching(hotkey, event);
 }
 
-export const hasModifierKey = (event: HotkeyEvent): boolean => {
+export const eventHasModifier = (event: HotkeyEvent): boolean => {
     return event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 };
+
+export const hotkeyHasModifier = (hotkey: HotkeyObject): boolean =>
+    Boolean(hotkey.alt) ||
+    Boolean(hotkey.cmd) ||
+    Boolean(hotkey.ctrl) ||
+    Boolean(hotkey.meta) ||
+    Boolean(hotkey.mod) ||
+    Boolean(hotkey.shift);
+
+export const serializeHotkey = (hotkey: HotkeyObject): string => {
+    // prettier-ignore
+    return `${
+        hotkey.alt ? 1 : 0}${
+        hotkey.cmd ? 1 : 0}${
+        hotkey.ctrl ? 1 : 0}${
+        hotkey.meta ? 1 : 0}${
+        hotkey.mod ? 1 : 0}${
+        hotkey.nonStrict ? 1 : 0}${
+        hotkey.shift ? 1 : 0}${
+        hotkey.key == null ? '' : hotkey.key}`;
+};
+
+const arrowKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+export const isArrowKey = (hotkey: HotkeyObject): boolean => arrowKeys.has(String(hotkey.key));
+
+export const mapIter = <T, R>(mapFn: (val: T, idx: number) => R) =>
+    function*(iter: Generator<T>): Generator<R, void, void> {
+        let idx = -1;
+        for (const val of iter) {
+            yield mapFn(val, ++idx);
+        }
+    };
+
+export const filterIter = <T>(predicate: (val: T, idx: number, accepted: T[]) => boolean) =>
+    function*(iter: Generator<T>): Generator<T, void, void> {
+        const accepted: T[] = [];
+        let idx = 0;
+        for (const val of iter) {
+            if (predicate(val, idx, accepted)) {
+                yield val;
+                accepted.push(val);
+            }
+            idx++;
+        }
+    };

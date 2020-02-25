@@ -1,5 +1,5 @@
 import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import { isKeyMatching, isModifierMatching } from '@zeroconf/keyboard-navigation/util';
 
 type Modifier = 'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey';
@@ -60,7 +60,7 @@ function iterateModifiers(
 describe('isModifierMatching', () => {
     describe('strict', () => {
         test('alt', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
             };
 
@@ -70,7 +70,7 @@ describe('isModifierMatching', () => {
         });
 
         test('ctrl', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 ctrl: true,
             };
 
@@ -80,7 +80,7 @@ describe('isModifierMatching', () => {
         });
 
         test('meta', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 meta: true,
             };
 
@@ -90,7 +90,7 @@ describe('isModifierMatching', () => {
         });
 
         test('shift', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 shift: true,
             };
 
@@ -100,7 +100,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 ctrl: true,
             };
@@ -111,7 +111,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+meta', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 meta: true,
             };
@@ -122,7 +122,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+shift', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 shift: true,
             };
@@ -133,7 +133,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl+meta', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 ctrl: true,
                 meta: true,
@@ -147,7 +147,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl+shift', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 ctrl: true,
                 shift: true,
@@ -161,7 +161,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl+meta+shift', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 ctrl: true,
                 meta: true,
@@ -178,7 +178,7 @@ describe('isModifierMatching', () => {
 
     describe('non-strict', () => {
         test('alt', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 nonStrict: true,
             };
@@ -189,7 +189,7 @@ describe('isModifierMatching', () => {
         });
 
         test('ctrl', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 ctrl: true,
                 nonStrict: true,
             };
@@ -200,7 +200,7 @@ describe('isModifierMatching', () => {
         });
 
         test('meta', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 meta: true,
                 nonStrict: true,
             };
@@ -211,7 +211,7 @@ describe('isModifierMatching', () => {
         });
 
         test('shift', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 shift: true,
                 nonStrict: true,
             };
@@ -222,7 +222,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 ctrl: true,
                 nonStrict: true,
@@ -234,7 +234,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+meta', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 meta: true,
                 nonStrict: true,
@@ -246,7 +246,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+shift', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 shift: true,
                 nonStrict: true,
@@ -258,7 +258,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl+meta', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 ctrl: true,
                 meta: true,
@@ -271,7 +271,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl+shift', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 ctrl: true,
                 shift: true,
@@ -284,7 +284,7 @@ describe('isModifierMatching', () => {
         });
 
         test('alt+ctrl+meta+shift', () => {
-            const hotkey: Hotkey = {
+            const hotkey: HotkeyObject = {
                 alt: true,
                 ctrl: true,
                 meta: true,
@@ -306,7 +306,7 @@ describe('isKeyMatching', () => {
         keys.forEach(key => {
             iterateModifiers(
                 event => {
-                    const hotkey: Hotkey = {
+                    const hotkey: HotkeyObject = {
                         key: key.length !== 1 ? null : key,
                     };
 
@@ -326,7 +326,7 @@ describe('isKeyMatching', () => {
         keys.forEach(key => {
             iterateModifiers(
                 event => {
-                    const hotkey: Hotkey = {
+                    const hotkey: HotkeyObject = {
                         key: key.length !== 1 ? null : key,
                         nonStrict: true,
                     };

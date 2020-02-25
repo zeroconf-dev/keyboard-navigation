@@ -1,6 +1,6 @@
 import { EventBubbleControl, HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
-import { isHotkeyMatching } from '@zeroconf/keyboard-navigation/util';
+import { parse, HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { isHotkeyMatching, getTargetFocusKey } from '@zeroconf/keyboard-navigation/util';
 
 let globalRegistry: HotkeyRegistry | null = null;
 let currentLocalRegistry: HotkeyRegistry | null = null;
@@ -17,8 +17,8 @@ export const scopes = Object.freeze({
 export type HotkeyPublicScope = typeof localScope | string;
 export type HotkeyScope = HotkeyPublicScope | typeof globalScope;
 
-export type HotkeyHandler = (e: HotkeyEvent & Partial<EventBubbleControl>) => boolean;
-type HotkeyTuppleWithID = [HotkeyID, string, Hotkey, HotkeyHandler];
+export type HotkeyHandler = (focusKey: string | null, e: HotkeyEvent & Partial<EventBubbleControl>) => boolean;
+type HotkeyTuppleWithID = [HotkeyID, string, HotkeyObject, HotkeyHandler];
 export type HotkeyMap = {
     [hotkey: string]: HotkeyHandler | null | undefined | false;
 };
@@ -191,12 +191,9 @@ export class HotkeyRegistry {
         return;
     };
 
-    public add(hotkeyStr: string, hotkey: Hotkey, handler: HotkeyHandler): HotkeyID {
+    public add(hotkeyStr: string, hotkey: HotkeyObject, handler: HotkeyHandler): HotkeyID {
         const hotkeyId = nextHotkeyId();
         this.hotkeys.set(hotkeyId, [hotkeyId, hotkeyStr, hotkey, handler]);
-        if (this.currentLocalRegistry === this) {
-            subscriptions.forEach(handler => handler(this));
-        }
         return hotkeyId;
     }
 
@@ -231,7 +228,7 @@ export class HotkeyRegistry {
         }
     }
 
-    public iterHotkeys = function*(this: HotkeyRegistry): Generator<Hotkey, void, void> {
+    public iterHotkeys = function*(this: HotkeyRegistry): Generator<HotkeyObject, void, void> {
         for (const reg of this) {
             for (const hotkey of reg.hotkeys.values()) {
                 yield hotkey[2];
@@ -239,7 +236,7 @@ export class HotkeyRegistry {
         }
     };
 
-    public iterLocalHotkeys = function*(this: HotkeyRegistry): Generator<Hotkey, void, void> {
+    public iterLocalHotkeys = function*(this: HotkeyRegistry): Generator<HotkeyObject, void, void> {
         for (const reg of this.iterLocal()) {
             for (const hotkey of reg.hotkeys.values()) {
                 yield hotkey[2];
@@ -256,10 +253,11 @@ export class HotkeyRegistry {
         hotkeyIds.forEach(hotkeyId => this.remove(hotkeyId));
     }
 
-    public run(e: HotkeyEvent & Partial<EventBubbleControl>): boolean {
+    public run(e: HotkeyEvent & Partial<EventBubbleControl> & { target?: HTMLElement }): boolean {
+        const focusKey = getTargetFocusKey(e.target);
         for (const hotkey of this.hotkeys.values()) {
             if (isHotkeyMatching(hotkey[2], e)) {
-                if (hotkey[3](e)) {
+                if (hotkey[3](focusKey, e)) {
                     if (typeof e.preventDefault === 'function') {
                         e.preventDefault();
                     }

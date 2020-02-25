@@ -2,28 +2,27 @@ import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import {
     GlobalHotkeyBoundary as GlobalHotkeyBoundaryBase,
-    Hotkey,
+    HotkeyObject,
     HotkeyLegend,
-    useHotkey,
 } from '@zeroconf/keyboard-navigation';
 import { hotkeyToText } from '@zeroconf/keyboard-navigation/hotkeys/components/__tests__/__helpers__/hotkeyToText';
-import * as React from 'react';
-import { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
+import { Hotkey as HotkeyBase } from '@zeroconf/keyboard-navigation/hotkeys/components';
 
-const renderHotkey = (hotkey: Hotkey) => {
+const renderHotkey = (hotkey: HotkeyObject) => {
     const hotkeyText = hotkeyToText(hotkey);
     return <li key={hotkeyText}>{hotkeyText}</li>;
 };
 
 interface FocusByKeyProps {
     hotkey: string;
-    handler?: () => void;
+    handler?: () => boolean;
 }
 
 const hotkeyFiredAction = action('hotkey fired');
-const FocusByKey: React.FC<FocusByKeyProps> = props => {
+const Hotkey: React.FC<FocusByKeyProps> = props => {
     const handler = useCallback(() => {
         hotkeyFiredAction(props.hotkey);
         if (props.handler != null) {
@@ -31,8 +30,7 @@ const FocusByKey: React.FC<FocusByKeyProps> = props => {
         }
         return true;
     }, [props.hotkey, props.handler]);
-    useHotkey(props.hotkey, handler);
-    return null;
+    return <HotkeyBase hotkey={props.hotkey} handler={handler} />;
 };
 
 const GlobalHotkeyBoundary = styled(GlobalHotkeyBoundaryBase)`
@@ -62,14 +60,16 @@ storiesOf('HotkeyLegend', module)
         const blur = useCallback(() => {
             if (ref.current != null) {
                 ref.current.blur();
+                return true;
             }
+            return false;
         }, [ref]);
 
         return (
             <GlobalHotkeyBoundary hotkeyRegistryRef={hotkeyRegistryRef} ref={ref} tabIndex={-1}>
-                <FocusByKey hotkey="ctrl" />
-                <FocusByKey hotkey="s" />
-                <FocusByKey hotkey="esc" handler={blur} />
+                <Hotkey hotkey="ctrl" />
+                <Hotkey hotkey="s" />
+                <Hotkey hotkey="esc" handler={blur} />
                 <ol>
                     <HotkeyLegend renderHotkey={renderHotkey} />
                 </ol>

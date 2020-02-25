@@ -73,7 +73,7 @@
   }
 */
 
-export interface Hotkey {
+export interface HotkeyObject {
     alt?: boolean;
     cmd?: boolean;
     ctrl?: boolean;
@@ -92,7 +92,7 @@ export interface Parser {
     new (): Parser;
     readonly Parser: new () => Parser;
     readonly lexer: lexer;
-    parse(hotkey: string): Hotkey;
+    parse(hotkey: string): HotkeyObject;
     parseError(text: string, hash: string): void;
 }
 

@@ -1,6 +1,6 @@
 import { act, cleanup, render } from '@testing-library/react';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
-import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import { GlobalHotkeyBoundary } from '@zeroconf/keyboard-navigation/hotkeys/components/GlobalHotkeyBoundary';
 import { HotkeyBoundary } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyBoundary';
 import { useHotkey } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkey';
@@ -128,7 +128,7 @@ test('hotkeys of boundaries with same scope are merged', async () => {
     const mainScopeRegistries = expectInstanceOf(mainRegistry.global.scopes.get('main'), Set) as Set<HotkeyRegistry>;
     const hotkeyMap = Array.from(mainScopeRegistries.values()).reduce(
         (c, r) => c.concat(Array.from(r.iterLocalHotkeys())),
-        [] as Hotkey[],
+        [] as HotkeyObject[],
     );
 
     expect(hotkeyMap.length).toBe(2);

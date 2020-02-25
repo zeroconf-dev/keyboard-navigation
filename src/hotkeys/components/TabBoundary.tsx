@@ -2,21 +2,18 @@ import { NavigationContext } from '@zeroconf/keyboard-navigation/components/Navi
 import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
 import { useNewTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useNewTabRegistry';
 import { HotkeyContextProvider } from '@zeroconf/keyboard-navigation/hotkeys/components/HotkeyContext';
-import { EventBubbleControl, HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
 import { scopes, HotkeyPublicScope, HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import {
     assertNeverNonThrow,
     filterPropKeys,
-    getTargetFocusKey,
     ForwardRefComponent,
     ForwardRefProps,
     HTMLType,
     UnpackedHTMLElement,
 } from '@zeroconf/keyboard-navigation/util';
-import * as React from 'react';
-import { forwardRef, useCallback, useEffect, useMemo } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**
@@ -147,16 +144,10 @@ export const TabBoundary = forwardRef(
 
         useEffect(() => {
             const hotkeyIds = registry.addAll({
-                tab: (e: HotkeyEvent & Partial<EventBubbleControl>) => {
-                    e.preventDefault?.();
-                    e.stopPropagation?.();
-                    const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
+                tab: (focusKey: string | null) => {
                     return focusKey == null ? false : tabRegistry.focusNext(focusKey);
                 },
-                'shift+tab': (e: HotkeyEvent & Partial<EventBubbleControl>) => {
-                    e.preventDefault?.();
-                    e.stopPropagation?.();
-                    const focusKey = getTargetFocusKey((e as React.KeyboardEvent).target);
+                'shift+tab': (focusKey: string | null) => {
                     return focusKey == null ? false : tabRegistry.focusPrev(focusKey);
                 },
                 esc: props.focusParentOnEscape ? () => tabRegistry.focusParent() : null,

@@ -8,6 +8,7 @@ import {
     ForwardRefProps,
     HTMLType,
     UnpackedHTMLElement,
+    isNativeInput,
 } from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
 import { forwardRef, useCallback, useEffect, useMemo } from 'react';
@@ -75,6 +76,9 @@ export const HotkeyBoundary = forwardRef(
 
         const onKeyDown = useCallback(
             (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
+                if (isNativeInput(e)) {
+                    return;
+                }
                 registry.runCurrent(e);
             },
             [registry],

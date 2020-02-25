@@ -1,6 +1,11 @@
 import { HotkeyHandler } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
-import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
-import { hasModifierKey, isHotkeyMatching, isNativeInput } from '@zeroconf/keyboard-navigation/util';
+import { parse, HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import {
+    eventHasModifier,
+    isHotkeyMatching,
+    isNativeInput,
+    getTargetFocusKey,
+} from '@zeroconf/keyboard-navigation/util';
 
 export interface HotkeysObject {
     [hotkey: string]: HotkeyHandler;
@@ -11,7 +16,7 @@ export interface EventBubbleControl {
     stopPropagation: () => void;
 }
 
-export interface HotkeyWithHandler extends Hotkey {
+export interface HotkeyWithHandler extends HotkeyObject {
     handler: HotkeyHandler;
 }
 
@@ -29,7 +34,7 @@ interface WithEventTarget {
 export type HotkeyEventHandler = (e: HotkeyEvent & EventBubbleControl & WithEventTarget) => void;
 
 const shouldHandleHotkey = (event: HotkeyEvent & WithEventTarget) =>
-    hasModifierKey(event) || !isNativeInput(event.target);
+    eventHasModifier(event) || !isNativeInput(event.target);
 
 export const createHandler = (hotkeys: HotkeysObject | HotkeyWithHandler[]): HotkeyEventHandler => {
     if (Array.isArray(hotkeys)) {
@@ -37,12 +42,13 @@ export const createHandler = (hotkeys: HotkeysObject | HotkeyWithHandler[]): Hot
             if (!shouldHandleHotkey(e)) {
                 return;
             }
+            const focusKey = getTargetFocusKey(e.target);
             hotkeys
                 .filter(hotkey => isHotkeyMatching(hotkey, e))
                 .forEach(hotkeyObj => {
                     e.stopPropagation();
                     e.preventDefault();
-                    hotkeyObj.handler(e);
+                    hotkeyObj.handler(focusKey, e);
                 });
         };
     } else {

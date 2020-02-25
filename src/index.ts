@@ -2,6 +2,7 @@ export { createNavigationHandler, NavigationMap } from '@zeroconf/keyboard-navig
 export { useFocusable, useTabRegistry } from '@zeroconf/keyboard-navigation/hooks';
 export {
     GlobalHotkeyBoundary,
+    Hotkey,
     HotkeyBoundary,
     HotkeyContextProvider,
     HotkeyLegend,
@@ -31,5 +32,5 @@ export {
     HotkeyPublicScope,
     HotkeyScope,
 } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
-export { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+export { parse, HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 export { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';

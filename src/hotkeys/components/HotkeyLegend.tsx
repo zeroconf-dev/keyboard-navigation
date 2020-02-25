@@ -1,12 +1,12 @@
 import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
 import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
-import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 interface HotkeyLegendProps {
     includeGlobal?: boolean;
-    renderHotkey: (hotkey: Hotkey) => JSX.Element;
+    renderHotkey: (hotkey: HotkeyObject) => JSX.Element;
 }
 export const HotkeyLegend: React.FC<HotkeyLegendProps> = props => {
     const globalRegistry = useHotkeyRegistry().global;

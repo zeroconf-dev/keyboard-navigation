@@ -1,9 +1,9 @@
 import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
 import { HotkeyHandler, HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
-import { parse, Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/parser';
+import { parse, HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import { useEffect, useMemo } from 'react';
 
-type HotkeyTupple = [string, Hotkey, HotkeyHandler];
+type HotkeyTupple = [string, HotkeyObject, HotkeyHandler];
 
 export const useHotkeysInRegistry = (
     registry: HotkeyRegistry | React.RefObject<HotkeyRegistry>,
