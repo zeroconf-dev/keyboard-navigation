@@ -1,63 +1,54 @@
-import { createNavigationHandler, NavigationMap, TabRegistry } from '@zeroconf/keyboard-navigation/hooks';
-import { HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import { useHotkeysInRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeys';
-import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
-import { useMemo, useRef } from 'react';
+import { createNavigationHandler, NavigationFieldMap, useTabRegistry } from '@zeroconf/keyboard-navigation/hooks';
+import { useHotkeys } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeys';
+import { HotkeyMap } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
+import { useMemo } from 'react';
 
-export const useNavigationMap = (navigationMap: NavigationMap, tabDirectionAxix?: 'x' | 'y') => {
-    const tabRegistryRef = useRef<TabRegistry>(null);
-    const hotkeyRegistryRef = useRef<HotkeyRegistry>(null);
+export const useNavigationMap = (navigationMap: NavigationFieldMap, tabDirectionAxix?: 'x' | 'y') => {
+    const tabRegistry = useTabRegistry();
 
     const navigationHandler = useMemo(() => {
-        return createNavigationHandler(navigationMap, tabRegistryRef, tabDirectionAxix);
-    }, [navigationMap, tabRegistryRef, tabDirectionAxix]);
+        return createNavigationHandler(navigationMap, tabRegistry, tabDirectionAxix);
+    }, [navigationMap, tabRegistry, tabDirectionAxix]);
 
-    const hotkeyMap = useMemo(
+    const hotkeyMap: HotkeyMap = useMemo(
         () => ({
-            left: (focusKey: string | null, e: HotkeyEvent) => {
-                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowLeft', e);
+            left: ({ focusKey, event }) => {
+                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowLeft', event);
             },
-            down: (focusKey: string | null, e: HotkeyEvent) => {
-                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowDown', e);
+            down: ({ focusKey, event }) => {
+                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowDown', event);
             },
-            right: (focusKey: string | null, e: HotkeyEvent) => {
-                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowRight', e);
+            right: ({ focusKey, event }) => {
+                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowRight', event);
             },
-            up: (focusKey: string | null, e: HotkeyEvent) => {
-                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowUp', e);
+            up: ({ focusKey, event }) => {
+                return focusKey == null ? false : navigationHandler(focusKey, 'ArrowUp', event);
             },
-            tab: (focusKey: string | null, e: HotkeyEvent) => {
-                const tabRegistry = tabRegistryRef.current;
+            tab: ({ focusKey, event }) => {
                 if (focusKey == null) {
                     return false;
                 }
 
                 if (tabRegistry == null) {
-                    return navigationHandler(focusKey, 'Tab', e);
+                    return navigationHandler(focusKey, 'Tab', event);
                 } else {
                     return tabRegistry.focusNext(focusKey);
                 }
             },
-            'shift+tab': (focusKey: string | null, e: HotkeyEvent) => {
-                const tabRegistry = tabRegistryRef.current;
+            'shift+tab': ({ focusKey, event }) => {
                 if (focusKey == null) {
                     return false;
                 }
 
                 if (tabRegistry == null) {
-                    return navigationHandler(focusKey, 'Tab', e);
+                    return navigationHandler(focusKey, 'Tab', event);
                 } else {
                     return tabRegistry.focusPrev(focusKey);
                 }
             },
         }),
-        [navigationHandler, tabRegistryRef],
+        [navigationHandler, tabRegistry],
     );
 
-    useHotkeysInRegistry(hotkeyRegistryRef, hotkeyMap);
-
-    return {
-        hotkeyRegistryRef,
-        tabRegistryRef,
-    };
+    useHotkeys(hotkeyMap);
 };

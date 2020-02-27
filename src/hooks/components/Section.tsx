@@ -16,7 +16,7 @@ import {
     spreadControlProps,
     UnpackedHTMLAttributes,
 } from '@zeroconf/keyboard-navigation/util';
-import * as React from 'react';
+import React, { useRef, useCallback } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends ControlProps {
     /**
@@ -77,7 +77,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends Cont
     /**
      * A
      */
-    tabRegistryRef?: React.RefObject<TabRegistry<string>>;
+    tabRegistryRef?: React.RefObject<TabRegistry>;
 }
 
 export type Props<TComp extends keyof JSX.IntrinsicElements> = UnpackedHTMLAttributes<TComp> & ComponentProps<TComp>;
@@ -117,15 +117,16 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
 
 export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<TComp>) => {
     const boundaryProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
-    const focuserRef = React.useRef<FocuserRef>(null);
+    const focuserRef = useRef<FocuserRef>(null);
     const focusOnClick = props.focusOnClick == null ? 'section' : props.focusOnClick;
-    const tabRegistry = useTabRegistry();
-    let tabRegistryRef = React.useRef<TabRegistry<string>>(null);
+    const tabRegistry = useTabRegistry(false);
+    let tabRegistryRef = useRef<TabRegistry<string>>(null);
+
     if (props.tabRegistryRef != null) {
         tabRegistryRef = props.tabRegistryRef;
     }
 
-    const navHandler = React.useCallback(
+    const navHandler = useCallback(
         (_: string, navKey: NavigationKey, modifierKeys: ModifierKeys) => {
             if (props.navigationHandler == null) {
                 return false;
@@ -137,7 +138,7 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
     );
     const navigationHandler = props.navigationHandler == null ? undefined : navHandler;
 
-    const onClick = React.useCallback(
+    const onClick = useCallback(
         (e: React.MouseEvent<any>) => {
             if (isNativeFocusable(e.target)) {
                 return;
@@ -182,7 +183,7 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
         [focusOnClick, props.onClick],
     );
 
-    const onEnterKey = React.useCallback(() => {
+    const onEnterKey = useCallback(() => {
         if (tabRegistry != null) {
             tabRegistry.focusIn([props.focusKey, props.focusKey + '-section'], {
                 focusOrigin: 'parent',
@@ -190,7 +191,7 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
         }
     }, [tabRegistry, props.focusKey]);
 
-    const onEscapeKey = React.useCallback(() => {
+    const onEscapeKey = useCallback(() => {
         if (tabRegistry != null) {
             const reg = tabRegistry.get(props.focusKey);
             if (reg instanceof TabRegistry) {

@@ -3,7 +3,7 @@ import { FocuserOptions, TabRegistry } from '@zeroconf/keyboard-navigation/TabRe
 
 type Maybe<T> = T | null;
 
-export type NavigationMap =
+export type NavigationFieldMap =
     | [Maybe<string>][]
     | [Maybe<string>, Maybe<string>][]
     | [Maybe<string>, Maybe<string>, Maybe<string>][]
@@ -37,7 +37,7 @@ const originNext: FocuserOptions = {
 };
 
 function findFieldCoordinates(
-    fieldMap: NavigationMap,
+    fieldMap: NavigationFieldMap,
     focusKey: string,
     maxX: number,
     maxY: number,
@@ -53,7 +53,7 @@ function findFieldCoordinates(
 }
 
 function focusUp(
-    fieldMap: NavigationMap,
+    fieldMap: NavigationFieldMap,
     getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
@@ -79,7 +79,7 @@ function focusUp(
 }
 
 function focusDown(
-    fieldMap: NavigationMap,
+    fieldMap: NavigationFieldMap,
     getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
@@ -105,7 +105,7 @@ function focusDown(
 }
 
 function focusLeft(
-    fieldMap: NavigationMap,
+    fieldMap: NavigationFieldMap,
     getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
@@ -133,7 +133,7 @@ function focusLeft(
 }
 
 function focusRight(
-    fieldMap: NavigationMap,
+    fieldMap: NavigationFieldMap,
     getTabRegistry: TabRegistryFetcher,
     x: number,
     y: number,
@@ -167,14 +167,19 @@ function focusRight(
  * adds arrow key navigation.
  */
 export function createNavigationHandler(
-    navigationMap: NavigationMap,
-    getTabRegistry: TabRegistryFetcher | React.RefObject<TabRegistry<string> | null>,
+    navigationMap: NavigationFieldMap,
+    getTabRegistry: TabRegistryFetcher | React.RefObject<TabRegistry | null> | TabRegistry,
     tabDirectionAxis: 'x' | 'y' = 'x',
 ): NavigationKeyHandler {
     const maxY = navigationMap.length - 1;
     const maxX = navigationMap[0].length - 1;
 
-    const fetcher = typeof getTabRegistry === 'function' ? getTabRegistry : () => getTabRegistry.current;
+    const fetcher =
+        typeof getTabRegistry === 'function'
+            ? getTabRegistry
+            : getTabRegistry instanceof TabRegistry
+            ? () => getTabRegistry
+            : () => getTabRegistry.current;
 
     return (focusKey: string, navigationKey: NavigationKey, modifierKeys: ModifierKeys) => {
         if (

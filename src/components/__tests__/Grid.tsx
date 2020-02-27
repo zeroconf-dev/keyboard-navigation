@@ -11,7 +11,7 @@ import {
     shiftTab,
     tab,
 } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
-import { NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { Grid as GridHooks } from '@zeroconf/keyboard-navigation/hooks/components/Grid';
 import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/components/Section';
@@ -59,7 +59,7 @@ import * as React from 'react';
                     />
                 </>
             );
-            const navigationMap: NavigationMap = [['section1'], ['section2']];
+            const navigationMap: NavigationFieldMap = [['section1'], ['section2']];
             const { container } = render(
                 <Grid focusKey="grid" navigationMap={navigationMap}>
                     {renderGrid}
@@ -76,7 +76,7 @@ import * as React from 'react';
         });
 
         test('remount section should not throw', () => {
-            const navigationMap: NavigationMap = [['section1', 'section2']];
+            const navigationMap: NavigationFieldMap = [['section1', 'section2']];
             const renderGrid = () => (
                 <>
                     <Section focusKey="section1" />
@@ -97,7 +97,7 @@ import * as React from 'react';
 
         test('three column grid arrow key navigation', () => {
             // prettier-ignore
-            const navigationMap: NavigationMap = [
+            const navigationMap: NavigationFieldMap = [
                 ['focuser1', 'focuser2', 'focuser3'],
                 ['focuser4', 'focuser5', 'focuser6'],
                 ['focuser7', 'focuser8', 'focuser9'],
@@ -170,7 +170,7 @@ import * as React from 'react';
 
         test('three column grid tab navigation in x-axis direction', () => {
             // prettier-ignore
-            const navigationMap: NavigationMap = [
+            const navigationMap: NavigationFieldMap = [
                 ['focuser1', 'focuser2', 'focuser3'],
                 ['focuser4', 'focuser5', 'focuser6'],
                 ['focuser7', 'focuser8', 'focuser9'],
@@ -241,7 +241,7 @@ import * as React from 'react';
 
         test('three column grid tab navigation in y-axis direction', () => {
             // prettier-ignore
-            const navigationMap: NavigationMap = [
+            const navigationMap: NavigationFieldMap = [
                 ['focuser1', 'focuser2', 'focuser3'],
                 ['focuser4', 'focuser5', 'focuser6'],
                 ['focuser7', 'focuser8', 'focuser9'],
@@ -314,7 +314,7 @@ import * as React from 'react';
 
         test('navigate backwards using shift tab in x-axis grid', () => {
             // prettier-ignore
-            const navigationMap: NavigationMap = [
+            const navigationMap: NavigationFieldMap = [
                 ['section1', 'section2'],
                 ['section3', 'section4'],
             ];
@@ -379,7 +379,7 @@ import * as React from 'react';
 
         test('navigate backwards using shift tab in y-axis grid', () => {
             // prettier-ignore
-            const navigationMap: NavigationMap = [
+            const navigationMap: NavigationFieldMap = [
                 ['section1', 'section2'],
                 ['section3', 'section4'],
             ];

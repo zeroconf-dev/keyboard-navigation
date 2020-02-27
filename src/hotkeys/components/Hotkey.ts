@@ -1,8 +1,9 @@
 import { useHotkey } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkey';
+import { HotkeyHandler } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 
 interface HotkeyProps {
     hotkey: string;
-    handler: () => boolean;
+    handler: HotkeyHandler;
     isGlobal?: boolean;
 }
 

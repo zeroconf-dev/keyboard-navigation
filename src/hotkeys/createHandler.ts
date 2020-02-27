@@ -1,11 +1,13 @@
-import { HotkeyHandler } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
+import { HotkeyHandler as RegistryHandler } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { parse, HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import {
-    eventHasModifier,
     isHotkeyMatching,
-    isNativeInput,
     getTargetFocusKey,
+    WithEventTarget,
+    shouldHandleHotkey,
 } from '@zeroconf/keyboard-navigation/util';
+
+type HotkeyHandler = (opts: Pick<Parameters<RegistryHandler>[0], 'focusKey' | 'event'>) => ReturnType<RegistryHandler>;
 
 export interface HotkeysObject {
     [hotkey: string]: HotkeyHandler;
@@ -28,27 +30,21 @@ export interface HotkeyEvent {
     shiftKey: boolean;
 }
 
-interface WithEventTarget {
-    target: EventTarget;
-}
 export type HotkeyEventHandler = (e: HotkeyEvent & EventBubbleControl & WithEventTarget) => void;
-
-const shouldHandleHotkey = (event: HotkeyEvent & WithEventTarget) =>
-    eventHasModifier(event) || !isNativeInput(event.target);
 
 export const createHandler = (hotkeys: HotkeysObject | HotkeyWithHandler[]): HotkeyEventHandler => {
     if (Array.isArray(hotkeys)) {
-        return (e: HotkeyEvent & EventBubbleControl & WithEventTarget) => {
-            if (!shouldHandleHotkey(e)) {
+        return (event: HotkeyEvent & EventBubbleControl & WithEventTarget) => {
+            if (!shouldHandleHotkey(event)) {
                 return;
             }
-            const focusKey = getTargetFocusKey(e.target);
+            const focusKey = getTargetFocusKey(event.target);
             hotkeys
-                .filter(hotkey => isHotkeyMatching(hotkey, e))
+                .filter(hotkey => isHotkeyMatching(hotkey, event))
                 .forEach(hotkeyObj => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    hotkeyObj.handler(focusKey, e);
+                    event.stopPropagation();
+                    event.preventDefault();
+                    hotkeyObj.handler({ focusKey: focusKey, event: event });
                 });
         };
     } else {

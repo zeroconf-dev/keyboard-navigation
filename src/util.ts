@@ -195,6 +195,10 @@ export const eventHasModifier = (event: HotkeyEvent): boolean => {
     return event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 };
 
+export interface WithEventTarget {
+    target: EventTarget;
+}
+
 export const hotkeyHasModifier = (hotkey: HotkeyObject): boolean =>
     Boolean(hotkey.alt) ||
     Boolean(hotkey.cmd) ||
@@ -217,7 +221,10 @@ export const serializeHotkey = (hotkey: HotkeyObject): string => {
 };
 
 const arrowKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
-export const isArrowKey = (hotkey: HotkeyObject): boolean => arrowKeys.has(String(hotkey.key));
+export const isArrowKey = (hotkey: HotkeyObject | HotkeyEvent): boolean => arrowKeys.has(String(hotkey.key));
+
+export const shouldHandleHotkey = (event: HotkeyEvent & WithEventTarget) =>
+    (isSpecialKey(event) && !isArrowKey(event)) || eventHasModifier(event) || !isNativeInput(event.target);
 
 export const mapIter = <T, R>(mapFn: (val: T, idx: number) => R) =>
     function*(iter: Generator<T>): Generator<R, void, void> {

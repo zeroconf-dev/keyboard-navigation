@@ -1,5 +1,5 @@
 export { Button, Input, Select, TextArea } from '@zeroconf/keyboard-navigation/hooks/components/Tabbable';
-export { createNavigationHandler, NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+export { createNavigationHandler, NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 export { Field } from '@zeroconf/keyboard-navigation/hooks/components/Field';
 export { Focuser } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 export { Grid } from '@zeroconf/keyboard-navigation/hooks/components/Grid';

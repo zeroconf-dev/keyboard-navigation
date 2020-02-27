@@ -8,9 +8,9 @@ import {
     ForwardRefProps,
     HTMLType,
     UnpackedHTMLElement,
+    shouldHandleHotkey,
 } from '@zeroconf/keyboard-navigation/util';
-import * as React from 'react';
-import { forwardRef, useCallback, useEffect } from 'react';
+import React, { forwardRef, useCallback, useEffect } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     // tslint:disable-next-line:no-reserved-keywords
@@ -58,6 +58,10 @@ export const GlobalHotkeyBoundary = forwardRef(
 
         const onKeyDown = useCallback(
             (e: React.KeyboardEvent<HTMLDivElement>) => {
+                if (!shouldHandleHotkey(e)) {
+                    return;
+                }
+                e.stopPropagation();
                 registry.runCurrent(e);
             },
             [registry],

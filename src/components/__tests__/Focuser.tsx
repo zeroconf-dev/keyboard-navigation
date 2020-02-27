@@ -1,4 +1,4 @@
-import { act as testAct, cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { TabBoundary as TabBoundaryClassic } from '@zeroconf/keyboard-navigation/components/TabBoundary';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
@@ -12,7 +12,6 @@ import { TabBoundary as TabBoundaryHooks } from '@zeroconf/keyboard-navigation/h
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import { assertNever } from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
-import { act as domAct } from 'react-dom/test-utils';
 
 const noModifiers: ModifierKeys = {
     altKey: false,
@@ -313,27 +312,21 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
 
         test('changing focus key removing old key from tab registry', () => {
             const tabRegistryRef = React.createRef<TabRegistry>();
-            domAct(() => {
-                let rerender: RenderResult['rerender'];
-                testAct(() => {
-                    const res = render(
-                        <TabBoundary tabRegistryRef={tabRegistryRef}>
-                            <Focuser focusKey="focuser-old" />
-                        </TabBoundary>,
-                    );
-                    rerender = res.rerender;
-                });
+            const { rerender } = render(
+                <TabBoundary tabRegistryRef={tabRegistryRef}>
+                    <Focuser focusKey="focuser-old" />
+                </TabBoundary>,
+            );
 
-                const tr = expectInstanceOf(tabRegistryRef.current, TabRegistry);
-                expect(tr.has('focuser-old')).toBe(true);
+            const tr = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+            expect(tr.has('focuser-old')).toBe(true);
 
-                testAct(() => {
-                    rerender(
-                        <TabBoundary tabRegistryRef={tabRegistryRef}>
-                            <Focuser focusKey="focuser-new" />
-                        </TabBoundary>,
-                    );
-                });
+            act(() => {
+                rerender(
+                    <TabBoundary tabRegistryRef={tabRegistryRef}>
+                        <Focuser focusKey="focuser-new" />
+                    </TabBoundary>,
+                );
             });
 
             const tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);

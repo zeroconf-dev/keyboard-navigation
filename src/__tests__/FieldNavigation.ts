@@ -1,5 +1,5 @@
 import { ModifierKeys, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
-import { createNavigationHandler, NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { createNavigationHandler, NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 
 function getFailureFocuser() {
@@ -24,7 +24,7 @@ const shiftModiferKey: ModifierKeys = {
 describe('FieldNavigation', () => {
     describe('simple arrow nav', () => {
         const createFocusersFromMap = (
-            navMap: NavigationMap,
+            navMap: NavigationFieldMap,
             tabDirectionAxis: 'x' | 'y' = 'x',
         ): [Map<string, () => void>, NavigationKeyHandler] => {
             const tabRegistry = new TabRegistry<string>();

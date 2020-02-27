@@ -2,8 +2,7 @@ import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import { Button, TabBoundary, useTabRegistry } from '@zeroconf/keyboard-navigation/hooks';
 import { FocuserFn, FocuserOptions } from '@zeroconf/keyboard-navigation/TabRegistry';
-import React from 'react';
-import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
 const styles: { [key: string]: React.CSSProperties } = {
     button: {

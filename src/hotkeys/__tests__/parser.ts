@@ -239,10 +239,10 @@ describe('modifier and special key combinations', () => {
         });
     });
 
-    test('modifier keys combinations with strict operator', () => {
+    test('modifier keys combinations with non-strict operator', () => {
         expect.assertions(209);
         forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
-            expect(parse('!' + modifiers.join('+'))).toEqual({ ...hotkey, strict: true });
+            expect(parse('!' + modifiers.join('+'))).toEqual({ ...hotkey, nonStrict: true });
         });
     });
 
@@ -263,7 +263,7 @@ describe('modifier and special key combinations', () => {
                 expect(parse(`!${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,
                     key,
-                    strict: true,
+                    nonStrict: true,
                 });
             });
         });
@@ -280,24 +280,24 @@ describe('modifier and special key combinations', () => {
         });
     });
 
-    test('modifier and special keys combinations with strict operator', () => {
+    test('modifier and special keys combinations with non-strict operator', () => {
         forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
             Object.keys(specialKeysMap).forEach(key => {
                 expect(parse(`!${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,
                     key: specialKeysMap[key],
-                    strict: true,
+                    nonStrict: true,
                 });
             });
         });
     });
 });
 
-describe('strict operastor', () => {
+describe('non-strict operastor', () => {
     test('exclamation mark edge case', () => {
         expect(parse('!!')).toEqual({
             key: '!',
-            strict: true,
+            nonStrict: true,
         });
 
         expect(parse('!')).toEqual({
@@ -309,11 +309,11 @@ describe('strict operastor', () => {
         expect(parse('!ctrl+!')).toEqual({
             ctrl: true,
             key: '!',
-            strict: true,
+            nonStrict: true,
         });
         expect(parse('!f')).toEqual({
             key: 'f',
-            strict: true,
+            nonStrict: true,
         });
     });
 });

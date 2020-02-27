@@ -1,6 +1,7 @@
 import { EventBubbleControl, HotkeyEvent } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
 import { parse, HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import { isHotkeyMatching, getTargetFocusKey } from '@zeroconf/keyboard-navigation/util';
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 
 let globalRegistry: HotkeyRegistry | null = null;
 let currentLocalRegistry: HotkeyRegistry | null = null;
@@ -17,7 +18,12 @@ export const scopes = Object.freeze({
 export type HotkeyPublicScope = typeof localScope | string;
 export type HotkeyScope = HotkeyPublicScope | typeof globalScope;
 
-export type HotkeyHandler = (focusKey: string | null, e: HotkeyEvent & Partial<EventBubbleControl>) => boolean;
+export type HotkeyHandler = (opts: {
+    focusKey: string | null;
+    event: HotkeyEvent & Partial<EventBubbleControl>;
+    hotkeyRegistry: HotkeyRegistry;
+    tabRegistry: TabRegistry | null;
+}) => boolean;
 type HotkeyTuppleWithID = [HotkeyID, string, HotkeyObject, HotkeyHandler];
 export type HotkeyMap = {
     [hotkey: string]: HotkeyHandler | null | undefined | false;
@@ -161,22 +167,26 @@ export class HotkeyRegistry {
         return;
     };
 
-    private runGlobal(e: HotkeyEvent & Partial<EventBubbleControl>): boolean {
-        return this.global.run(e);
+    private runGlobal(e: HotkeyEvent & Partial<EventBubbleControl>, tabRegistry?: TabRegistry | null): boolean {
+        return this.global.run(e, tabRegistry);
     }
 
-    private runLocal(e: HotkeyEvent & Partial<EventBubbleControl>): boolean {
+    private runLocal(e: HotkeyEvent & Partial<EventBubbleControl>, tabRegistry?: TabRegistry | null): boolean {
         for (const registry of this) {
-            if (registry.run(e)) {
+            if (registry.run(e, tabRegistry)) {
                 return true;
             }
         }
         return false;
     }
 
-    private runScope(e: HotkeyEvent & Partial<EventBubbleControl>, scope: string): boolean {
+    private runScope(
+        e: HotkeyEvent & Partial<EventBubbleControl>,
+        scope: string,
+        tabRegistry?: TabRegistry | null,
+    ): boolean {
         for (const registry of this.iterScope(scope)) {
-            if (registry.run(e)) {
+            if (registry.run(e, tabRegistry)) {
                 return true;
             }
         }
@@ -253,16 +263,19 @@ export class HotkeyRegistry {
         hotkeyIds.forEach(hotkeyId => this.remove(hotkeyId));
     }
 
-    public run(e: HotkeyEvent & Partial<EventBubbleControl> & { target?: HTMLElement }): boolean {
-        const focusKey = getTargetFocusKey(e.target);
+    public run(
+        event: HotkeyEvent & Partial<EventBubbleControl> & { target?: HTMLElement },
+        tabRegistry?: TabRegistry | null,
+    ): boolean {
+        const focusKey = getTargetFocusKey(event.target);
         for (const hotkey of this.hotkeys.values()) {
-            if (isHotkeyMatching(hotkey[2], e)) {
-                if (hotkey[3](focusKey, e)) {
-                    if (typeof e.preventDefault === 'function') {
-                        e.preventDefault();
+            if (isHotkeyMatching(hotkey[2], event)) {
+                if (hotkey[3]({ focusKey: focusKey, event, hotkeyRegistry: this, tabRegistry: tabRegistry || null })) {
+                    if (typeof event.preventDefault === 'function') {
+                        event.preventDefault();
                     }
-                    if (typeof e.stopPropagation === 'function') {
-                        e.stopPropagation();
+                    if (typeof event.stopPropagation === 'function') {
+                        event.stopPropagation();
                     }
                     return true;
                 }
@@ -271,17 +284,17 @@ export class HotkeyRegistry {
         return false;
     }
 
-    public runCurrent(e: HotkeyEvent & Partial<EventBubbleControl>): boolean {
-        return this.runFor(e, this.scope);
+    public runCurrent(e: HotkeyEvent & Partial<EventBubbleControl>, tabRegistry?: TabRegistry | null): boolean {
+        return this.runFor(e, this.scope, tabRegistry);
     }
 
-    public runFor(e: HotkeyEvent & Partial<EventBubbleControl>, scope: HotkeyScope) {
+    public runFor(e: HotkeyEvent & Partial<EventBubbleControl>, scope: HotkeyScope, tabRegistry?: TabRegistry | null) {
         if (scope === globalScope) {
-            return this.runGlobal(e);
+            return this.runGlobal(e, tabRegistry);
         } else if (scope === scopes.local) {
-            return this.runLocal(e);
+            return this.runLocal(e, tabRegistry);
         } else if (typeof scope === 'string') {
-            return this.runScope(e, scope);
+            return this.runScope(e, scope, tabRegistry);
         } else {
             throw TypeError('Invalid scope, only [Symbol global, [Symbol local] and strings are allowed');
         }

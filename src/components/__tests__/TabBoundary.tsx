@@ -1,34 +1,38 @@
-import { act as testAct, cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { Input as InputClassic } from '@zeroconf/keyboard-navigation/components/Tabbable';
 import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
-import { Input } from '@zeroconf/keyboard-navigation/components/Tabbable';
 import { TabBoundary as TabBoundaryClassic } from '@zeroconf/keyboard-navigation/components/TabBoundary';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
 import { escape, shiftTab, space, tab } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
 import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
+import { Input as InputHooks } from '@zeroconf/keyboard-navigation/hooks/components/Tabbable';
 import { TabBoundary as TabBoundaryHooks } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
 import { TabBoundary as TabBoundaryHotkeys } from '@zeroconf/keyboard-navigation/hotkeys/components/TabBoundary';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/__helpers__/errorBoundary';
-import * as React from 'react';
-import { act as domAct } from 'react-dom/test-utils';
+import React from 'react';
 
 [
     {
         Focuser: FocuserClassic,
+        Input: InputClassic,
         TabBoundary: TabBoundaryClassic,
     },
     {
         Focuser: FocuserHooks,
+        Input: InputHooks,
         TabBoundary: TabBoundaryHooks,
     },
     {
         Focuser: FocuserHooks,
+        Input: InputHooks,
         TabBoundary: TabBoundaryHotkeys,
     },
 ].forEach(components => {
     const Focuser = components.Focuser as typeof FocuserClassic;
     const TabBoundary = components.TabBoundary as typeof TabBoundaryClassic;
+    const Input = components.Input as typeof InputClassic;
 
     const suiteName =
         (TabBoundary as any) === (TabBoundaryClassic as any)
@@ -43,16 +47,14 @@ import { act as domAct } from 'react-dom/test-utils';
         afterEach(cleanup);
         test('duplicate focus keys within same boundary throws', () => {
             const [ErrorBoundary, errorRef] = createErrorBoundary();
-            testAct(() => {
-                render(
-                    <ErrorBoundary>
-                        <TabBoundary>
-                            <Focuser focusKey="focuser" />
-                            <Focuser focusKey="focuser" />
-                        </TabBoundary>
-                    </ErrorBoundary>,
-                );
-            });
+            render(
+                <ErrorBoundary>
+                    <TabBoundary>
+                        <Focuser focusKey="focuser" />
+                        <Focuser focusKey="focuser" />
+                    </TabBoundary>
+                </ErrorBoundary>,
+            );
 
             expect(errorRef.current).toMatchSnapshot();
         });
@@ -148,38 +150,42 @@ import { act as domAct } from 'react-dom/test-utils';
         });
 
         test('duplicate keys in sibling boundary does not throw', () => {
-            expect(() =>
-                render(
-                    <div>
-                        <TabBoundary boundaryKey="sibling-1">
-                            <Focuser focusKey="duplicate-1" />
-                            <Focuser focusKey="duplicate-2" />
-                        </TabBoundary>
-                        <TabBoundary boundaryKey="sibling-2">
-                            <Focuser focusKey="duplicate-1" />
-                            <Focuser focusKey="duplicate-2" />
-                        </TabBoundary>
-                    </div>,
-                ),
-            ).not.toThrowError();
+            const [ErrorBoundary, errorRef] = createErrorBoundary();
+            render(
+                <ErrorBoundary>
+                    <TabBoundary boundaryKey="sibling-1">
+                        <Focuser focusKey="duplicate-1" />
+                        <Focuser focusKey="duplicate-2" />
+                    </TabBoundary>
+                    <TabBoundary boundaryKey="sibling-2">
+                        <Focuser focusKey="duplicate-1" />
+                        <Focuser focusKey="duplicate-2" />
+                    </TabBoundary>
+                </ErrorBoundary>,
+            );
+
+            expect(errorRef.current).toBeNull();
         });
 
         test('remount tab boundary should not throw', () => {
+            const [ErrorBoundary, errorRef] = createErrorBoundary();
             const { rerender } = render(
-                <>
+                <ErrorBoundary>
                     <TabBoundary key="boundary1" />
                     <TabBoundary key="boundary2" />
-                </>,
+                </ErrorBoundary>,
             );
 
-            expect(() => {
+            act(() => {
                 rerender(
-                    <>
+                    <ErrorBoundary>
                         <TabBoundary key="boundary1-remount" />
                         <TabBoundary key="boundary2" />
-                    </>,
+                    </ErrorBoundary>,
                 );
-            }).not.toThrowError();
+            });
+
+            expect(errorRef.current).toBeNull();
         });
 
         test('fetching tab registry through mutable ref object', () => {
@@ -233,15 +239,17 @@ import { act as domAct } from 'react-dom/test-utils';
             shiftTab(input3);
             expect(onFocus2).toHaveBeenCalled();
 
-            rerender(
-                <TabBoundary>
-                    <TabBoundary boundaryKey="first" focusFirstOnNextOrigin={true}>
-                        <Input name="input1" onFocus={onFocus1} />
-                        <Input name="input2" onFocus={onFocus2} />
-                    </TabBoundary>
-                    <Input name="input3" />
-                </TabBoundary>,
-            );
+            act(() => {
+                rerender(
+                    <TabBoundary>
+                        <TabBoundary boundaryKey="first" focusFirstOnNextOrigin={true}>
+                            <Input name="input1" onFocus={onFocus1} />
+                            <Input name="input2" onFocus={onFocus2} />
+                        </TabBoundary>
+                        <Input name="input3" />
+                    </TabBoundary>,
+                );
+            });
 
             shiftTab(input3);
             expect(onFocus1).toHaveBeenCalled();
@@ -262,22 +270,26 @@ import { act as domAct } from 'react-dom/test-utils';
             tab(input2);
             expect(onFocus1).not.toHaveBeenCalled();
 
-            rerender(
-                <TabBoundary cycle={true}>
-                    <Input name="input1" onFocus={onFocus1} />
-                    <Input name="input2" onFocus={onFocus2} />
-                </TabBoundary>,
-            );
+            act(() => {
+                rerender(
+                    <TabBoundary cycle={true}>
+                        <Input name="input1" onFocus={onFocus1} />
+                        <Input name="input2" onFocus={onFocus2} />
+                    </TabBoundary>,
+                );
+            });
 
             tab(input2);
             expect(onFocus1).toHaveBeenCalled();
 
-            rerender(
-                <TabBoundary cycle={false}>
-                    <Input name="input1" onFocus={onFocus1} />
-                    <Input name="input2" onFocus={onFocus2} />
-                </TabBoundary>,
-            );
+            act(() => {
+                rerender(
+                    <TabBoundary cycle={false}>
+                        <Input name="input1" onFocus={onFocus1} />
+                        <Input name="input2" onFocus={onFocus2} />
+                    </TabBoundary>,
+                );
+            });
 
             tab(input2);
             expect(onFocus1).toHaveBeenCalledTimes(1);
@@ -305,15 +317,21 @@ import { act as domAct } from 'react-dom/test-utils';
 
             expect(onFocus2).toHaveBeenCalled();
 
-            rerender(
-                <TabBoundary boundaryKey="outer">
-                    <Input name="input1" onFocus={onFocus1} />
-                    <TabBoundary boundaryKey="inner" focusParentOnChildOrigin={true} tabRegistryRef={tabRegistryRef}>
-                        <Input name="input2" onFocus={onFocus2} />
-                        <Input name="input3" onFocus={onFocus3} />
-                    </TabBoundary>
-                </TabBoundary>,
-            );
+            act(() => {
+                rerender(
+                    <TabBoundary boundaryKey="outer">
+                        <Input name="input1" onFocus={onFocus1} />
+                        <TabBoundary
+                            boundaryKey="inner"
+                            focusParentOnChildOrigin={true}
+                            tabRegistryRef={tabRegistryRef}
+                        >
+                            <Input name="input2" onFocus={onFocus2} />
+                            <Input name="input3" onFocus={onFocus3} />
+                        </TabBoundary>
+                    </TabBoundary>,
+                );
+            });
 
             tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
 
@@ -323,28 +341,22 @@ import { act as domAct } from 'react-dom/test-utils';
 
         test('can change boundary key between renders', () => {
             const tabRegistryRef = React.createRef<TabRegistry>();
-            domAct(() => {
-                let rerender: RenderResult['rerender'];
-                testAct(() => {
-                    const res = render(
-                        <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
-                            <TabBoundary boundaryKey="inner" />
-                        </TabBoundary>,
-                    );
-                    rerender = res.rerender;
-                });
+            const { rerender } = render(
+                <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
+                    <TabBoundary boundaryKey="inner" />
+                </TabBoundary>,
+            );
 
-                const tr = expectInstanceOf(tabRegistryRef.current, TabRegistry);
-                expect(tr.has('inner')).toBe(true);
-                expect(tr.has('inner-new')).toBe(false);
+            const tr = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+            expect(tr.has('inner')).toBe(true);
+            expect(tr.has('inner-new')).toBe(false);
 
-                testAct(() => {
-                    rerender(
-                        <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
-                            <TabBoundary boundaryKey="inner-new" />
-                        </TabBoundary>,
-                    );
-                });
+            act(() => {
+                rerender(
+                    <TabBoundary boundaryKey="outer" tabRegistryRef={tabRegistryRef}>
+                        <TabBoundary boundaryKey="inner-new" />
+                    </TabBoundary>,
+                );
             });
             const tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
             expect(tabRegistry.has('inner')).toBe(false);

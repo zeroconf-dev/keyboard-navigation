@@ -6,14 +6,16 @@ import {
     HotkeyRegistry,
     TabBoundary,
     useFocusable,
-    useNavigationMap,
     useHotkeyRegistry,
+    HotkeyHandler,
 } from '@zeroconf/keyboard-navigation';
 import { css } from '@zeroconf/keyboard-navigation/stories/utils/css';
 import { globalStyles } from '@zeroconf/keyboard-navigation/stories/utils/globalStyles';
 import { hotkeyToText } from '@zeroconf/keyboard-navigation/hotkeys/components/__tests__/__helpers__/hotkeyToText';
 import { serializeHotkey, isArrowKey, hotkeyHasModifier } from '@zeroconf/keyboard-navigation/util';
 import { actions } from '@storybook/addon-actions';
+import { NavigationMap } from '@zeroconf/keyboard-navigation/hotkeys/components/NavigationMap';
+import { HotkeyBoundary } from '@zeroconf/keyboard-navigation/hotkeys/components';
 
 const Sidebar = css`
     border: 1px solid black;
@@ -54,10 +56,23 @@ const Link = css`
     const { className, focusKey } = props;
     const { focus, ref } = useFocus<HTMLDivElement>();
     const focusableProps = useFocusable(focusKey, focus);
+
+    const special =
+        focusKey === 'link3' ? (
+            <Hotkey
+                hotkey="3"
+                handler={() => {
+                    alert('Special key');
+                    return true;
+                }}
+            />
+        ) : null;
+
     return (
-        <div className={className} {...focusableProps} ref={ref}>
+        <HotkeyBoundary crossLocalBoundary={true} className={className} {...focusableProps} ref={ref}>
             {focusKey}
-        </div>
+            {special}
+        </HotkeyBoundary>
     );
 });
 
@@ -143,6 +158,8 @@ function hotkeyMapper(hotkeys: Iterable<HotkeyObject>): Iterable<HotkeyObjectExt
                         : 0
                     : hotkey.key === 'Tab' && hotkey.shift
                     ? -89
+                    : hotkey.key === 'Enter'
+                    ? -88
                     : 0,
             };
             accepted.add(hotkeyExtended.hashCode);
@@ -166,16 +183,31 @@ const stopPropagation: React.KeyboardEventHandler<HTMLElement> = e => {
 };
 
 storiesOf('App/Navigation', module).add('Sidebar', () => {
-    const navigationMapProps = useNavigationMap([
-        // prettier-ignore
-        ['link1'],
-        ['link2'],
-        ['link3'],
-    ] as [string][]);
+    const outerMap = useMemo(
+        () =>
+            [
+                // prettier-ignore
+                ['link1'],
+                ['link2'],
+                ['link3'],
+                ['link4'],
+                ['link5'],
+            ] as [string][],
+        [],
+    );
+    const innerMap = useMemo(
+        () =>
+            [
+                // prettier-ignore
+                ['link4-1'],
+                ['link4-2'],
+                ['link4-3'],
+                ['link4-4'],
+            ] as [string][],
+        [],
+    );
 
-    const navigationHandler = useCallback((...args: any[]) => {
-        const e = args[0] as any;
-        const focusKey = (e.target as HTMLDivElement).dataset.focuskey;
+    const navigationHandler: HotkeyHandler = useCallback(({ focusKey }) => {
         if (focusKey == null) {
             return false;
         }
@@ -183,14 +215,73 @@ storiesOf('App/Navigation', module).add('Sidebar', () => {
         return true;
     }, []);
 
+    const focusPrev: HotkeyHandler = useCallback(({ focusKey, tabRegistry }) => {
+        if (focusKey != null && tabRegistry != null && focusKey === tabRegistry.firstKey) {
+            return tabRegistry.focusPrev(focusKey);
+        }
+        return false;
+    }, []);
+
+    const focusNext: HotkeyHandler = useCallback(({ focusKey, tabRegistry }) => {
+        if (focusKey != null && tabRegistry != null && focusKey === tabRegistry.lastKey) {
+            return tabRegistry.focusNext(focusKey);
+        }
+        return false;
+    }, []);
+
     return (
-        <Sidebar {...navigationMapProps} crossLocalBoundary={false} onKeyDown={stopPropagation}>
-            {globalStyles}
-            <Hotkey hotkey="enter" handler={navigationHandler} />
-            <Link focusKey="link1" />
-            <Link focusKey="link2" />
-            <Link focusKey="link3" />
+        <>
+            <Sidebar cycle={false} onKeyDown={stopPropagation}>
+                <Link focusKey="link1" />
+                <Link focusKey="link2" />
+                <Link focusKey="link3" />
+                <TabBoundary boundaryKey="link4" crossLocalBoundary={true}>
+                    <Hotkey hotkey="arrowup" handler={focusPrev} />
+                    <Hotkey hotkey="arrowdown" handler={focusNext} />
+                    <Link focusKey="link4-1" />
+                    <Link focusKey="link4-2" />
+                    <Link focusKey="link4-3" />
+                    <NavigationMap navigationMap={innerMap} tabDirectionAxis="y" />
+                </TabBoundary>
+                <Link focusKey="link5" />
+                <Hotkey hotkey="enter" handler={navigationHandler} />
+                <NavigationMap navigationMap={outerMap} tabDirectionAxis="y" />
+                {globalStyles}
+            </Sidebar>
             <HotkeyLegend renderHotkey={renderHotkey} mapFn={hotkeyMapper} />
-        </Sidebar>
+        </>
+    );
+});
+
+const Topbar = css`
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+`(TabBoundary);
+
+const TopbarLink = css`
+    display: flex;
+    flex: 0 1 100px;
+    flex-direction: column;
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+    justify-content: center;
+`(Link);
+
+storiesOf('App/Navigation', module).add('Topbar', () => {
+    const outerMap = useMemo(() => [['link1', 'link2', 'link3', 'link4']] as [string, string, string, string][], []);
+    return (
+        <>
+            <Topbar>
+                <TopbarLink focusKey="link1" />
+                <TopbarLink focusKey="link2" />
+                <TopbarLink focusKey="link3" />
+                <TopbarLink focusKey="link4" />
+                <NavigationMap navigationMap={outerMap} />
+            </Topbar>
+            <HotkeyLegend renderHotkey={renderHotkey} mapFn={hotkeyMapper} />
+        </>
     );
 });

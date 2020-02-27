@@ -1,13 +1,13 @@
 import { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
 import { FocuserOptions, TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 
 export const useFocusable = (
     focusKey: string | undefined,
     focus: TabRegistry | ((opts: FocuserOptions) => boolean),
 ) => {
-    const tabRegistry = useTabRegistry();
-    useLayoutEffect(() => {
+    const tabRegistry = useTabRegistry(false);
+    useEffect(() => {
         if (tabRegistry != null && focusKey != null) {
             tabRegistry.add(focusKey, focus);
         }

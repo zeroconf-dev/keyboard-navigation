@@ -1,16 +1,16 @@
-import { createNavigationHandler, NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { createNavigationHandler, NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 import { ModifierKeys } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
-import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import { useCallback, useMemo } from 'react';
+import { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
 
 export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(
-    navigationMap: NavigationMap,
-    tabRegistryRef: React.RefObject<TabRegistry>,
+    navigationMap: NavigationFieldMap,
     tabDirectionAxix?: 'x' | 'y',
 ): React.DetailedHTMLProps<React.HTMLAttributes<TElement>, TElement> => {
+    const tabRegistry = useTabRegistry();
     const navigationHandler = useMemo(() => {
-        return createNavigationHandler(navigationMap, tabRegistryRef, tabDirectionAxix);
-    }, [navigationMap, tabRegistryRef, tabDirectionAxix]);
+        return createNavigationHandler(navigationMap, tabRegistry, tabDirectionAxix);
+    }, [navigationMap, tabRegistry, tabDirectionAxix]);
     return {
         onKeyDown: useCallback(
             (e: React.KeyboardEvent<TElement>) => {
@@ -39,7 +39,6 @@ export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(
                     shouldPrevent = true;
                     navigationHandler(focusKey, 'ArrowRight', modifierKeys);
                 } else if (e.key === 'Tab') {
-                    const tabRegistry = tabRegistryRef.current;
                     if (e.shiftKey) {
                         if (tabRegistry != null) {
                             shouldPrevent = true;
@@ -62,7 +61,7 @@ export const useNavigationMap = <TElement extends HTMLElement = HTMLElement>(
                     e.stopPropagation();
                 }
             },
-            [navigationHandler, tabRegistryRef],
+            [navigationHandler, tabRegistry],
         ),
     };
 };

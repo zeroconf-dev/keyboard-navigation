@@ -325,7 +325,11 @@ export class TabRegistry<E = string> {
 
         let internalKey: E | undefined | null = key;
         if (internalKey == null) {
-            if (options != null && options.focusOrigin === 'next' && !options.focusFirstOnNextOrigin) {
+            if (
+                options != null &&
+                (options.focusOrigin === 'next' || options.focusOrigin === 'down') &&
+                !options.focusFirstOnNextOrigin
+            ) {
                 internalKey = this.lastKey;
             } else {
                 internalKey = this.firstKey;

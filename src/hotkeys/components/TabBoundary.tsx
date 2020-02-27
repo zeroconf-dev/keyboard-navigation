@@ -12,6 +12,7 @@ import {
     ForwardRefProps,
     HTMLType,
     UnpackedHTMLElement,
+    shouldHandleHotkey,
 } from '@zeroconf/keyboard-navigation/util';
 import React, { forwardRef, useCallback, useEffect, useMemo } from 'react';
 
@@ -144,10 +145,10 @@ export const TabBoundary = forwardRef(
 
         useEffect(() => {
             const hotkeyIds = registry.addAll({
-                tab: (focusKey: string | null) => {
+                tab: ({ focusKey }) => {
                     return focusKey == null ? false : tabRegistry.focusNext(focusKey);
                 },
-                'shift+tab': (focusKey: string | null) => {
+                'shift+tab': ({ focusKey }) => {
                     return focusKey == null ? false : tabRegistry.focusPrev(focusKey);
                 },
                 esc: props.focusParentOnEscape ? () => tabRegistry.focusParent() : null,
@@ -157,12 +158,17 @@ export const TabBoundary = forwardRef(
 
         const onKeyDown = useCallback(
             (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
-                registry.runCurrent(e);
+                if (!shouldHandleHotkey(e)) {
+                    return;
+                }
+                e.stopPropagation();
+                registry.runCurrent(e, tabRegistry);
+
                 if (props.onKeyDown != null) {
                     props.onKeyDown.call(null, e);
                 }
             },
-            [registry, props.onKeyDown],
+            [tabRegistry, registry, props.onKeyDown, props.crossLocalBoundary],
         );
 
         const onBlur = useCallback(

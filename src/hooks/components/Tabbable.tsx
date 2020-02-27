@@ -1,16 +1,16 @@
 import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
-import * as React from 'react';
+import React, { forwardRef, useRef, useCallback, useEffect } from 'react';
 
 export interface TabbableProps {
     name: string;
 }
 
 type ButtonProps = JSX.IntrinsicElements['button'] & TabbableProps;
-export const Button = React.forwardRef((props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
-    const buttonRef = React.useRef<HTMLButtonElement>(null);
+export const Button = forwardRef((props: ButtonProps, ref: React.Ref<HTMLButtonElement>) => {
+    const buttonRef = useRef<HTMLButtonElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = React.useCallback(() => {
+    const focus = useCallback(() => {
         if (buttonRef.current == null || disabled) {
             return false;
         }
@@ -18,12 +18,19 @@ export const Button = React.forwardRef((props: ButtonProps, ref: React.Ref<HTMLB
         return true;
     }, [props.name, disabled]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (typeof ref === 'function') {
             ref(buttonRef.current);
+            return () => {
+                ref(null);
+            };
         } else if (typeof ref === 'object' && ref != null) {
             (ref as React.MutableRefObject<HTMLButtonElement | null>).current = buttonRef.current;
+            return () => {
+                (ref as React.MutableRefObject<HTMLButtonElement | null>).current = null;
+            };
         }
+        return;
     }, [buttonRef.current]);
 
     useFocusable(props.name, focus);
@@ -34,11 +41,11 @@ export const Button = React.forwardRef((props: ButtonProps, ref: React.Ref<HTMLB
 Button.displayName = 'Button';
 
 type InputProps = JSX.IntrinsicElements['input'] & TabbableProps;
-export const Input = React.forwardRef((props: InputProps, ref: React.Ref<HTMLInputElement>) => {
-    const inputRef = React.useRef<HTMLInputElement>(null);
+export const Input = forwardRef((props: InputProps, ref: React.Ref<HTMLInputElement>) => {
+    const inputRef = useRef<HTMLInputElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = React.useCallback(() => {
+    const focus = useCallback(() => {
         if (inputRef.current == null || disabled) {
             return false;
         }
@@ -46,11 +53,18 @@ export const Input = React.forwardRef((props: InputProps, ref: React.Ref<HTMLInp
         return true;
     }, [props.name, disabled]);
 
-    if (typeof ref === 'function') {
-        ref(inputRef.current);
-    } else if (typeof ref === 'object' && ref != null) {
-        (ref as React.MutableRefObject<HTMLInputElement | null>).current = inputRef.current;
-    }
+    useEffect(() => {
+        if (typeof ref === 'function') {
+            ref(inputRef.current);
+            return () => ref(null);
+        } else if (typeof ref === 'object' && ref != null) {
+            (ref as React.MutableRefObject<HTMLInputElement | null>).current = inputRef.current;
+            return () => {
+                (ref as React.MutableRefObject<HTMLInputElement | null>).current = null;
+            };
+        }
+        return;
+    }, [ref]);
 
     useFocusable(props.name, focus);
 
@@ -60,11 +74,11 @@ export const Input = React.forwardRef((props: InputProps, ref: React.Ref<HTMLInp
 Input.displayName = 'Input';
 
 type SelectProps = JSX.IntrinsicElements['select'] & TabbableProps;
-export const Select = React.forwardRef((props: SelectProps, ref: React.Ref<HTMLSelectElement>) => {
-    const selectRef = React.useRef<HTMLSelectElement>(null);
+export const Select = forwardRef((props: SelectProps, ref: React.Ref<HTMLSelectElement>) => {
+    const selectRef = useRef<HTMLSelectElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = React.useCallback(() => {
+    const focus = useCallback(() => {
         if (selectRef.current == null || disabled) {
             return false;
         }
@@ -72,11 +86,18 @@ export const Select = React.forwardRef((props: SelectProps, ref: React.Ref<HTMLS
         return true;
     }, [props.name, disabled]);
 
-    if (typeof ref === 'function') {
-        ref(selectRef.current);
-    } else if (typeof ref === 'object' && ref != null) {
-        (ref as React.MutableRefObject<HTMLSelectElement | null>).current = selectRef.current;
-    }
+    useEffect(() => {
+        if (typeof ref === 'function') {
+            ref(selectRef.current);
+            return () => ref(null);
+        } else if (typeof ref === 'object' && ref != null) {
+            (ref as React.MutableRefObject<HTMLSelectElement | null>).current = selectRef.current;
+            return () => {
+                (ref as React.MutableRefObject<HTMLSelectElement | null>).current = null;
+            };
+        }
+        return;
+    }, [ref]);
 
     useFocusable(props.name, focus);
 
@@ -86,11 +107,11 @@ export const Select = React.forwardRef((props: SelectProps, ref: React.Ref<HTMLS
 Select.displayName = 'Select';
 
 type TextAreaProps = JSX.IntrinsicElements['textarea'] & TabbableProps;
-export const TextArea = React.forwardRef((props: TextAreaProps, ref: React.Ref<HTMLTextAreaElement>) => {
-    const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
+export const TextArea = forwardRef((props: TextAreaProps, ref: React.Ref<HTMLTextAreaElement>) => {
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const disabled = props.disabled || false;
 
-    const focus = React.useCallback(() => {
+    const focus = useCallback(() => {
         if (textAreaRef.current == null || disabled) {
             return false;
         }
@@ -98,11 +119,18 @@ export const TextArea = React.forwardRef((props: TextAreaProps, ref: React.Ref<H
         return true;
     }, [props.name, disabled]);
 
-    if (typeof ref === 'function') {
-        ref(textAreaRef.current);
-    } else if (typeof ref === 'object' && ref != null) {
-        (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current = textAreaRef.current;
-    }
+    useEffect(() => {
+        if (typeof ref === 'function') {
+            ref(textAreaRef.current);
+            return () => ref(null);
+        } else if (typeof ref === 'object' && ref != null) {
+            (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current = textAreaRef.current;
+            return () => {
+                (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current = null;
+            };
+        }
+        return;
+    });
 
     useFocusable(props.name, focus);
 

@@ -1,5 +1,5 @@
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
-import * as React from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 interface NewTabRegistryProps {
     cycle?: boolean;
@@ -9,29 +9,34 @@ interface NewTabRegistryProps {
 }
 
 export function useNewTabRegistry(props: NewTabRegistryProps): TabRegistry {
-    const tabRegistry = React.useMemo(
-        () =>
-            new TabRegistry({
-                cycle: props.cycle,
-                focusFirstOnNextOrigin: props.focusFirstOnNextOrigin,
-                focusParentOnChildOrigin: props.focusParentOnChildOrigin,
-            }),
-        [],
-    );
+    const { cycle, focusFirstOnNextOrigin, focusParentOnChildOrigin, tabRegistryRef } = props;
+    const tabRegistry = useMemo(() => {
+        const registry = new TabRegistry({
+            cycle: props.cycle,
+            focusFirstOnNextOrigin: props.focusFirstOnNextOrigin,
+            focusParentOnChildOrigin: props.focusParentOnChildOrigin,
+        });
+        if (tabRegistryRef != null) {
+            (tabRegistryRef as React.MutableRefObject<TabRegistry>).current = registry;
+        }
+        return registry;
+    }, []);
 
-    if (props.tabRegistryRef != null) {
-        (props.tabRegistryRef as React.MutableRefObject<TabRegistry>).current = tabRegistry;
-    }
+    useEffect(() => {
+        if (tabRegistryRef != null) {
+            (tabRegistryRef as React.MutableRefObject<TabRegistry>).current = tabRegistry;
+        }
 
-    if (props.focusParentOnChildOrigin !== tabRegistry.focusParentOnChildOrigin) {
         tabRegistry.focusParentOnChildOrigin = props.focusParentOnChildOrigin === true;
-    }
-
-    if (props.focusFirstOnNextOrigin !== tabRegistry.focusFirstOnNextOrigin) {
         tabRegistry.focusFirstOnNextOrigin = props.focusFirstOnNextOrigin === true;
-    }
 
-    props.cycle ? tabRegistry.enableCycle() : tabRegistry.disableCycle();
+        if (tabRegistry.isCycleEnabled && !cycle) {
+            tabRegistry.disableCycle();
+        }
+        if (!tabRegistry.isCycleEnabled && cycle) {
+            tabRegistry.enableCycle();
+        }
+    }, [cycle, focusFirstOnNextOrigin, focusParentOnChildOrigin, tabRegistry, tabRegistryRef]);
 
     return tabRegistry;
 }

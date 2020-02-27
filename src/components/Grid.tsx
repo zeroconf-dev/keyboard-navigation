@@ -1,6 +1,6 @@
 import { NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
-import { createNavigationHandler, NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { createNavigationHandler, NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
@@ -34,7 +34,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
      * [['elm1', 'elm2', 'elm3'],
      *  ['elm4', null, 'elm3']]
      */
-    navigationMap: NavigationMap;
+    navigationMap: NavigationFieldMap;
 
     /**
      * Set the tab direction of the

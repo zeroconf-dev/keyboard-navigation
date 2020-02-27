@@ -8,7 +8,7 @@ import {
 import { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
 import { FocuserOptions } from '@zeroconf/keyboard-navigation/TabRegistry';
 import { spreadControlProps } from '@zeroconf/keyboard-navigation/util';
-import * as React from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 // tslint:disable:react-unused-props-and-state
 
@@ -118,15 +118,15 @@ export const Field: React.SFC<Props> = (props: Props) => {
     const submitOnBlur = props.submitOnBlur || false;
     const submitOnClickOutside = props.submitOnClickOutside || false;
 
-    const containerRef = React.useRef<HTMLDivElement>(null);
-    const focuserRef = React.useRef<FocuserRef>(null);
-    const focusNextRef = React.useRef(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const focuserRef = useRef<FocuserRef>(null);
+    const focusNextRef = useRef(false);
 
-    const tabRegistry = useTabRegistry();
+    const tabRegistry = useTabRegistry(false);
 
-    const [isEditing, setIsEditing] = React.useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
-    const focus = React.useCallback(
+    const focus = useCallback(
         (opts: FocuserOptions) => {
             if (disabled || focuserRef.current == null) {
                 return false;
@@ -136,13 +136,13 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [disabled],
     );
 
-    React.useLayoutEffect(() => {
+    useLayoutEffect(() => {
         if (isEditing && disabled) {
             setIsEditing(false);
         }
     }, [isEditing, disabled]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (focusNextRef.current) {
             focus({
                 focusOrigin: 'user',
@@ -155,7 +155,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
         }
     }, [focus, props.onEditStop, focusNextRef.current]);
 
-    const stopEditing = React.useCallback(
+    const stopEditing = useCallback(
         (preventFocus?: boolean) => {
             if (!isEditing) {
                 return;
@@ -172,7 +172,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [isEditing, focus, props.onEditStop],
     );
 
-    const startEditing = React.useCallback(() => {
+    const startEditing = useCallback(() => {
         if (disabled || isEditing) {
             return;
         }
@@ -184,7 +184,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
         }
     }, [disabled, isEditing, props.onEditStart, stopEditing]);
 
-    const clickOutside = React.useCallback(
+    const clickOutside = useCallback(
         (e: MouseEvent) => {
             if (
                 isEditing &&
@@ -198,14 +198,14 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [isEditing, submitOnClickOutside, props.onSubmit, stopEditing],
     );
 
-    React.useLayoutEffect(() => {
+    useLayoutEffect(() => {
         document.addEventListener('click', clickOutside, false);
         return () => {
             document.removeEventListener('click', clickOutside, false);
         };
     }, [clickOutside]);
 
-    const onBlur = React.useCallback(
+    const onBlur = useCallback(
         (e: React.FocusEvent<HTMLDivElement>) => {
             // don't prevent default on blur event
             // or else the field actually won't get blurred.
@@ -220,7 +220,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [isEditing, submitOnBlur, props.onSubmit, stopEditing],
     );
 
-    const onClick = React.useCallback(
+    const onClick = useCallback(
         (e: React.MouseEvent<HTMLDivElement>) => {
             e.preventDefault();
             e.stopPropagation();
@@ -229,12 +229,12 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [startEditing],
     );
 
-    const onContainerClick = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const onContainerClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
         e.preventDefault();
     }, []);
 
-    const onEnter = React.useCallback(
+    const onEnter = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => {
             startEditing();
             if (props.onEnter != null) {
@@ -244,7 +244,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [startEditing, props.onEnter],
     );
 
-    const onEscape = React.useCallback(
+    const onEscape = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => {
             if (props.onEscape != null) {
                 props.onEscape(e, focusKey);
@@ -260,7 +260,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [props.onEscape, isEditing, stopEditing, tabRegistry],
     );
 
-    const onFieldKeyDown = React.useCallback(
+    const onFieldKeyDown = useCallback(
         (e: React.KeyboardEvent<HTMLDivElement>) => {
             if (disabled) {
                 return;
@@ -280,7 +280,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [disabled, props.onSubmit, startEditing],
     );
 
-    const onLabelClick = React.useCallback(
+    const onLabelClick = useCallback(
         (e: React.MouseEvent<HTMLLabelElement>) => {
             e.preventDefault();
             e.stopPropagation();
@@ -290,7 +290,7 @@ export const Field: React.SFC<Props> = (props: Props) => {
         [focus],
     );
 
-    const onSpace = React.useCallback(
+    const onSpace = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>, focusKey: string) => {
             startEditing();
             if (props.onSpace != null) {

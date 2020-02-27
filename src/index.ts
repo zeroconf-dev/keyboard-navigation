@@ -1,4 +1,4 @@
-export { createNavigationHandler, NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+export { createNavigationHandler, NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 export { useFocusable, useTabRegistry } from '@zeroconf/keyboard-navigation/hooks';
 export {
     GlobalHotkeyBoundary,
@@ -6,6 +6,7 @@ export {
     HotkeyBoundary,
     HotkeyContextProvider,
     HotkeyLegend,
+    NavigationMap,
     TabBoundary,
 } from '@zeroconf/keyboard-navigation/hotkeys/components';
 export {

@@ -1,9 +1,8 @@
-import { createNavigationHandler, NavigationMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 import { NavigationKeyHandler } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
-import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '@zeroconf/keyboard-navigation/util';
-import * as React from 'react';
+import React from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
     /**
@@ -34,7 +33,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
      * [['elm1', 'elm2', 'elm3'],
      *  ['elm4', null, 'elm3']]
      */
-    navigationMap: NavigationMap;
+    navigationMap: NavigationFieldMap;
 
     /**
      * Set the tab direction of the
@@ -64,17 +63,15 @@ function filterProps<TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
 
 export const Grid = <TComp extends keyof JSX.IntrinsicElements>(props: Props<TComp>) => {
     const boundaryProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
-    const tabRegistryRef = React.useRef<TabRegistry<string>>(null);
-    const tabDirectionAxis = props.tabDirectionAxis == null ? 'x' : props.tabDirectionAxis;
-
-    const navigationHandler = React.useMemo(
-        () => createNavigationHandler(props.navigationMap, tabRegistryRef, tabDirectionAxis),
-        [props.navigationMap, tabRegistryRef, tabDirectionAxis],
-    );
-
     return (
-        <TabBoundary {...boundaryProps} as={props.as} boundaryKey={props.focusKey} tabRegistryRef={tabRegistryRef}>
-            {props.children(navigationHandler)}
+        <TabBoundary
+            {...boundaryProps}
+            as={props.as}
+            boundaryKey={props.focusKey}
+            navigationMap={props.navigationMap}
+            tabDirectionAxis={props.tabDirectionAxis}
+        >
+            {props.children}
         </TabBoundary>
     );
 };
