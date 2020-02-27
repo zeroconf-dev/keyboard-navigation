@@ -2,15 +2,17 @@ import { HotkeyRegistry, HotkeyHandler } from '@zeroconf/keyboard-navigation/hot
 import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeyRegistry';
 import { parse } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import { useEffect, useMemo } from 'react';
+import { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
 
 export const useHotkey = (hotkeyStr: string, handler: HotkeyHandler, isGlobalHotkey = false) => {
-    let registry = (useHotkeyRegistry as (calledFromHotkey: boolean) => HotkeyRegistry)(true as any);
+    let hotkeyRegistry = (useHotkeyRegistry as (calledFromHotkey: boolean) => HotkeyRegistry)(true as any);
     if (isGlobalHotkey) {
-        registry = registry.global;
+        hotkeyRegistry = hotkeyRegistry.global;
     }
+    const tabRegistry = useTabRegistry(false);
     const hotkey = useMemo(() => parse(hotkeyStr), [hotkeyStr]);
     useEffect(() => {
-        const hotkeyId = registry.add(hotkeyStr, hotkey, handler);
-        return () => registry.remove(hotkeyId);
-    }, [registry, hotkey, hotkeyStr, handler]);
+        const hotkeyId = hotkeyRegistry.add(hotkeyStr, hotkey, handler, tabRegistry);
+        return () => hotkeyRegistry.remove(hotkeyId);
+    }, [hotkeyRegistry, tabRegistry, hotkey, hotkeyStr, handler]);
 };

@@ -5,7 +5,7 @@ import {
     HotkeyObject,
     HotkeyLegend,
 } from '@zeroconf/keyboard-navigation';
-import { hotkeyToText } from '@zeroconf/keyboard-navigation/hotkeys/components/__tests__/__helpers__/hotkeyToText';
+import { hotkeyToText } from '@zeroconf/keyboard-navigation/hotkeys/components/__tests__/helpers/hotkeyToText';
 import React, { useCallback, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';

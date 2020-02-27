@@ -11,7 +11,7 @@ import {
 } from '@zeroconf/keyboard-navigation';
 import { css } from '@zeroconf/keyboard-navigation/stories/utils/css';
 import { globalStyles } from '@zeroconf/keyboard-navigation/stories/utils/globalStyles';
-import { hotkeyToText } from '@zeroconf/keyboard-navigation/hotkeys/components/__tests__/__helpers__/hotkeyToText';
+import { hotkeyToText } from '@zeroconf/keyboard-navigation/hotkeys/components/__tests__/helpers/hotkeyToText';
 import { serializeHotkey, isArrowKey, hotkeyHasModifier } from '@zeroconf/keyboard-navigation/util';
 import { actions } from '@storybook/addon-actions';
 import { NavigationMap } from '@zeroconf/keyboard-navigation/hotkeys/components/NavigationMap';

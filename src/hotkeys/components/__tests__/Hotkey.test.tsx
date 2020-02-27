@@ -1,7 +1,7 @@
 import { cleanup, render, fireEvent, act } from '@testing-library/react';
 import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/components/Hotkey';
 import React from 'react';
-import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/__helpers__/errorBoundary';
+import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/helpers/errorBoundary';
 import { GlobalHotkeyBoundary } from '@zeroconf/keyboard-navigation/hotkeys/components/GlobalHotkeyBoundary';
 
 afterEach(cleanup);

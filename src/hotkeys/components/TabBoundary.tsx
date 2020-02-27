@@ -119,7 +119,7 @@ export const TabBoundary = forwardRef(
     ) => {
         const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
         const parentRegistry = useHotkeyRegistry();
-        const registry = useMemo(
+        const hotkeyRegistry = useMemo(
             () =>
                 HotkeyRegistry.for(parentRegistry, scope, {
                     crossGlobalBoundary,
@@ -129,14 +129,14 @@ export const TabBoundary = forwardRef(
         );
         useEffect(() => {
             if (hotkeyRegistryRef != null) {
-                (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = registry;
+                (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = hotkeyRegistry;
                 return () => {
                     (hotkeyRegistryRef as React.MutableRefObject<HotkeyRegistry | null>).current = null;
                 };
             }
             return;
-        }, [registry, hotkeyRegistryRef]);
-        useEffect(() => () => registry.dispose(), [registry]);
+        }, [hotkeyRegistry, hotkeyRegistryRef]);
+        useEffect(() => () => hotkeyRegistry.dispose(), [hotkeyRegistry]);
 
         const tabRegistry = useNewTabRegistry(props) as TabRegistry;
         useFocusable(props.boundaryKey, tabRegistry);
@@ -144,7 +144,7 @@ export const TabBoundary = forwardRef(
         const childProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
 
         useEffect(() => {
-            const hotkeyIds = registry.addAll({
+            const hotkeyIds = hotkeyRegistry.addAll({
                 tab: ({ focusKey }) => {
                     return focusKey == null ? false : tabRegistry.focusNext(focusKey);
                 },
@@ -153,8 +153,8 @@ export const TabBoundary = forwardRef(
                 },
                 esc: props.focusParentOnEscape ? () => tabRegistry.focusParent() : null,
             });
-            return () => registry.removeAll(hotkeyIds);
-        }, [tabRegistry, registry, props.focusParentOnEscape]);
+            return () => hotkeyRegistry.removeAll(hotkeyIds);
+        }, [tabRegistry, hotkeyRegistry, props.focusParentOnEscape]);
 
         const onKeyDown = useCallback(
             (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
@@ -162,35 +162,35 @@ export const TabBoundary = forwardRef(
                     return;
                 }
                 e.stopPropagation();
-                registry.runCurrent(e, tabRegistry);
+                hotkeyRegistry.runCurrent(e);
 
                 if (props.onKeyDown != null) {
                     props.onKeyDown.call(null, e);
                 }
             },
-            [tabRegistry, registry, props.onKeyDown, props.crossLocalBoundary],
+            [hotkeyRegistry, props.onKeyDown, props.crossLocalBoundary],
         );
 
         const onBlur = useCallback(
             (e: React.FocusEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
                 e.stopPropagation();
-                registry.currentLocalRegistry = null;
+                hotkeyRegistry.currentLocalRegistry = null;
                 if (typeof props.onBlur === 'function') {
                     props.onBlur.call(undefined, e);
                 }
             },
-            [registry, props.onBlur],
+            [hotkeyRegistry, props.onBlur],
         );
 
         const onFocus = useCallback(
             (e: React.FocusEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
                 e.stopPropagation();
-                registry.currentLocalRegistry = registry;
+                hotkeyRegistry.currentLocalRegistry = hotkeyRegistry;
                 if (typeof props.onFocus === 'function') {
                     props.onFocus.call(undefined, e);
                 }
             },
-            [registry, props.onFocus],
+            [hotkeyRegistry, props.onFocus],
         );
 
         const comp = props.as == null ? 'div' : props.as;
@@ -201,7 +201,7 @@ export const TabBoundary = forwardRef(
         );
 
         return (
-            <HotkeyContextProvider value={registry}>
+            <HotkeyContextProvider value={hotkeyRegistry}>
                 <NavigationContext.Provider children={children} value={tabRegistry} />
             </HotkeyContextProvider>
         );

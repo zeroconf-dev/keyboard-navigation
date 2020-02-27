@@ -24,7 +24,7 @@ export type HotkeyHandler = (opts: {
     hotkeyRegistry: HotkeyRegistry;
     tabRegistry: TabRegistry | null;
 }) => boolean;
-type HotkeyTuppleWithID = [HotkeyID, string, HotkeyObject, HotkeyHandler];
+type HotkeyTuppleWithID = [HotkeyID, string, HotkeyObject, HotkeyHandler, TabRegistry | null];
 export type HotkeyMap = {
     [hotkey: string]: HotkeyHandler | null | undefined | false;
 };
@@ -167,26 +167,22 @@ export class HotkeyRegistry {
         return;
     };
 
-    private runGlobal(e: HotkeyEvent & Partial<EventBubbleControl>, tabRegistry?: TabRegistry | null): boolean {
-        return this.global.run(e, tabRegistry);
+    private runGlobal(e: HotkeyEvent & Partial<EventBubbleControl>): boolean {
+        return this.global.run(e);
     }
 
-    private runLocal(e: HotkeyEvent & Partial<EventBubbleControl>, tabRegistry?: TabRegistry | null): boolean {
+    private runLocal(e: HotkeyEvent & Partial<EventBubbleControl>): boolean {
         for (const registry of this) {
-            if (registry.run(e, tabRegistry)) {
+            if (registry.run(e)) {
                 return true;
             }
         }
         return false;
     }
 
-    private runScope(
-        e: HotkeyEvent & Partial<EventBubbleControl>,
-        scope: string,
-        tabRegistry?: TabRegistry | null,
-    ): boolean {
+    private runScope(e: HotkeyEvent & Partial<EventBubbleControl>, scope: string): boolean {
         for (const registry of this.iterScope(scope)) {
-            if (registry.run(e, tabRegistry)) {
+            if (registry.run(e)) {
                 return true;
             }
         }
@@ -201,9 +197,14 @@ export class HotkeyRegistry {
         return;
     };
 
-    public add(hotkeyStr: string, hotkey: HotkeyObject, handler: HotkeyHandler): HotkeyID {
+    public add(
+        hotkeyStr: string,
+        hotkey: HotkeyObject,
+        handler: HotkeyHandler,
+        tabRegistry?: TabRegistry | null,
+    ): HotkeyID {
         const hotkeyId = nextHotkeyId();
-        this.hotkeys.set(hotkeyId, [hotkeyId, hotkeyStr, hotkey, handler]);
+        this.hotkeys.set(hotkeyId, [hotkeyId, hotkeyStr, hotkey, handler, tabRegistry || null]);
         return hotkeyId;
     }
 
@@ -263,14 +264,11 @@ export class HotkeyRegistry {
         hotkeyIds.forEach(hotkeyId => this.remove(hotkeyId));
     }
 
-    public run(
-        event: HotkeyEvent & Partial<EventBubbleControl> & { target?: HTMLElement },
-        tabRegistry?: TabRegistry | null,
-    ): boolean {
+    public run(event: HotkeyEvent & Partial<EventBubbleControl> & { target?: HTMLElement }): boolean {
         const focusKey = getTargetFocusKey(event.target);
         for (const hotkey of this.hotkeys.values()) {
             if (isHotkeyMatching(hotkey[2], event)) {
-                if (hotkey[3]({ focusKey: focusKey, event, hotkeyRegistry: this, tabRegistry: tabRegistry || null })) {
+                if (hotkey[3]({ focusKey: focusKey, event, hotkeyRegistry: this, tabRegistry: hotkey[4] })) {
                     if (typeof event.preventDefault === 'function') {
                         event.preventDefault();
                     }
@@ -284,17 +282,17 @@ export class HotkeyRegistry {
         return false;
     }
 
-    public runCurrent(e: HotkeyEvent & Partial<EventBubbleControl>, tabRegistry?: TabRegistry | null): boolean {
-        return this.runFor(e, this.scope, tabRegistry);
+    public runCurrent(e: HotkeyEvent & Partial<EventBubbleControl>): boolean {
+        return this.runFor(e, this.scope);
     }
 
-    public runFor(e: HotkeyEvent & Partial<EventBubbleControl>, scope: HotkeyScope, tabRegistry?: TabRegistry | null) {
+    public runFor(e: HotkeyEvent & Partial<EventBubbleControl>, scope: HotkeyScope) {
         if (scope === globalScope) {
-            return this.runGlobal(e, tabRegistry);
+            return this.runGlobal(e);
         } else if (scope === scopes.local) {
-            return this.runLocal(e, tabRegistry);
+            return this.runLocal(e);
         } else if (typeof scope === 'string') {
-            return this.runScope(e, scope, tabRegistry);
+            return this.runScope(e, scope);
         } else {
             throw TypeError('Invalid scope, only [Symbol global, [Symbol local] and strings are allowed');
         }

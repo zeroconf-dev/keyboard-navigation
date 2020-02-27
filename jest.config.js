@@ -23,5 +23,5 @@ module.exports = {
             },
         ],
     ],
-    testPathIgnorePatterns: ['/node_modules/', '/__helpers__/'],
+    testMatch: ['**/__tests__/**/?(*.)+(test).ts?(x)'],
 };

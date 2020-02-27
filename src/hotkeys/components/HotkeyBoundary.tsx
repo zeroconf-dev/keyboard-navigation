@@ -11,7 +11,6 @@ import {
     shouldHandleHotkey,
 } from '@zeroconf/keyboard-navigation/util';
 import React, { forwardRef, useCallback, useEffect, useMemo } from 'react';
-import { useTabRegistry } from '@zeroconf/keyboard-navigation/hooks/useTabRegistry';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     // tslint:disable-next-line:no-reserved-keywords
@@ -54,7 +53,6 @@ export const HotkeyBoundary = forwardRef(
     ) => {
         const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
         const parentRegistry = useHotkeyRegistry();
-        const tabRegistry = useTabRegistry(false);
         const registry = useMemo(
             () =>
                 HotkeyRegistry.for(parentRegistry, scope, {
@@ -81,9 +79,9 @@ export const HotkeyBoundary = forwardRef(
                     return;
                 }
                 e.stopPropagation();
-                registry.runCurrent(e, tabRegistry);
+                registry.runCurrent(e);
             },
-            [registry, tabRegistry],
+            [registry],
         );
 
         const onBlur = useCallback(

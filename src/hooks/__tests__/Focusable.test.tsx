@@ -1,9 +1,9 @@
 import { act, cleanup, render } from '@testing-library/react';
 import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
-import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/helpers/assert';
 import { FocuserFn, TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
-import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/__helpers__/errorBoundary';
+import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/helpers/errorBoundary';
 import { useLayoutEffect } from 'react';
 import * as React from 'react';
 

@@ -3,14 +3,14 @@ import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/compone
 import { Input as InputClassic } from '@zeroconf/keyboard-navigation/components/Tabbable';
 import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 import { TabBoundary as TabBoundaryClassic } from '@zeroconf/keyboard-navigation/components/TabBoundary';
-import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/assert';
-import { escape, shiftTab, space, tab } from '@zeroconf/keyboard-navigation/components/__tests__/__helpers__/event';
+import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/helpers/assert';
+import { escape, shiftTab, space, tab } from '@zeroconf/keyboard-navigation/components/__tests__/helpers/event';
 import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { Input as InputHooks } from '@zeroconf/keyboard-navigation/hooks/components/Tabbable';
 import { TabBoundary as TabBoundaryHooks } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
 import { TabBoundary as TabBoundaryHotkeys } from '@zeroconf/keyboard-navigation/hotkeys/components/TabBoundary';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
-import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/__helpers__/errorBoundary';
+import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/helpers/errorBoundary';
 import React from 'react';
 
 [

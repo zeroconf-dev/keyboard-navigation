@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { useHotkey } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkey';
-import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/__helpers__/errorBoundary';
+import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/helpers/errorBoundary';
 import * as React from 'react';
 
 const createErrorBoundary = installErrorBoundary();
