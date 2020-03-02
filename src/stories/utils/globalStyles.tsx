@@ -18,6 +18,7 @@ export const globalStyles = (
                 flex: '1 1 auto',
             },
             '#root': {
+                flexDirection: 'column',
                 padding: 15,
             },
         }}

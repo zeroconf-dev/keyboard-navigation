@@ -39,6 +39,8 @@ export interface TabRegistryOptions {
      * If focus is called with origin child focus next parent.
      */
     focusParentOnChildOrigin?: boolean;
+
+    focusSelfHandler?: FocuserFn;
 }
 
 const focusOriginNone: FocuserOptions = { focusOrigin: 'none' };
@@ -168,7 +170,7 @@ export class TabRegistry<E = string> {
     /**
      * The key to this registry from the parent registry if it exists.
      */
-    private parentRegistryKey: any;
+    public readonly parentRegistryKey: E | null = null;
 
     /**
      * The internal set that maintain order.
@@ -176,14 +178,19 @@ export class TabRegistry<E = string> {
     private registry: DoublyLinkedOrderedSet<E>;
 
     /**
+     *
+     */
+    public focusSelfHandler: FocuserFn | null = null;
+
+    /**
      * If focus is called with origin next, focus first instead of last.
      */
-    public focusFirstOnNextOrigin: boolean;
+    public focusFirstOnNextOrigin = false;
 
     /**
      * If focus is called with origin child focus next parent.
      */
-    public focusParentOnChildOrigin: boolean;
+    public focusParentOnChildOrigin = false;
 
     /**
      * Constructs a registry with optional parent registry.
@@ -192,14 +199,11 @@ export class TabRegistry<E = string> {
         this.focuserMap = new Map();
         this.registry = new DoublyLinkedOrderedSet<E>();
         this.internalParentRegistry = null;
-        if (options == null) {
-            this.cycle = false;
-            this.focusFirstOnNextOrigin = false;
-            this.focusParentOnChildOrigin = false;
-        } else {
+        if (options != null) {
             this.cycle = options.cycle === true;
             this.focusFirstOnNextOrigin = options.focusFirstOnNextOrigin === true;
             this.focusParentOnChildOrigin = options.focusParentOnChildOrigin === true;
+            this.focusSelfHandler = options.focusSelfHandler || null;
         }
     }
 
@@ -323,6 +327,10 @@ export class TabRegistry<E = string> {
             return this.focusParent();
         }
 
+        if (this.focusSelfHandler != null && this.focusSelfHandler(opts)) {
+            return true;
+        }
+
         let internalKey: E | undefined | null = key;
         if (internalKey == null) {
             if (
@@ -369,7 +377,12 @@ export class TabRegistry<E = string> {
             return false;
         }
 
-        const result = focuser instanceof TabRegistry ? focuser.focusFirst() : focuser(focusOriginPrev);
+        const result =
+            focuser instanceof TabRegistry
+                ? focuser.focusSelfHandler == null
+                    ? focuser.focusFirst()
+                    : focuser.focusSelfHandler(focusOriginPrev)
+                : focuser(focusOriginPrev);
         if (result) {
             return true;
         } else {
@@ -427,11 +440,7 @@ export class TabRegistry<E = string> {
                 if (focuser instanceof TabRegistry) {
                     return focuser.focus(undefined, options);
                 } else {
-                    if (options == null) {
-                        return focuser(focusOriginNone);
-                    } else {
-                        return focuser(options);
-                    }
+                    return focuser(options || focusOriginNone);
                 }
             }
         }
@@ -524,7 +533,8 @@ export class TabRegistry<E = string> {
                 continue;
             }
 
-            const result = focuser instanceof TabRegistry ? focuser.focusFirst() : focuser(focusOriginPrev);
+            const result =
+                focuser instanceof TabRegistry ? focuser.focus(undefined, focusOriginPrev) : focuser(focusOriginPrev);
 
             if (result) {
                 this.focusCycleStartKey = null;
@@ -553,7 +563,7 @@ export class TabRegistry<E = string> {
             return this.focusFirst();
         }
 
-        if (this.internalParentRegistry != null) {
+        if (this.parentRegistryKey != null && this.internalParentRegistry != null) {
             this.focusCycleStartKey = null;
             this.internalParentRegistry.focusNext(this.parentRegistryKey);
             return true;
@@ -655,7 +665,7 @@ export class TabRegistry<E = string> {
             return this.focusLast();
         }
 
-        if (this.internalParentRegistry != null) {
+        if (this.parentRegistryKey != null && this.internalParentRegistry != null) {
             this.focusCycleStartKey = null;
             this.internalParentRegistry.focusPrev(this.parentRegistryKey);
             return true;
@@ -889,9 +899,9 @@ export class TabRegistry<E = string> {
      * Set the `key` of this registry from
      * the `parentRegistry`.
      */
-    public setParentRegistry(parentRegistryKey: any, parentRegistry: TabRegistry<E>) {
+    public setParentRegistry(parentRegistryKey: E, parentRegistry: TabRegistry<E>) {
         this.internalParentRegistry = parentRegistry;
-        this.parentRegistryKey = parentRegistryKey;
+        (this as { parentRegistryKey: E | null }).parentRegistryKey = parentRegistryKey;
     }
 
     /**

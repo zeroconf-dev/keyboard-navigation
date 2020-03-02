@@ -14,7 +14,7 @@ import {
     UnpackedHTMLElement,
     shouldHandleHotkey,
 } from '@zeroconf/keyboard-navigation/util';
-import React, { forwardRef, useCallback, useEffect, useMemo } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**
@@ -115,9 +115,9 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
 export const TabBoundary = forwardRef(
     <TComp extends keyof JSX.IntrinsicElements = 'div'>(
         props: React.PropsWithChildren<Props<TComp>>,
-        ref?: React.Ref<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>,
+        forwardedRef: React.Ref<HTMLType<TComp>>,
     ) => {
-        const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope } = props;
+        const { crossGlobalBoundary, crossLocalBoundary, hotkeyRegistryRef, scope, tabIndex } = props;
         const parentRegistry = useHotkeyRegistry();
         const hotkeyRegistry = useMemo(
             () =>
@@ -138,18 +138,58 @@ export const TabBoundary = forwardRef(
         }, [hotkeyRegistry, hotkeyRegistryRef]);
         useEffect(() => () => hotkeyRegistry.dispose(), [hotkeyRegistry]);
 
-        const tabRegistry = useNewTabRegistry(props) as TabRegistry;
+        const ref = useRef<HTMLType<TComp>>(null);
+        const setRef = useMemo(
+            () => (htmlRef: HTMLType<TComp> | null) => {
+                (ref as React.MutableRefObject<HTMLType<TComp> | null>).current = htmlRef;
+                if (typeof forwardedRef === 'function') {
+                    forwardedRef(htmlRef);
+                } else if (forwardedRef != null && forwardedRef.hasOwnProperty('current')) {
+                    (forwardedRef as React.MutableRefObject<HTMLType<TComp> | null>).current = htmlRef;
+                }
+            },
+            [forwardedRef],
+        );
+
+        const focusSelfHandler = useMemo(
+            () =>
+                tabIndex == null
+                    ? undefined
+                    : () => {
+                          if (ref.current == null) {
+                              return false;
+                          }
+                          ref.current.focus();
+                          return true;
+                      },
+            [tabIndex, forwardedRef],
+        );
+
+        const tabRegistry = useNewTabRegistry({
+            ...props,
+            focusSelfHandler,
+        }) as TabRegistry;
         useFocusable(props.boundaryKey, tabRegistry);
 
         const childProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
 
         useEffect(() => {
             const hotkeyIds = hotkeyRegistry.addAll({
-                tab: ({ focusKey }) => {
-                    return focusKey == null ? false : tabRegistry.focusNext(focusKey);
+                tab: ({ event, focusKey }) => {
+                    // The tab boundary should not handle if itself is focusable,
+                    // then the parent boundary is supposed to handle it.
+                    if (focusKey == null || (event as any).target === ref.current) {
+                        return false;
+                    }
+                    return tabRegistry.focusNext(focusKey);
                 },
-                'shift+tab': ({ focusKey }) => {
-                    return focusKey == null ? false : tabRegistry.focusPrev(focusKey);
+                'shift+tab': ({ event, focusKey }) => {
+                    // The tab boundary should not handle if itself is focusable,
+                    // then the parent boundary is supposed to handle it.
+                    if (focusKey == null || (event as any).target === ref.current) {
+                        return false;
+                    }
+                    return tabRegistry.focusPrev(focusKey);
                 },
                 esc: props.focusParentOnEscape ? () => tabRegistry.focusParent() : null,
             });
@@ -161,6 +201,7 @@ export const TabBoundary = forwardRef(
                 if (!shouldHandleHotkey(e)) {
                     return;
                 }
+
                 e.stopPropagation();
                 hotkeyRegistry.runCurrent(e);
 
@@ -196,7 +237,7 @@ export const TabBoundary = forwardRef(
         const comp = props.as == null ? 'div' : props.as;
         const children = React.createElement(
             comp,
-            { ...childProps, onBlur, onFocus, onKeyDown, ref: ref },
+            { ...childProps, onBlur, onFocus, onKeyDown, ref: setRef, 'data-focuskey': props.boundaryKey },
             props.children,
         );
 

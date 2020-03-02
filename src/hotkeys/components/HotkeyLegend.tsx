@@ -2,6 +2,7 @@ import { useHotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/hooks/u
 import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 import React, { useEffect, useState } from 'react';
+import { useForceRender } from '@zeroconf/keyboard-navigation/hooks/useForceRender';
 
 interface HotkeyLegendProps {
     includeGlobal?: boolean;
@@ -9,18 +10,21 @@ interface HotkeyLegendProps {
 }
 export const HotkeyLegend: React.FC<HotkeyLegendProps> = props => {
     const globalRegistry = useHotkeyRegistry().global;
-    const [registry, setRegistry] = useState<HotkeyRegistry | null>(globalRegistry);
-    const [, setUpdater] = useState(0);
-    useEffect(
-        () =>
-            globalRegistry.subscribe(reg => {
-                setRegistry(reg);
-                setUpdater(s => s + 1);
-            }),
-        [globalRegistry],
-    );
+    const [currentRegistry, setCurrentRegistry] = useState<HotkeyRegistry | null>(globalRegistry.currentLocalRegistry);
+    const forceRender = useForceRender();
 
-    return registry == null ? null : (
-        <> {Array.from(registry.iterHotkeys()).map(hotkey => props.renderHotkey(hotkey))}</>
+    useEffect(() => {
+        if (currentRegistry !== globalRegistry.currentLocalRegistry) {
+            setCurrentRegistry(globalRegistry.currentLocalRegistry);
+            forceRender();
+        }
+        return globalRegistry.subscribe(reg => {
+            setCurrentRegistry(reg);
+            forceRender();
+        });
+    }, [globalRegistry, currentRegistry, forceRender]);
+
+    return currentRegistry == null ? null : (
+        <> {Array.from(currentRegistry.iterHotkeys()).map(hotkey => props.renderHotkey(hotkey))}</>
     );
 };

@@ -7,10 +7,9 @@ import {
     filterPropKeys,
     getTargetFocusKey,
     UnpackedHTMLElement,
+    HTMLType,
 } from '@zeroconf/keyboard-navigation/util';
-import React, { useCallback, useMemo } from 'react';
-import { NavigationFieldMap, createNavigationHandler } from '@zeroconf/keyboard-navigation/FieldNavigation';
-import { ModifierKeys } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
+import React, { useCallback, useMemo, forwardRef, useRef } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     /**
@@ -71,14 +70,6 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> {
     focusParentOnEscape?: boolean;
 
     /**
-     * Map focus key location map, describing the
-     * visual physical location between one and nother.
-     */
-    navigationMap?: NavigationFieldMap;
-
-    tabDirectionAxis?: 'x' | 'y';
-
-    /**
      * Take a ref to the tab registry this boundary creates.
      */
     tabRegistryRef?: React.RefObject<TabRegistry>;
@@ -97,8 +88,6 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
         case 'focusFirstOnNextOrigin':
         case 'focusParentOnEscape':
         case 'focusParentOnChildOrigin':
-        case 'navigationMap':
-        case 'tabDirectionAxis':
         case 'tabRegistryRef':
             return false;
         default:
@@ -107,75 +96,79 @@ const filterProps = <TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
     }
 };
 
-export const TabBoundary = <TComp extends keyof JSX.IntrinsicElements>(props: Props<TComp>) => {
-    const tabRegistry = useNewTabRegistry(props);
-    useFocusable(props.boundaryKey, tabRegistry);
+export const TabBoundary = forwardRef(
+    <TComp extends keyof JSX.IntrinsicElements>(props: Props<TComp>, forwardedRef?: React.Ref<HTMLType<TComp>>) => {
+        const { tabIndex } = props;
 
-    const navigationHandler = useMemo(() => {
-        return props.navigationMap == null
-            ? null
-            : createNavigationHandler(props.navigationMap, tabRegistry, props.tabDirectionAxis);
-    }, [tabRegistry, props.navigationMap, props.tabDirectionAxis]);
+        const ref = useRef<HTMLType<TComp>>(null);
+        const setRef = useMemo(
+            () => (htmlRef: HTMLType<TComp> | null) => {
+                (ref as React.MutableRefObject<HTMLType<TComp> | null>).current = htmlRef;
+                if (typeof forwardedRef === 'function') {
+                    forwardedRef(htmlRef);
+                } else if (forwardedRef != null && forwardedRef.hasOwnProperty('current')) {
+                    (forwardedRef as React.MutableRefObject<HTMLType<TComp> | null>).current = htmlRef;
+                }
+            },
+            [forwardedRef],
+        );
 
-    const childProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
+        const focusSelfHandler = useMemo(
+            () =>
+                tabIndex == null
+                    ? undefined
+                    : () => {
+                          if (ref.current == null) {
+                              return false;
+                          }
+                          ref.current.focus();
+                          return true;
+                      },
+            [tabIndex, forwardedRef],
+        );
 
-    const onKeyDown = useCallback(
-        (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
-            const focusKey = getTargetFocusKey(e.target);
-            let shouldPrevent = false;
-            const modifierKeys: ModifierKeys = {
-                altKey: e.altKey,
-                ctrlKey: e.ctrlKey,
-                metaKey: e.metaKey,
-                shiftKey: e.shiftKey,
-            };
+        const tabRegistry = useNewTabRegistry({
+            ...props,
+            focusSelfHandler,
+        });
+        useFocusable(props.boundaryKey, tabRegistry);
 
-            if (e.key === 'ArrowUp' && focusKey != null && navigationHandler != null) {
-                shouldPrevent = true;
-                navigationHandler(focusKey, 'ArrowUp', modifierKeys);
-            } else if (e.key === 'ArrowDown' && focusKey != null && navigationHandler != null) {
-                shouldPrevent = true;
-                navigationHandler(focusKey, 'ArrowDown', modifierKeys);
-            } else if (e.key === 'ArrowLeft' && focusKey != null && navigationHandler != null) {
-                shouldPrevent = true;
-                navigationHandler(focusKey, 'ArrowLeft', modifierKeys);
-            } else if (e.key === 'ArrowRight' && focusKey != null && navigationHandler != null) {
-                shouldPrevent = true;
-                navigationHandler(focusKey, 'ArrowRight', modifierKeys);
-            } else if (e.key === 'Tab' && focusKey != null) {
-                shouldPrevent = true;
-                if (navigationHandler == null) {
+        const childProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
+
+        const onKeyDown = useCallback(
+            (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
+                const focusKey = getTargetFocusKey(e.target);
+                let shouldPrevent = false;
+
+                if (e.key === 'Tab' && focusKey != null && e.target !== ref.current) {
+                    shouldPrevent = true;
                     if (e.shiftKey) {
                         tabRegistry.focusPrev(focusKey);
                     } else {
                         tabRegistry.focusNext(focusKey);
                     }
-                } else {
-                    navigationHandler(focusKey, 'Tab', modifierKeys);
+                } else if (e.key === 'Escape' && props.focusParentOnEscape) {
+                    shouldPrevent = true;
+                    tabRegistry.focusParent();
                 }
-            } else if (e.key === 'Escape' && props.focusParentOnEscape) {
-                shouldPrevent = true;
-                tabRegistry.focusParent();
-            }
 
-            if (shouldPrevent) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
+                if (shouldPrevent) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
 
-            if (props.onKeyDown != null) {
-                props.onKeyDown(e);
-            }
-        },
-        [tabRegistry, props.onKeyDown, props.focusParentOnEscape, navigationHandler],
-    );
+                if (props.onKeyDown != null) {
+                    props.onKeyDown(e);
+                }
+            },
+            [tabRegistry, props.onKeyDown, props.focusParentOnEscape],
+        );
 
-    const comp = props.as == null ? 'div' : props.as;
-    const children = React.createElement(
-        comp,
-        { ...childProps, onKeyDown },
-        typeof props.children === 'function' ? props.children(navigationHandler) : props.children,
-    );
+        const comp = props.as == null ? 'div' : props.as;
+        const children = React.createElement(comp, { ...childProps, onKeyDown, ref: setRef }, props.children);
 
-    return <NavigationContext.Provider children={children} value={tabRegistry} />;
-};
+        return <NavigationContext.Provider children={children} value={tabRegistry} />;
+    },
+);
+
+TabBoundary.displayName = 'TabRegistry(TabBoundary)';

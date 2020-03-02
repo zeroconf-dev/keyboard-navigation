@@ -88,7 +88,7 @@ const FocusOnClick: React.FC<FocusOnClickProps> = props => {
     );
 };
 
-storiesOf('hooks/useFocusable', module)
+storiesOf('Hooks/useFocusable', module)
     .add('card is focusable', () => (
         <TabBoundary>
             <Card focusKey="dummy">This card is focusable.</Card>

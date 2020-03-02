@@ -1,8 +1,9 @@
-import { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { NavigationFieldMap, createNavigationHandler } from '@zeroconf/keyboard-navigation/FieldNavigation';
 import { NavigationKeyHandler } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '@zeroconf/keyboard-navigation/util';
-import React from 'react';
+import React, { useMemo, useRef } from 'react';
+import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
     /**
@@ -62,16 +63,18 @@ function filterProps<TComp extends keyof JSX.IntrinsicElements>(propKey: keyof C
 }
 
 export const Grid = <TComp extends keyof JSX.IntrinsicElements>(props: Props<TComp>) => {
+    const { navigationMap, tabDirectionAxis } = props;
+    const tabRegistryRef = useRef<TabRegistry | null>(null);
     const boundaryProps = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(props, filterProps);
+
+    const navigationHandler = useMemo(() => createNavigationHandler(navigationMap, tabRegistryRef, tabDirectionAxis), [
+        navigationMap,
+        tabDirectionAxis,
+    ]);
+
     return (
-        <TabBoundary
-            {...boundaryProps}
-            as={props.as}
-            boundaryKey={props.focusKey}
-            navigationMap={props.navigationMap}
-            tabDirectionAxis={props.tabDirectionAxis}
-        >
-            {props.children}
+        <TabBoundary {...boundaryProps} as={props.as} boundaryKey={props.focusKey} tabRegistryRef={tabRegistryRef}>
+            {props.children(navigationHandler)}
         </TabBoundary>
     );
 };

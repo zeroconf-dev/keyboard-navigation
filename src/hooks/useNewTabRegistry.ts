@@ -1,20 +1,22 @@
-import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
+import { TabRegistry, FocuserFn } from '@zeroconf/keyboard-navigation/TabRegistry';
 import React, { useEffect, useMemo } from 'react';
 
 interface NewTabRegistryProps {
     cycle?: boolean;
     focusFirstOnNextOrigin?: boolean;
     focusParentOnChildOrigin?: boolean;
+    focusSelfHandler?: FocuserFn;
     tabRegistryRef?: React.RefObject<TabRegistry>;
 }
 
 export function useNewTabRegistry(props: NewTabRegistryProps): TabRegistry {
-    const { cycle, focusFirstOnNextOrigin, focusParentOnChildOrigin, tabRegistryRef } = props;
+    const { cycle, focusFirstOnNextOrigin, focusParentOnChildOrigin, focusSelfHandler, tabRegistryRef } = props;
     const tabRegistry = useMemo(() => {
         const registry = new TabRegistry({
-            cycle: props.cycle,
-            focusFirstOnNextOrigin: props.focusFirstOnNextOrigin,
-            focusParentOnChildOrigin: props.focusParentOnChildOrigin,
+            cycle: cycle,
+            focusFirstOnNextOrigin: focusFirstOnNextOrigin,
+            focusParentOnChildOrigin: focusParentOnChildOrigin,
+            focusSelfHandler: focusSelfHandler,
         });
         if (tabRegistryRef != null) {
             (tabRegistryRef as React.MutableRefObject<TabRegistry>).current = registry;
@@ -27,8 +29,9 @@ export function useNewTabRegistry(props: NewTabRegistryProps): TabRegistry {
             (tabRegistryRef as React.MutableRefObject<TabRegistry>).current = tabRegistry;
         }
 
-        tabRegistry.focusParentOnChildOrigin = props.focusParentOnChildOrigin === true;
-        tabRegistry.focusFirstOnNextOrigin = props.focusFirstOnNextOrigin === true;
+        tabRegistry.focusParentOnChildOrigin = focusParentOnChildOrigin === true;
+        tabRegistry.focusFirstOnNextOrigin = focusFirstOnNextOrigin === true;
+        tabRegistry.focusSelfHandler = focusSelfHandler || null;
 
         if (tabRegistry.isCycleEnabled && !cycle) {
             tabRegistry.disableCycle();
@@ -36,7 +39,7 @@ export function useNewTabRegistry(props: NewTabRegistryProps): TabRegistry {
         if (!tabRegistry.isCycleEnabled && cycle) {
             tabRegistry.enableCycle();
         }
-    }, [cycle, focusFirstOnNextOrigin, focusParentOnChildOrigin, tabRegistry, tabRegistryRef]);
+    }, [cycle, focusFirstOnNextOrigin, focusParentOnChildOrigin, focusSelfHandler, tabRegistry, tabRegistryRef]);
 
     return tabRegistry;
 }

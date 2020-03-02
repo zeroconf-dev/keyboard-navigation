@@ -43,7 +43,7 @@ const GlobalHotkeyBoundary = styled(GlobalHotkeyBoundaryBase)`
     width: 100px;
 `;
 
-storiesOf('HotkeyLegend', module)
+storiesOf('Components/HotkeyLegend', module)
     .add('Empty legend', () => <HotkeyLegend renderHotkey={renderHotkey} />)
     .add('Legend with simple content', () => {
         const ref = useRef<HTMLDivElement | null>(null);

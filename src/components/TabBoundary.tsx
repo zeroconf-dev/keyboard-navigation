@@ -5,6 +5,7 @@ import {
     filterPropKeys,
     getTargetFocusKey,
     UnpackedHTMLElement,
+    HTMLType,
 } from '@zeroconf/keyboard-navigation/util';
 import * as React from 'react';
 
@@ -84,21 +85,23 @@ type PropsWithTabRegistry<TComp extends keyof JSX.IntrinsicElements> = Props<TCo
 interface State {}
 
 class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
-    PropsWithTabRegistry<TComp>,
+    PropsWithTabRegistry<TComp> & { forwardedRef?: React.Ref<HTMLType<TComp>> },
     State
 > {
     public static displayName = 'TabBoundary';
 
-    private tabRegistry: TabRegistry<string>;
+    private tabRegistry: TabRegistry;
+    private ref: React.MutableRefObject<HTMLType<TComp> | null>;
 
     public constructor(props: PropsWithTabRegistry<TComp>) {
         super(props);
-
         this.tabRegistry = new TabRegistry({
             cycle: props.cycle,
             focusFirstOnNextOrigin: props.focusFirstOnNextOrigin,
             focusParentOnChildOrigin: props.focusParentOnChildOrigin,
         });
+
+        this.ref = React.createRef();
 
         if (props.tabRegistryRef != null) {
             (props.tabRegistryRef as React.MutableRefObject<TabRegistry>).current = this.tabRegistry;
@@ -127,7 +130,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
         }
     }
 
-    private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'parentRegistry') => {
+    private filterPropKeys = (propKey: keyof ComponentProps<TComp> | 'parentRegistry' | 'forwardedRef') => {
         switch (propKey) {
             case 'as':
             case 'boundaryKey':
@@ -135,6 +138,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
             case 'focusFirstOnNextOrigin':
             case 'focusParentOnEscape':
             case 'focusParentOnChildOrigin':
+            case 'forwardedRef':
             case 'parentRegistry':
             case 'tabRegistryRef':
                 return false;
@@ -146,7 +150,7 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
 
     private onKeyDown = (e: React.KeyboardEvent<UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>>) => {
         const targetFocusKey = getTargetFocusKey(e.target);
-        if (e.key === 'Tab' && targetFocusKey != null) {
+        if (e.key === 'Tab' && targetFocusKey != null && e.target !== this.ref.current) {
             e.preventDefault();
             e.stopPropagation();
             if (e.shiftKey) {
@@ -188,6 +192,15 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
         }
     }
 
+    private setRef = (htmlRef: HTMLType<TComp> | null) => {
+        this.ref.current = htmlRef;
+        if (typeof this.props.forwardedRef === 'function') {
+            this.props.forwardedRef(htmlRef);
+        } else if (this.props.forwardedRef != null && this.props.forwardedRef.hasOwnProperty('current')) {
+            (this.props.forwardedRef as React.MutableRefObject<HTMLType<TComp> | null>).current = htmlRef;
+        }
+    };
+
     public render() {
         const props = filterPropKeys<ComponentProps<TComp>, TComp, PropsWithTabRegistry<TComp>>(
             this.props,
@@ -195,14 +208,18 @@ class TabBoundaryWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'di
         );
 
         const comp = this.props.as == null ? 'div' : this.props.as;
-        const children = React.createElement(comp, { ...props, onKeyDown: this.onKeyDown }, this.props.children);
+        const children = React.createElement(
+            comp,
+            { ...props, onKeyDown: this.onKeyDown, ref: this.setRef },
+            this.props.children,
+        );
 
         return <NavigationContext.Provider value={this.tabRegistry}>{children}</NavigationContext.Provider>;
     }
 }
 
 type PropsWithForwardRef<TComp extends keyof JSX.IntrinsicElements> = Props<TComp> & {
-    forwardedRef?: React.Ref<TabBoundaryWithTabRegistry<TComp>>;
+    forwardedRef?: React.Ref<HTMLType<TComp>>;
 };
 class TabBoundaryWithForwardRef<TComp extends keyof JSX.IntrinsicElements = 'div'> extends React.Component<
     PropsWithForwardRef<TComp>
@@ -210,22 +227,13 @@ class TabBoundaryWithForwardRef<TComp extends keyof JSX.IntrinsicElements = 'div
     public static displayName = 'TabRegistry(TabBoundary)';
 
     private renderChildren = (parentRegistry: TabRegistry | null) => {
-        const { forwardedRef, ...props } = this.props;
-        return <TabBoundaryWithTabRegistry {...props} parentRegistry={parentRegistry} ref={forwardedRef} />;
+        return <TabBoundaryWithTabRegistry {...this.props} parentRegistry={parentRegistry} />;
     };
 
     public render() {
         return <NavigationContext.Consumer children={this.renderChildren} />;
     }
 }
-
-const forwardRef = <TComp extends keyof JSX.IntrinsicElements = 'div'>() =>
-    React.forwardRef<TabBoundaryWithTabRegistry<TComp>, Props<TComp>>((props, ref) => (
-        <TabBoundaryWithForwardRef {...props} forwardedRef={ref} />
-    )) as React.ComponentClass<Props<TComp>> &
-        React.ForwardRefExoticComponent<
-            React.PropsWithoutRef<Props<TComp>> & React.RefAttributes<TabBoundaryWithTabRegistry<TComp>>
-        >;
 
 /**
  * Define a tab/navigation boundary of focusable elements.
@@ -248,5 +256,8 @@ const forwardRef = <TComp extends keyof JSX.IntrinsicElements = 'div'>() =>
  *   </TabBoundary>
  * </TabBoundary>
  */
-export type TabBoundary<TComp extends keyof JSX.IntrinsicElements = 'div'> = TabBoundaryWithTabRegistry<TComp>;
-export const TabBoundary = forwardRef<keyof JSX.IntrinsicElements>();
+export const TabBoundary = React.forwardRef(
+    <TComp extends keyof JSX.IntrinsicElements = 'div'>(props: Props<TComp>, ref: React.Ref<HTMLType<TComp>>) => (
+        <TabBoundaryWithForwardRef<TComp> {...props} forwardedRef={ref} />
+    ),
+);

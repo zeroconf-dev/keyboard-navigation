@@ -258,6 +258,7 @@ export class HotkeyRegistry {
 
     public remove(hotkeyId: HotkeyID) {
         this.hotkeys.delete(hotkeyId);
+        subscriptions.forEach(handler => handler(this.currentLocalRegistry));
     }
 
     public removeAll(hotkeyIds: HotkeyID[]) {

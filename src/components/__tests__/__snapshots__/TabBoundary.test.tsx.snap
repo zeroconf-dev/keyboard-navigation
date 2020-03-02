@@ -23,8 +23,8 @@ Object {
   "errorInfo": Object {
     "componentStack": "
     in Focuser
-    in div
-    in Unknown
+    in div (created by TabRegistry(TabBoundary))
+    in TabRegistry(TabBoundary)
     in ErrorBoundary",
   },
 }
