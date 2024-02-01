@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import { render } from '@testing-library/react';
 import { Input } from '@zeroconf/keyboard-navigation/components/Tabbable';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';

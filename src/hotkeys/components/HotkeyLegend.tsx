@@ -5,10 +5,11 @@ import React, { useEffect, useState } from 'react';
 import { useForceRender } from '@zeroconf/keyboard-navigation/hooks/useForceRender';
 
 interface HotkeyLegendProps {
-    includeGlobal?: boolean;
-    renderHotkey: (hotkey: HotkeyObject) => JSX.Element;
+    readonly children?: React.ReactNode;
+    readonly includeGlobal?: boolean;
+    readonly renderHotkey: (hotkey: HotkeyObject) => JSX.Element;
 }
-export const HotkeyLegend: React.FC<HotkeyLegendProps> = props => {
+export const HotkeyLegend: React.FC<HotkeyLegendProps> = (props) => {
     const globalRegistry = useHotkeyRegistry().global;
     const [currentRegistry, setCurrentRegistry] = useState<HotkeyRegistry | null>(globalRegistry.currentLocalRegistry);
     const forceRender = useForceRender();
@@ -18,13 +19,13 @@ export const HotkeyLegend: React.FC<HotkeyLegendProps> = props => {
             setCurrentRegistry(globalRegistry.currentLocalRegistry);
             forceRender();
         }
-        return globalRegistry.subscribe(reg => {
+        return globalRegistry.subscribe((reg) => {
             setCurrentRegistry(reg);
             forceRender();
         });
     }, [globalRegistry, currentRegistry, forceRender]);
 
     return currentRegistry == null ? null : (
-        <> {Array.from(currentRegistry.iterHotkeys()).map(hotkey => props.renderHotkey(hotkey))}</>
+        <> {Array.from(currentRegistry.iterHotkeys()).map((hotkey) => props.renderHotkey(hotkey))}</>
     );
 };

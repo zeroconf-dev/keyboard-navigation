@@ -260,7 +260,7 @@ TabBoundary.defaultProps = {
     focusFirstOnNextOrigin: false,
     focusParentOnChildOrigin: false,
     focusParentOnEscape: false,
-    scope: (scopes.local as any) as string,
+    scope: scopes.local as any as string,
 } as const;
 
 TabBoundary.displayName = 'hotkeys(TabBoundary)';

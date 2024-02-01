@@ -1,5 +1,5 @@
 import { useFocusable } from '@zeroconf/keyboard-navigation/hooks/useFocusable';
-import React, { forwardRef, useRef, useCallback, useEffect } from 'react';
+import { forwardRef, useRef, useCallback, useEffect } from 'react';
 
 export interface TabbableProps {
     name: string;

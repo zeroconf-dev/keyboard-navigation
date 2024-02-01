@@ -16,7 +16,7 @@ import {
     spreadControlProps,
     UnpackedHTMLAttributes,
 } from '@zeroconf/keyboard-navigation/util';
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements> extends ControlProps {
     /**

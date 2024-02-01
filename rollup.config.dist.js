@@ -1,10 +1,10 @@
 import path from 'path';
 import ts from 'typescript';
 
-import commonjs from 'rollup-plugin-commonjs';
-import nodeResolve from 'rollup-plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
 import prettier from 'rollup-plugin-prettier';
-import replace from 'rollup-plugin-replace';
+import replace from '@rollup/plugin-replace';
 import typescript from 'rollup-plugin-ts';
 
 const tsconfigOverride = {
@@ -22,7 +22,10 @@ const plugins = [
         parser: 'typescript',
     }),
     replace({
-        'process.env.NODE_ENV': JSON.stringify('production'),
+        preventAssignment: true,
+        values: {
+            'process.env.NODE_ENV': JSON.stringify('production'),
+        },
     }),
     typescript({
         transpiler: 'typescript',
@@ -42,7 +45,9 @@ const plugins = [
 
 const outputOptions = {
     banner: '// @ts-nocheck',
-    preferConst: true,
+    generatedCode: {
+        constBindings: true,
+    },
     // sourcemap: true,
     // sourcemapExcludeSources: true,
     strict: true,

@@ -234,7 +234,7 @@ export class TabRegistry<E = string> {
     /**
      * Enabling iterating through all the focusers.
      */
-    public [Symbol.iterator] = function*(
+    public [Symbol.iterator] = function* (
         this: TabRegistry<E>,
         includeRegistries = false,
     ): IterableIterator<FocuserType<E>> {
@@ -817,7 +817,7 @@ export class TabRegistry<E = string> {
     /**
      * Returns an iterator of all the `keys` in this registry.
      */
-    public keys = function*(this: TabRegistry<E>): IterableIterator<E> {
+    public keys = function* (this: TabRegistry<E>): IterableIterator<E> {
         if (this.registry.isEmpty) {
             return;
         }
@@ -833,7 +833,7 @@ export class TabRegistry<E = string> {
      * Returns an iterator of all the `keys` in this
      * and all nested registries.
      */
-    public keysRecursive = function*(this: TabRegistry<E>, includeRegistries = true): IterableIterator<E> {
+    public keysRecursive = function* (this: TabRegistry<E>, includeRegistries = true): IterableIterator<E> {
         if (this.registry.isEmpty) {
             return;
         }

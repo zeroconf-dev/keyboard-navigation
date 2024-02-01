@@ -9,8 +9,8 @@ export const getTargetFocusKey = (obj: any): string | null => {
         ? typeof obj.name === 'string' && obj.name !== ''
             ? obj.name
             : typeof obj.dataset === 'object'
-            ? obj.dataset.focuskey || null
-            : null
+              ? obj.dataset.focuskey || null
+              : null
         : null;
 };
 
@@ -34,9 +34,8 @@ export const assertNeverNonThrow = (obj: never): void => {
     return obj;
 };
 
-export type UnpackedHTMLElement<T> = T extends React.DetailedHTMLProps<React.HTMLAttributes<infer U>, infer U>
-    ? U
-    : HTMLElement;
+export type UnpackedHTMLElement<T> =
+    T extends React.DetailedHTMLProps<React.HTMLAttributes<infer U>, infer U> ? U : HTMLElement;
 
 export type UnpackedHTMLAttributes<TComp extends keyof JSX.IntrinsicElements> = React.HTMLAttributes<
     UnpackedHTMLElement<JSX.IntrinsicElements[TComp]>
@@ -44,6 +43,7 @@ export type UnpackedHTMLAttributes<TComp extends keyof JSX.IntrinsicElements> = 
 
 export type HTMLType<T extends keyof JSX.IntrinsicElements> = UnpackedHTMLElement<JSX.IntrinsicElements[T]>;
 export type ForwardRefProps<T, P> = React.PropsWithoutRef<P> & React.RefAttributes<T>;
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type ForwardRefComponent<P = {}, D extends Partial<P> = {}> = {
     readonly $$typeof: symbol;
     defaultProps: D;
@@ -56,9 +56,9 @@ export type ForwardRefComponent<P = {}, D extends Partial<P> = {}> = {
  * of type `TComp`.
  */
 export const filterPropKeys = <
-    U extends {},
+    U extends { [key: string]: any },
     TComp extends keyof JSX.IntrinsicElements,
-    TProps extends UnpackedHTMLAttributes<TComp> & U
+    TProps extends UnpackedHTMLAttributes<TComp> & U,
 >(
     props: TProps,
     filterFn: (propKey: keyof U) => boolean,
@@ -80,7 +80,7 @@ export const filterPropKeys = <
  */
 export const spreadControlProps = <Props extends ControlProps>(props: Props): ControlProps => {
     return (Object.keys(props) as (keyof ControlProps)[])
-        .filter(key => {
+        .filter((key) => {
             /* istanbul ignore next */
             switch (key) {
                 case 'autoFocus':
@@ -227,7 +227,7 @@ export const shouldHandleHotkey = (event: HotkeyEvent & WithEventTarget) =>
     (isSpecialKey(event) && !isArrowKey(event)) || eventHasModifier(event) || !isNativeInput(event.target);
 
 export const mapIter = <T, R>(mapFn: (val: T, idx: number) => R) =>
-    function*(iter: Generator<T>): Generator<R, void, void> {
+    function* (iter: Generator<T>): Generator<R, void, void> {
         let idx = -1;
         for (const val of iter) {
             yield mapFn(val, ++idx);
@@ -235,7 +235,7 @@ export const mapIter = <T, R>(mapFn: (val: T, idx: number) => R) =>
     };
 
 export const filterIter = <T>(predicate: (val: T, idx: number, accepted: T[]) => boolean) =>
-    function*(iter: Generator<T>): Generator<T, void, void> {
+    function* (iter: Generator<T>): Generator<T, void, void> {
         const accepted: T[] = [];
         let idx = 0;
         for (const val of iter) {

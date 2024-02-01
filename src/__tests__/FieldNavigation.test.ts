@@ -250,12 +250,12 @@ describe('FieldNavigation', () => {
 
             handler('bottom-left', 'ArrowDown', noModifierKeys);
 
-            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            focuserMap.forEach((focuser) => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(4);
 
             handler('bottom-right', 'ArrowDown', noModifierKeys);
 
-            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            focuserMap.forEach((focuser) => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(8);
         });
 
@@ -301,7 +301,7 @@ describe('FieldNavigation', () => {
                 ['bottom-left', 'bottom-right'],
             ]);
             handler1('bottom-left', 'ArrowUp', noModifierKeys);
-            focuserMap1.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            focuserMap1.forEach((focuser) => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(4);
 
             // prettier-ignore
@@ -311,7 +311,7 @@ describe('FieldNavigation', () => {
                 ['bottom-left', 'bottom-right'],
             ]);
             handler2('bottom-right', 'ArrowUp', noModifierKeys);
-            focuserMap2.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            focuserMap2.forEach((focuser) => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(8);
         });
 
@@ -442,19 +442,19 @@ describe('FieldNavigation', () => {
             const [focuserMap, handler] = createFocusersFromMap([['field1', 'field2']]);
 
             handler('field1', 'ArrowRight', { altKey: true, ctrlKey: false, metaKey: false, shiftKey: false });
-            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            focuserMap.forEach((focuser) => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(2);
 
             handler('field1', 'ArrowRight', { altKey: false, ctrlKey: true, metaKey: false, shiftKey: false });
-            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            focuserMap.forEach((focuser) => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(4);
 
             handler('field1', 'ArrowRight', { altKey: false, ctrlKey: false, metaKey: true, shiftKey: false });
-            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            focuserMap.forEach((focuser) => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(6);
 
             handler('field1', 'ArrowRight', { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true });
-            focuserMap.forEach(focuser => expect(focuser).not.toHaveBeenCalled());
+            focuserMap.forEach((focuser) => expect(focuser).not.toHaveBeenCalled());
             expect.assertions(8);
         });
 

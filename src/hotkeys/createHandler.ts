@@ -40,8 +40,8 @@ export const createHandler = (hotkeys: HotkeysObject | HotkeyWithHandler[]): Hot
             }
             const focusKey = getTargetFocusKey(event.target);
             hotkeys
-                .filter(hotkey => isHotkeyMatching(hotkey, event))
-                .forEach(hotkeyObj => {
+                .filter((hotkey) => isHotkeyMatching(hotkey, event))
+                .forEach((hotkeyObj) => {
                     event.stopPropagation();
                     event.preventDefault();
                     hotkeyObj.handler({ focusKey: focusKey, event: event });

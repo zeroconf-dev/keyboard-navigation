@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import { cleanup, render } from '@testing-library/react';
 import { Focuser as FocuserClassic, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { Grid as GridClassic } from '@zeroconf/keyboard-navigation/components/Grid';
@@ -15,7 +16,6 @@ import { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigatio
 import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { Grid as GridHooks } from '@zeroconf/keyboard-navigation/hooks/components/Grid';
 import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/components/Section';
-import * as React from 'react';
 
 [
     {
@@ -28,7 +28,7 @@ import * as React from 'react';
         Grid: GridHooks,
         Section: SectionHooks,
     },
-].forEach(components => {
+].forEach((components) => {
     const Focuser = components.Focuser as typeof FocuserClassic;
     const Grid = components.Grid as typeof GridClassic;
     const Section = components.Section as typeof SectionClassic;

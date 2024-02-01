@@ -1,7 +1,7 @@
+/** @jest-environment jsdom */
 import { cleanup, render } from '@testing-library/react';
 import { GlobalHotkeyBoundary } from '@zeroconf/keyboard-navigation/hotkeys/components/GlobalHotkeyBoundary';
 import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
-import * as React from 'react';
 import { createRef } from 'react';
 
 afterEach(cleanup);

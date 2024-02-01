@@ -24,7 +24,7 @@ const actionsMap = actions({
     navigate: 'navigation fired',
 });
 
-const stopPropagation: React.KeyboardEventHandler<HTMLElement> = e => {
+const stopPropagation: React.KeyboardEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
 };
 

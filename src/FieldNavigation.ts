@@ -178,8 +178,8 @@ export function createNavigationHandler(
         typeof getTabRegistry === 'function'
             ? getTabRegistry
             : getTabRegistry instanceof TabRegistry
-            ? () => getTabRegistry
-            : () => getTabRegistry.current;
+              ? () => getTabRegistry
+              : () => getTabRegistry.current;
 
     return (focusKey: string, navigationKey: NavigationKey, modifierKeys: ModifierKeys) => {
         if (

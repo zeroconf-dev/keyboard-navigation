@@ -61,7 +61,7 @@ interface CardProps {
     focusKey: string;
     onFocus?: React.FocusEventHandler<HTMLDivElement>;
 }
-const Card: React.FC<CardProps> = props => {
+const Card: React.FC<CardProps> = (props) => {
     const ref = useRef<HTMLDivElement>(null);
     const p = useFocusable(props.focusKey, ref, props.autoFocus);
     return (
@@ -74,7 +74,7 @@ const Card: React.FC<CardProps> = props => {
 interface FocusOnClickProps {
     focusKey: string;
 }
-const FocusOnClick: React.FC<FocusOnClickProps> = props => {
+const FocusOnClick: React.FC<FocusOnClickProps> = (props) => {
     const tabRegistry = useTabRegistry();
     const onClick = useCallback(() => {
         if (tabRegistry != null) {

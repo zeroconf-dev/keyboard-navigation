@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import { cleanup, fireEvent, render } from '@testing-library/react';
 import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { Section as SectionClassic } from '@zeroconf/keyboard-navigation/components/Section';
@@ -21,7 +22,7 @@ import * as React from 'react';
         Section: SectionHooks,
         TabBoundary: TabBoundaryHooks,
     },
-].forEach(components => {
+].forEach((components) => {
     const Focuser = components.Focuser as typeof FocuserClassic;
     const Section = components.Section as typeof SectionClassic;
     const TabBoundary = components.TabBoundary as typeof TabBoundaryClassic;

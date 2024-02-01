@@ -43,7 +43,7 @@ const defaultProps = {
     as: 'div',
     crossGlobalBoundary: true,
     crossLocalBoundary: false,
-    scope: (scopes.local as unknown) as string,
+    scope: scopes.local as unknown as string,
 } as const;
 
 export const HotkeyBoundary = forwardRef(

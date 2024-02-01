@@ -43,7 +43,7 @@ interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
     tabDirectionAxis?: 'x' | 'y';
 }
 
-export type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = UnpackedHTMLAttributes<TComp> &
+export type Props<TComp extends keyof JSX.IntrinsicElements = 'div'> = Omit<UnpackedHTMLAttributes<TComp>, 'children'> &
     ComponentProps<TComp>;
 
 interface State {
@@ -102,7 +102,7 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
     }
 
     public render() {
-        const props = filterPropKeys<ComponentProps<TComp>, TComp, Props<TComp>>(this.props, this.filterPropKeys);
+        const props = filterPropKeys<Omit<ComponentProps<TComp>, 'children'>, TComp, Omit<Props<TComp>, 'children'>>(this.props, this.filterPropKeys);
 
         return (
             <TabBoundary

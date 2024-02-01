@@ -118,7 +118,7 @@ const Editor = css`
                   key="editor"
                   name="editor"
                   onBlur={cancelEditor}
-                  onChange={e => setValue(e.target.value)}
+                  onChange={(e) => setValue(e.target.value)}
                   placeholder={focusKey}
                   value={value}
               />,

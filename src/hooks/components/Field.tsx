@@ -113,7 +113,7 @@ export interface Props extends ControlProps {
     submitOnClickOutside?: boolean;
 }
 
-export const Field: React.SFC<Props> = (props: Props) => {
+export const Field: React.FC<Props> = (props: Props) => {
     const disabled = props.disabled || false;
     const submitOnBlur = props.submitOnBlur || false;
     const submitOnClickOutside = props.submitOnClickOutside || false;

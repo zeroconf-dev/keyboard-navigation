@@ -1,4 +1,4 @@
-export default {
+module.exports = {
     base: '/keyboard-navigation',
     dest: './docs',
     filterComponents: files =>

@@ -22,7 +22,7 @@ interface FocusByKeyProps {
 }
 
 const hotkeyFiredAction = action('hotkey fired');
-const Hotkey: React.FC<FocusByKeyProps> = props => {
+const Hotkey: React.FC<FocusByKeyProps> = (props) => {
     const handler = useCallback(() => {
         hotkeyFiredAction(props.hotkey);
         if (props.handler != null) {

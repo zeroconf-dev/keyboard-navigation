@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import { act, cleanup, render } from '@testing-library/react';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/helpers/assert';
 import { HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
@@ -67,7 +68,7 @@ test('changing scope names removes old scope, and creating a new', async () => {
 
     const rootRegistry = expectHotkeyRegistry(rootRegistryRef.current);
     expect(rootRegistry.scopes.size).toBe(3);
-    expect(Array.from(rootRegistry.scopes.keys()).map(scope => String(scope))).toMatchObject([
+    expect(Array.from(rootRegistry.scopes.keys()).map((scope) => String(scope))).toMatchObject([
         'scope1',
         'scope2',
         'scope3',
@@ -84,7 +85,7 @@ test('changing scope names removes old scope, and creating a new', async () => {
     });
 
     expect(rootRegistry.scopes.size).toBe(3);
-    expect(Array.from(rootRegistry.scopes.keys()).map(scope => String(scope))).toMatchObject([
+    expect(Array.from(rootRegistry.scopes.keys()).map((scope) => String(scope))).toMatchObject([
         'scope1',
         'scope2',
         'scope3a',
@@ -96,7 +97,7 @@ interface FocusByKeyProps {
     hotkey: string;
     onHotkey: () => boolean;
 }
-const HotkeyMonitor: React.FC<FocusByKeyProps> = props => {
+const HotkeyMonitor: React.FC<FocusByKeyProps> = (props) => {
     const handler = useCallback(() => {
         return props.onHotkey();
     }, [props.hotkey, props.onHotkey]);
@@ -133,11 +134,11 @@ test('hotkeys of boundaries with same scope are merged', async () => {
 
     expect(hotkeyMap.length).toBe(2);
     expect(Array.from(hotkeyMap.values())).toMatchInlineSnapshot(`
-        Array [
-          Object {
+        [
+          {
             "key": "ArrowRight",
           },
-          Object {
+          {
             "key": "ArrowLeft",
           },
         ]
@@ -173,18 +174,18 @@ test('global keys at multiple levels are merged', async () => {
 
     expect(hotkeyMap.length).toBe(4);
     expect(Array.from(hotkeyMap.values())).toMatchInlineSnapshot(`
-        Array [
-          Object {
+        [
+          {
             "key": "Escape",
           },
-          Object {
+          {
             "key": "f",
             "mod": true,
           },
-          Object {
+          {
             "key": "m",
           },
-          Object {
+          {
             "key": "a",
           },
         ]

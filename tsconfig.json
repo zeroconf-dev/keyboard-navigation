@@ -3,7 +3,7 @@
         "baseUrl": ".",
         "target": "es2018",
         "module": "es2015",
-        "jsx": "react",
+        "jsx": "react-jsxdev",
         "esModuleInterop": true,
         "importHelpers": true,
         "skipLibCheck": true,
@@ -18,7 +18,8 @@
         "typeRoots": ["./node_modules/@types"],
         "paths": {
             "@zeroconf/keyboard-navigation/*": ["src/*"],
-            "@zeroconf/keyboard-navigation": ["src/index"]
+            "@zeroconf/keyboard-navigation": ["src/index"],
+            "@testing-library/react": ["node_modules/@testing-library/react/types/index.d.ts"]
         }
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],

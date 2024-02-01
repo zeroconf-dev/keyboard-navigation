@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import { act, cleanup, render } from '@testing-library/react';
 import { NavigationContext } from '@zeroconf/keyboard-navigation/components/NavigationContext';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/components/TabBoundary';
@@ -60,12 +61,12 @@ describe('Focusable', () => {
         );
 
         expect(errorRef.current).toMatchInlineSnapshot(`
-            Object {
+            {
               "error": [Error: A focusable must be rendered inside NavigationContext],
-              "errorInfo": Object {
+              "errorInfo": {
                 "componentStack": "
-                in Focusable
-                in ErrorBoundary",
+                at Focusable
+                at ErrorBoundary",
               },
             }
         `);
@@ -101,13 +102,13 @@ describe('Focusable', () => {
                     <Focusable />
                 </TabBoundary>,
             );
-            const tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
-
-            expect(focus).not.toHaveBeenCalled();
-            tabRegistry.focus('test');
-            expect(focus).toHaveBeenCalledTimes(1);
-            expect(focus).toHaveBeenCalledWith({ focusOrigin: 'none' });
         });
+        const tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+
+        expect(focus).not.toHaveBeenCalled();
+        tabRegistry.focus('test');
+        expect(focus).toHaveBeenCalledTimes(1);
+        expect(focus).toHaveBeenCalledWith({ focusOrigin: 'none' });
     });
 
     test('Focusable Next/Prev relationship', () => {
@@ -127,10 +128,10 @@ describe('Focusable', () => {
                     <Focusable focusKey="field2" ref={field2Ref} />
                 </TabBoundary>,
             );
-            const tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
-
-            tabRegistry.focusNext('field1');
-            expect(field2Ref.current).toBeInstanceOf(HTMLDivElement);
         });
+
+        const tabRegistry = expectInstanceOf(tabRegistryRef.current, TabRegistry);
+        tabRegistry.focusNext('field1');
+        expect(field2Ref.current).toBeInstanceOf(HTMLDivElement);
     });
 });

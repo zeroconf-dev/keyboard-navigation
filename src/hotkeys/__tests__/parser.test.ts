@@ -49,61 +49,61 @@ describe('parse modifiers', () => {
 
 describe('parse special keys', () => {
     test('parse ArrowDown', () => {
-        ['down', 'arrowdown', '⬇'].forEach(key => {
+        ['down', 'arrowdown', '⬇'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'ArrowDown' });
         });
     });
 
     test('parse ArrowLeft', () => {
-        ['left', 'arrowleft', '⬅'].forEach(key => {
+        ['left', 'arrowleft', '⬅'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'ArrowLeft' });
         });
     });
 
     test('parse ArrowRight', () => {
-        ['right', 'arrowright', '➡'].forEach(key => {
+        ['right', 'arrowright', '➡'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'ArrowRight' });
         });
     });
 
     test('parse ArrowUp', () => {
-        ['up', 'arrowup', '⬆'].forEach(key => {
+        ['up', 'arrowup', '⬆'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'ArrowUp' });
         });
     });
 
     test('parse Backspace', () => {
-        ['backspace', '⌫', '⟵'].forEach(key => {
+        ['backspace', '⌫', '⟵'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'Backspace' });
         });
     });
 
     test('parse ContextMenu', () => {
-        ['menu', '▤', '☰', '𝌆', 'context', 'contextmenu'].forEach(key => {
+        ['menu', '▤', '☰', '𝌆', 'context', 'contextmenu'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'ContextMenu' });
         });
     });
 
     test('parse Delete', () => {
-        ['delete', 'del', '⌦'].forEach(key => {
+        ['delete', 'del', '⌦'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'Delete' });
         });
     });
 
     test('parse End', () => {
-        ['end', '⤓'].forEach(key => {
+        ['end', '⤓'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'End' });
         });
     });
 
     test('parse Enter', () => {
-        ['enter', '⏎'].forEach(key => {
+        ['enter', '⏎'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'Enter' });
         });
     });
 
     test('parse Escape', () => {
-        ['esc'].forEach(key => {
+        ['esc'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'Escape' });
         });
     });
@@ -116,31 +116,31 @@ describe('parse special keys', () => {
     });
 
     test('parse Home', () => {
-        ['home', '⤒'].forEach(key => {
+        ['home', '⤒'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'Home' });
         });
     });
 
     test('parse Insert', () => {
-        ['insert', 'ins', '⎀'].forEach(key => {
+        ['insert', 'ins', '⎀'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'Insert' });
         });
     });
 
     test('parse PageDown', () => {
-        ['pagedown', 'pgdn', '⇟'].forEach(key => {
+        ['pagedown', 'pgdn', '⇟'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'PageDown' });
         });
     });
 
     test('parse PageUp', () => {
-        ['pageup', 'pgup', '⇞'].forEach(key => {
+        ['pageup', 'pgup', '⇞'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'PageUp' });
         });
     });
 
     test('parse Tab', () => {
-        ['tab', '⭾', '↹', '⇥'].forEach(key => {
+        ['tab', '⭾', '↹', '⇥'].forEach((key) => {
             expect(parse(key)).toEqual({ key: 'Tab' });
         });
     });
@@ -213,13 +213,13 @@ describe('modifier and special key combinations', () => {
         up: 'ArrowUp',
     };
 
-    const forEachCombinations = <TMap extends {}, TAlpha extends keyof TMap = keyof TMap>(
+    const forEachCombinations = <TMap extends { [key: string]: any }, TAlpha extends keyof TMap = keyof TMap>(
         alphabet: TAlpha[],
         fn: (combinations: TAlpha[], inUseMap: TMap) => void,
         inUseMap: TMap = {} as TMap,
         combinations: TAlpha[] = [],
     ) => {
-        alphabet.forEach(mod => {
+        alphabet.forEach((mod) => {
             if (inUseMap[mod]) {
                 return;
             }
@@ -248,7 +248,7 @@ describe('modifier and special key combinations', () => {
 
     test('modifier and simple keys combinations', () => {
         forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
-            simpleKeys.forEach(key => {
+            simpleKeys.forEach((key) => {
                 expect(parse(`${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,
                     key,
@@ -259,7 +259,7 @@ describe('modifier and special key combinations', () => {
 
     test('modifier and simple keys combinations with strict operator', () => {
         forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
-            simpleKeys.forEach(key => {
+            simpleKeys.forEach((key) => {
                 expect(parse(`!${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,
                     key,
@@ -271,7 +271,7 @@ describe('modifier and special key combinations', () => {
 
     test('modifier and special keys combinations', () => {
         forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
-            Object.keys(specialKeysMap).forEach(key => {
+            Object.keys(specialKeysMap).forEach((key) => {
                 expect(parse(`${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,
                     key: specialKeysMap[key],
@@ -282,7 +282,7 @@ describe('modifier and special key combinations', () => {
 
     test('modifier and special keys combinations with non-strict operator', () => {
         forEachCombinations<HotkeyObject>(allModifiers, (modifiers, hotkey) => {
-            Object.keys(specialKeysMap).forEach(key => {
+            Object.keys(specialKeysMap).forEach((key) => {
                 expect(parse(`!${modifiers.join('+')}+${key}`)).toEqual({
                     ...hotkey,
                     key: specialKeysMap[key],

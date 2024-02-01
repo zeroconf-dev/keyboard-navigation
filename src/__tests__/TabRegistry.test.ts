@@ -547,9 +547,7 @@ describe('TabRegistry', () => {
                     [2, tr3],
                 ]),
             );
-            const tr1 = TabRegistry.fromMap(
-                new Map<number, FocuserType>([[1, tr2]]),
-            );
+            const tr1 = TabRegistry.fromMap(new Map<number, FocuserType>([[1, tr2]]));
 
             expect(tr1.focusFirstIn([2, 2, 2, 1])).toBe(true);
             expect(focuser).toHaveBeenCalledTimes(1);

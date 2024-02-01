@@ -23,7 +23,7 @@ export const renderHotkey = (hotkey: HotkeyObject) => {
 };
 
 export function hotkeyMapper(hotkeys: Iterable<HotkeyObject>): Iterable<HotkeyObjectExtended> {
-    const generator = function*(iter: Iterable<HotkeyObject>): Generator<HotkeyObjectExtended, void, void> {
+    const generator = function* (iter: Iterable<HotkeyObject>): Generator<HotkeyObjectExtended, void, void> {
         const accepted: Set<string> = new Set();
         for (const hotkey of iter) {
             const hashCode = serializeHotkey(hotkey);
@@ -38,20 +38,20 @@ export function hotkeyMapper(hotkeys: Iterable<HotkeyObject>): Iterable<HotkeyOb
                         ? hotkey.key === 'ArrowLeft'
                             ? -100
                             : hotkey.key === 'ArrowRight'
-                            ? -99
-                            : hotkey.key === 'ArrowUp'
-                            ? -98
-                            : hotkey.key === 'ArrowDown'
-                            ? -97
-                            : -91
+                              ? -99
+                              : hotkey.key === 'ArrowUp'
+                                ? -98
+                                : hotkey.key === 'ArrowDown'
+                                  ? -97
+                                  : -91
                         : hotkey.key === 'Tab'
-                        ? -90
-                        : 0
+                          ? -90
+                          : 0
                     : hotkey.key === 'Tab' && hotkey.shift
-                    ? -89
-                    : hotkey.key === 'Enter'
-                    ? -88
-                    : 0,
+                      ? -89
+                      : hotkey.key === 'Enter'
+                        ? -88
+                        : 0,
             };
             accepted.add(hotkeyExtended.hashCode);
             yield hotkeyExtended;
@@ -84,7 +84,7 @@ export const HotkeyLegendBase = (props: HotkeyLegendBaseProps) => {
             setCurrentRegistry(globalRegistry.currentLocalRegistry);
             forceRender();
         }
-        return globalRegistry.subscribe(reg => {
+        return globalRegistry.subscribe((reg) => {
             setCurrentRegistry(reg);
             forceRender();
         });
@@ -94,8 +94,8 @@ export const HotkeyLegendBase = (props: HotkeyLegendBaseProps) => {
         currentRegistry == null
             ? null
             : props.mapFn == null
-            ? currentRegistry.iterHotkeys()
-            : props.mapFn(currentRegistry.iterHotkeys());
+              ? currentRegistry.iterHotkeys()
+              : props.mapFn(currentRegistry.iterHotkeys());
 
     // prettier-ignore
     return hotkeys == null ? null : <>{Array.from(hotkeys).map(hotkey => props.renderHotkey(hotkey))}</>;

@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { Input as InputClassic } from '@zeroconf/keyboard-navigation/components/Tabbable';
@@ -29,7 +30,7 @@ import React from 'react';
         Input: InputHooks,
         TabBoundary: TabBoundaryHotkeys,
     },
-].forEach(components => {
+].forEach((components) => {
     const Focuser = components.Focuser as typeof FocuserClassic;
     const TabBoundary = components.TabBoundary as typeof TabBoundaryClassic;
     const Input = components.Input as typeof InputClassic;
@@ -38,8 +39,8 @@ import React from 'react';
         (TabBoundary as any) === (TabBoundaryClassic as any)
             ? 'Classic'
             : (TabBoundary as any) === (TabBoundaryHooks as any)
-            ? 'Hooks'
-            : 'Hotkeys';
+              ? 'Hooks'
+              : 'Hotkeys';
 
     describe(`TabBoundary.${suiteName}`, () => {
         const createErrorBoundary = installErrorBoundary();

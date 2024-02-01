@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { TabBoundary as TabBoundaryClassic } from '@zeroconf/keyboard-navigation/components/TabBoundary';
@@ -29,7 +30,7 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
         Focuser: FocuserHooks,
         TabBoundary: TabBoundaryHooks,
     },
-].forEach(components => {
+].forEach((components) => {
     const Focuser = components.Focuser as typeof FocuserClassic;
     const TabBoundary = components.TabBoundary as typeof TabBoundaryClassic;
 
@@ -135,7 +136,7 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
 
             const focuser = container.querySelector('[name=focuser1]') as HTMLInputElement;
 
-            allNavigationEvents.forEach(event => fireEvent.keyDown(focuser, event));
+            allNavigationEvents.forEach((event) => fireEvent.keyDown(focuser, event));
 
             expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowUp', noModifiers);
             expect(onArrowKeys).toHaveBeenCalledWith('focuser1', 'ArrowDown', noModifiers);
@@ -150,7 +151,7 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
 
             const focuser = container.querySelector('[name=focuser1]') as HTMLInputElement;
 
-            allNavigationEvents.forEach(event => fireEvent.keyDown(focuser, event));
+            allNavigationEvents.forEach((event) => fireEvent.keyDown(focuser, event));
 
             expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowDown', noModifiers);
             expect(onNavigationKeys).toHaveBeenCalledWith('focuser1', 'ArrowLeft', noModifiers);
@@ -200,7 +201,7 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
 
             const focuser = container.querySelector('[name=focuser]') as HTMLInputElement;
 
-            allNavigationEvents.forEach(event => {
+            allNavigationEvents.forEach((event) => {
                 fireEvent.keyDown(focuser, event);
                 switch (event.key) {
                     case ' ':
@@ -244,8 +245,8 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
             );
             const focuser = container.querySelector('[name=focuser]') as HTMLInputElement;
 
-            allNavigationEvents.forEach(event => fireEvent.keyDown(focuser, event));
-            ['a', 'b', 'c', '1', '2', '3'].forEach(key => fireEvent.keyDown(focuser, { key }));
+            allNavigationEvents.forEach((event) => fireEvent.keyDown(focuser, event));
+            ['a', 'b', 'c', '1', '2', '3'].forEach((key) => fireEvent.keyDown(focuser, { key }));
 
             expect(onKeyDown).toHaveBeenCalledTimes(allNavigationEvents.length);
         });
@@ -273,8 +274,8 @@ const shiftModifier: ModifierKeys = Object.assign({}, noModifiers, {
             );
             const focuser = container.querySelector('[name=focuser]') as HTMLInputElement;
 
-            allNavigationEvents.forEach(event => fireEvent.keyDown(focuser, event));
-            ['a', 'b', 'c', '1', '2', '3'].forEach(key => fireEvent.keyDown(focuser, { key }));
+            allNavigationEvents.forEach((event) => fireEvent.keyDown(focuser, event));
+            ['a', 'b', 'c', '1', '2', '3'].forEach((key) => fireEvent.keyDown(focuser, { key }));
 
             expect(onKeyDown).not.toHaveBeenCalled();
         });

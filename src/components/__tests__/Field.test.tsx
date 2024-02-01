@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import { cleanup, fireEvent, render } from '@testing-library/react';
 import { Field as FieldClassic, Props } from '@zeroconf/keyboard-navigation/components/Field';
 import { Focuser } from '@zeroconf/keyboard-navigation/components/Focuser';
@@ -9,7 +10,6 @@ import {
     rerenderFieldEditMode,
 } from '@zeroconf/keyboard-navigation/components/__tests__/helpers/Field';
 import { Field as FieldHooks } from '@zeroconf/keyboard-navigation/hooks/components/Field';
-import * as React from 'react';
 
 [
     {
@@ -18,7 +18,7 @@ import * as React from 'react';
     {
         Field: FieldHooks,
     },
-].forEach(components => {
+].forEach((components) => {
     const Field = components.Field as typeof FieldClassic;
 
     const suiteName = Field === FieldClassic ? 'Classic' : 'Hooks';

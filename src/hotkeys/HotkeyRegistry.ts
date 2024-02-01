@@ -51,7 +51,7 @@ export class HotkeyRegistry {
 
     public set currentLocalRegistry(registry: HotkeyRegistry | null) {
         currentLocalRegistry = registry;
-        subscriptions.forEach(handler => handler(registry));
+        subscriptions.forEach((handler) => handler(registry));
     }
     public static get global() {
         if (globalRegistry == null) {
@@ -136,7 +136,7 @@ export class HotkeyRegistry {
         }
     }
 
-    private iterLocal = function*(this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
+    private iterLocal = function* (this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
         let reg = this as HotkeyRegistry;
         while (true) {
             if ((this.scope !== scopes.global && reg === this.global) || reg == null) {
@@ -150,7 +150,7 @@ export class HotkeyRegistry {
         }
     };
 
-    private iterScope = function*(this: HotkeyRegistry, scope: string): Generator<HotkeyRegistry, void, undefined> {
+    private iterScope = function* (this: HotkeyRegistry, scope: string): Generator<HotkeyRegistry, void, undefined> {
         const registries = this.global.scopes.get(scope);
         if (registries != null) {
             for (const registry of registries) {
@@ -189,7 +189,7 @@ export class HotkeyRegistry {
         return false;
     }
 
-    public [Symbol.iterator] = function*(this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
+    public [Symbol.iterator] = function* (this: HotkeyRegistry): Generator<HotkeyRegistry, void, void> {
         yield* this.iterLocal();
         if (this.getCrossGlobalBoundary()) {
             yield this.global;
@@ -239,7 +239,7 @@ export class HotkeyRegistry {
         }
     }
 
-    public iterHotkeys = function*(this: HotkeyRegistry): Generator<HotkeyObject, void, void> {
+    public iterHotkeys = function* (this: HotkeyRegistry): Generator<HotkeyObject, void, void> {
         for (const reg of this) {
             for (const hotkey of reg.hotkeys.values()) {
                 yield hotkey[2];
@@ -247,7 +247,7 @@ export class HotkeyRegistry {
         }
     };
 
-    public iterLocalHotkeys = function*(this: HotkeyRegistry): Generator<HotkeyObject, void, void> {
+    public iterLocalHotkeys = function* (this: HotkeyRegistry): Generator<HotkeyObject, void, void> {
         for (const reg of this.iterLocal()) {
             for (const hotkey of reg.hotkeys.values()) {
                 yield hotkey[2];
@@ -258,11 +258,11 @@ export class HotkeyRegistry {
 
     public remove(hotkeyId: HotkeyID) {
         this.hotkeys.delete(hotkeyId);
-        subscriptions.forEach(handler => handler(this.currentLocalRegistry));
+        subscriptions.forEach((handler) => handler(this.currentLocalRegistry));
     }
 
     public removeAll(hotkeyIds: HotkeyID[]) {
-        hotkeyIds.forEach(hotkeyId => this.remove(hotkeyId));
+        hotkeyIds.forEach((hotkeyId) => this.remove(hotkeyId));
     }
 
     public run(event: HotkeyEvent & Partial<EventBubbleControl> & { target?: HTMLElement }): boolean {

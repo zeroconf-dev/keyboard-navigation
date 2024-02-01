@@ -41,7 +41,7 @@ function iterateModifiers(
     },
     mods: Modifier[] = [],
 ) {
-    modifiers.forEach(mod => {
+    modifiers.forEach((mod) => {
         if (mods.indexOf(mod) !== -1) {
             return;
         }
@@ -303,9 +303,9 @@ describe('isModifierMatching', () => {
 
 describe('isKeyMatching', () => {
     test('strict simple alphabet', () => {
-        keys.forEach(key => {
+        keys.forEach((key) => {
             iterateModifiers(
-                event => {
+                (event) => {
                     const hotkey: HotkeyObject = {
                         key: key.length !== 1 ? null : key,
                     };
@@ -323,9 +323,9 @@ describe('isKeyMatching', () => {
     });
 
     test('non-strict simple alphabet', () => {
-        keys.forEach(key => {
+        keys.forEach((key) => {
             iterateModifiers(
-                event => {
+                (event) => {
                     const hotkey: HotkeyObject = {
                         key: key.length !== 1 ? null : key,
                         nonStrict: true,

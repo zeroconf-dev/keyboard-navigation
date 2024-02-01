@@ -2,20 +2,31 @@ import React from 'react';
 
 type ErrorBoundary = React.ComponentClass;
 export interface ErrorRefObject {
-    error: unknown;
-    errorInfo: unknown;
+    error: Error;
+    errorInfo: {
+        componentStack: string;
+    };
 }
+
+const componentStackLineRegex = /^([\s\w\d]+)( \(\/.*\))?$/;
 
 const createErrorRef = (): React.RefObject<ErrorRefObject> => React.createRef();
 const createErrorBoundary = (): [ErrorBoundary, React.RefObject<ErrorRefObject>] => {
     const ref = createErrorRef();
     return [
-        class extends React.Component {
+        class ErrorBoundary extends React.Component<{ readonly children?: React.ReactNode }> {
             public static displayName = 'ErrorBoundary';
-            public componentDidCatch(error: unknown, errorInfo: unknown) {
-                (ref as React.MutableRefObject<{ error: unknown; errorInfo: unknown }>).current = {
+            public componentDidCatch(error: Error, errorInfo: { componentStack: string }) {
+                (ref as React.MutableRefObject<{ error: Error; errorInfo: { componentStack: string } }>).current = {
                     error: error,
-                    errorInfo: errorInfo,
+                    errorInfo: {
+                        ...errorInfo,
+                        componentStack: errorInfo.componentStack.split('\n').map(line =>
+                            line.trim().startsWith('at /')
+                                ? null
+                                : line.replace(componentStackLineRegex, '$1')
+                        ).filter(line => line != null).join('\n'),
+                    },
                 };
             }
             public render() {

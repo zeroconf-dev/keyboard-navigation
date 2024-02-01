@@ -19,8 +19,8 @@ type Component = keyof JSX.IntrinsicElements | React.ComponentClass<any>;
 type ComponentPropTypes<TComp extends Component> = TComp extends keyof JSX.IntrinsicElements
     ? JSX.IntrinsicElements[TComp]
     : TComp extends React.ComponentClass<infer Props>
-    ? Props
-    : never;
+      ? Props
+      : never;
 
 export function Tabbable<TElm extends keyof JSX.IntrinsicElements>(
     Comp: TElm,

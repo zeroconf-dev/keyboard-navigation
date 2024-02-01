@@ -1,6 +1,6 @@
+/** @jest-environment jsdom */
 import { cleanup, render, fireEvent, act } from '@testing-library/react';
 import { Hotkey } from '@zeroconf/keyboard-navigation/hotkeys/components/Hotkey';
-import React from 'react';
 import { installErrorBoundary } from '@zeroconf/keyboard-navigation/__tests__/helpers/errorBoundary';
 import { GlobalHotkeyBoundary } from '@zeroconf/keyboard-navigation/hotkeys/components/GlobalHotkeyBoundary';
 
@@ -19,12 +19,12 @@ test('render hotkey outside boundary throws', () => {
     );
 
     expect(errorRef.current).toMatchInlineSnapshot(`
-        Object {
+        {
           "error": [Error: It appears that useHotkey/useHotkeys is called outside of a hotkey boundary, consider wrapping your application in a <GlobalHotkeyBoundary />],
-          "errorInfo": Object {
+          "errorInfo": {
             "componentStack": "
-            in Hotkey
-            in ErrorBoundary",
+            at Hotkey
+            at ErrorBoundary",
           },
         }
     `);

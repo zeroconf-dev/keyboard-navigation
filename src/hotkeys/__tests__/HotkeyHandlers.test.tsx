@@ -1,8 +1,8 @@
+/** @jest-environment jsdom */
 import { fireEvent, render } from '@testing-library/react';
 import { Input } from '@zeroconf/keyboard-navigation/hooks/components/Tabbable';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/helpers/assert';
 import { createHandler, HotkeysObject } from '@zeroconf/keyboard-navigation/hotkeys/createHandler';
-import * as React from 'react';
 
 describe('Handlers', () => {
     test('non-strict', () => {
@@ -82,7 +82,7 @@ describe('Handlers', () => {
         const input = expectInstanceOf(container.firstElementChild, HTMLInputElement);
 
         const assertCalls = () =>
-            Object.keys(handlers).forEach(k => expect(handlers[k]).toHaveBeenCalledTimes(counters[k]));
+            Object.keys(handlers).forEach((k) => expect(handlers[k]).toHaveBeenCalledTimes(counters[k]));
 
         fireEvent.keyDown(input, { key: '!' });
         // counters['!']++;
@@ -140,7 +140,7 @@ describe('Handlers', () => {
         const input = expectInstanceOf(container.firstElementChild, HTMLDivElement);
 
         const assertCalls = () =>
-            Object.keys(handlers).forEach(k => expect(handlers[k]).toHaveBeenCalledTimes(counters[k]));
+            Object.keys(handlers).forEach((k) => expect(handlers[k]).toHaveBeenCalledTimes(counters[k]));
 
         fireEvent.keyDown(input, { key: '!' });
         counters['!']++;
