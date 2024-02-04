@@ -21,11 +21,13 @@ const createErrorBoundary = (): [ErrorBoundary, React.RefObject<ErrorRefObject>]
                     error: error,
                     errorInfo: {
                         ...errorInfo,
-                        componentStack: errorInfo.componentStack.split('\n').map(line =>
-                            line.trim().startsWith('at /')
-                                ? null
-                                : line.replace(componentStackLineRegex, '$1')
-                        ).filter(line => line != null).join('\n'),
+                        componentStack: errorInfo.componentStack
+                            .split('\n')
+                            .map((line) =>
+                                line.trim().startsWith('at /') ? null : line.replace(componentStackLineRegex, '$1'),
+                            )
+                            .filter((line) => line != null)
+                            .join('\n'),
                     },
                 };
             }

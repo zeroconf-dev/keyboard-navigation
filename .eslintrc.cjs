@@ -4,6 +4,7 @@ module.exports = {
         'plugin:react/recommended',
         'plugin:@typescript-eslint/recommended',
         'plugin:prettier/recommended',
+        'plugin:storybook/recommended',
     ],
     parserOptions: {
         ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
@@ -19,6 +20,7 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 'off',
         'react/no-children-prop': 'off',
         'react/prop-types': 'off',
+        'react/react-in-jsx-scope': 'off',
     },
     settings: {
         react: {

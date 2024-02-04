@@ -102,7 +102,10 @@ export class Grid<TComp extends keyof JSX.IntrinsicElements = 'div'> extends Rea
     }
 
     public render() {
-        const props = filterPropKeys<Omit<ComponentProps<TComp>, 'children'>, TComp, Omit<Props<TComp>, 'children'>>(this.props, this.filterPropKeys);
+        const props = filterPropKeys<Omit<ComponentProps<TComp>, 'children'>, TComp, Omit<Props<TComp>, 'children'>>(
+            this.props,
+            this.filterPropKeys,
+        );
 
         return (
             <TabBoundary

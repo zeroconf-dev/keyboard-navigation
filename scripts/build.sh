@@ -31,7 +31,7 @@ copySource() {
     local d
     (
         cd "$DIR" && \
-        for f in $(find src -type f \( -name '*.ts' -o -name '*.tsx' \) | grep -v '__tests__' | grep -v '/stories/' ); do
+        for f in $(find src -type f \( -name '*.ts' -o -name '*.tsx' \) | grep -v '__tests__' | grep -v '/stories/' | grep -v 'vite-env.d.ts' ); do
             d="$(dirname "${f/src/package}")"
             [ ! -d "$d" ] && mkdir -p "$d"
             cp "$f" "${f/src/package}"

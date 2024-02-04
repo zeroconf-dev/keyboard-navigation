@@ -170,7 +170,10 @@ export interface FocuserRef {
 }
 
 type Focuser = React.ForwardRefExoticComponent<Props & React.RefAttributes<FocuserRef>>;
-export let Focuser: Focuser | React.ForwardRefRenderFunction<FocuserRef, Props> = (props: Props, ref: React.Ref<FocuserRef>) => {
+export let Focuser: Focuser | React.ForwardRefRenderFunction<FocuserRef, Props> = (
+    props: Props,
+    ref: React.Ref<FocuserRef>,
+) => {
     const tabRegistry = useTabRegistry(false);
     const inputRef = useRef<HTMLInputElement>(null);
 

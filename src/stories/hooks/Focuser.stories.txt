@@ -1,0 +1,154 @@
+import { action } from '@storybook/addon-actions';
+import { Button, TabBoundary, useTabRegistry } from '@zeroconf/keyboard-navigation/hooks';
+import { FocuserFn, FocuserOptions } from '@zeroconf/keyboard-navigation/TabRegistry';
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+
+const styles: { [key: string]: React.CSSProperties } = {
+    button: {
+        boxSizing: 'border-box',
+        margin: 10,
+    },
+    card: {
+        border: '1px solid #aaa',
+        borderRadius: 5,
+        boxSizing: 'border-box',
+        color: '#666',
+        height: 150,
+        margin: 10,
+        padding: 10,
+        width: 400,
+    },
+};
+
+const useFocusable = (
+    focusKey: string | undefined,
+    ref: React.RefObject<{ focus: FocuserFn } | HTMLElement>,
+    autoFocus?: boolean,
+) => {
+    const focus = useCallback((e?: FocuserOptions) => {
+        if (ref.current != null) {
+            const res = ref.current.focus(e as FocuserOptions);
+            return res === undefined ? true : res;
+        }
+        return false;
+    }, []);
+    const tabRegistry = useTabRegistry();
+
+    useEffect(() => {
+        if (tabRegistry != null && focusKey) {
+            tabRegistry.add(focusKey, focus as any);
+            return () => tabRegistry.delete(focusKey);
+        }
+        return;
+    }, [tabRegistry, focusKey, focus]);
+
+    useLayoutEffect(() => {
+        if (tabRegistry != null && autoFocus) {
+            tabRegistry.focus(focusKey);
+        }
+    }, [tabRegistry, focusKey, autoFocus]);
+
+    return {
+        'data-focuskey': focusKey,
+        ref: ref,
+        tabIndex: -1,
+    } as React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+};
+
+interface CardProps {
+    readonly autoFocus?: boolean;
+    readonly children?: React.ReactNode;
+    readonly focusKey: string;
+    readonly onFocus?: React.FocusEventHandler<HTMLDivElement>;
+}
+const Card: React.FC<CardProps> = (props) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const p = useFocusable(props.focusKey, ref, props.autoFocus);
+    return (
+        <div {...p} onFocus={props.onFocus} ref={ref} style={styles.card}>
+            {props.children}
+        </div>
+    );
+};
+
+interface FocusOnClickProps {
+    readonly children?: React.ReactNode;
+    readonly focusKey: string;
+}
+const FocusOnClick: React.FC<FocusOnClickProps> = (props) => {
+    const tabRegistry = useTabRegistry();
+    const onClick = useCallback(() => {
+        if (tabRegistry != null) {
+            tabRegistry.focus(props.focusKey);
+        }
+    }, [tabRegistry, props.focusKey]);
+    return (
+        <Button name="focus-card" onClick={onClick} style={styles.button}>
+            {props.children}
+        </Button>
+    );
+};
+
+export default {
+    title: 'Hooks/useFocusable',
+};
+
+export const CardIsFocusable = () => (
+    <TabBoundary>
+        <Card focusKey="dummy">This card is focusable.</Card>
+    </TabBoundary>
+);
+
+CardIsFocusable.story = {
+    name: 'card is focusable',
+};
+
+export const WithOnFocusAction = () => (
+    <TabBoundary>
+        <Card focusKey="dummy" onFocus={action('focus')}>
+            Focus action
+        </Card>
+    </TabBoundary>
+);
+
+WithOnFocusAction.story = {
+    name: 'with onFocus action',
+};
+
+export const WithAutoFocus = () => (
+    <TabBoundary>
+        <Card autoFocus={true} focusKey="auto-focus">
+            This is card automatically gains focus on mount.
+        </Card>
+    </TabBoundary>
+);
+
+WithAutoFocus.story = {
+    name: 'with autoFocus',
+};
+
+export const NavigatingBetweenFields = () => (
+    <TabBoundary>
+        <Card autoFocus={true} focusKey="field1">
+            Press &apos;Tab&apos; to focus next card.
+        </Card>
+        <Card focusKey="field2">Press &apos;Shift + Tab&apos; to focus previous card.</Card>
+    </TabBoundary>
+);
+
+NavigatingBetweenFields.story = {
+    name: 'navigating between fields',
+};
+
+export const ProgramticallyFocusCard = () => (
+    <TabBoundary>
+        <Card focusKey="card" onFocus={action('focused')}>
+            Click the button to focus card.
+        </Card>
+        <FocusOnClick focusKey="card">Focus card above</FocusOnClick>
+    </TabBoundary>
+);
+
+ProgramticallyFocusCard.story = {
+    name: 'programtically focus card',
+};

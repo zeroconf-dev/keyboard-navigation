@@ -1,7 +1,6 @@
 import { useFocusable, Hotkey, HotkeyBoundary } from '@zeroconf/keyboard-navigation';
-import { css } from '@zeroconf/keyboard-navigation/stories/utils/css';
-import React, { useLayoutEffect } from 'react';
 import { useFocus } from '@zeroconf/keyboard-navigation/stories/utils/useFocus';
+import { useLayoutEffect } from 'react';
 
 interface LinkProps {
     autoFocus?: boolean;
@@ -9,17 +8,18 @@ interface LinkProps {
     focusKey: string;
 }
 
-export const Link = css`
-    &:focus {
-        border-color: red;
-        border-bottom-color: red;
-    }
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-bottom-color: black;
-    height: 50px;
-    outline: none;
-`((props: LinkProps) => {
+// css`
+//     &:focus {
+//         border-color: red;
+//         border-bottom-color: red;
+//     }
+//     cursor: pointer;
+//     border: 1px solid transparent;
+//     border-bottom-color: black;
+//     height: 50px;
+//     outline: none;
+// `
+export const Link = (props: LinkProps) => {
     const { autoFocus, className, focusKey } = props;
     const { focus, ref } = useFocus<HTMLDivElement>();
     const focusableProps = useFocusable(focusKey, focus);
@@ -57,4 +57,4 @@ export const Link = css`
             {special}
         </HotkeyBoundary>
     );
-});
+};
