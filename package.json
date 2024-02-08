@@ -62,9 +62,6 @@
   "main": "lib/index.js",
   "module": "lib2015/index.js",
   "repository": "https://github.com/zeroconf-dev/keyboard-navigation",
-  "resolutions": {
-    "strip-ansi": "6.0.1"
-  },
   "scripts": {
     "build": "rollup -c rollup.config.dist.js",
     "build:example": "rollup -c rollup.config.example.js",
