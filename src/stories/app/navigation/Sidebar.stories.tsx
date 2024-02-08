@@ -1,23 +1,13 @@
 import React, { useMemo, useCallback } from 'react';
 import { Hotkey, TabBoundary, HotkeyHandler } from '@zeroconf/keyboard-navigation';
-import { css } from '@zeroconf/keyboard-navigation/stories/utils/css';
-import { globalStyles } from '@zeroconf/keyboard-navigation/stories/utils/globalStyles';
 import { actions } from '@storybook/addon-actions';
 import { NavigationMap } from '@zeroconf/keyboard-navigation/hotkeys/components/NavigationMap';
 import { HotkeyLegend } from '@zeroconf/keyboard-navigation/stories/utils/HotkeyLegend';
 import { Link } from '@zeroconf/keyboard-navigation/stories/app/navigation/Link';
 
-const Sidebar = css`
-    border: 1px solid black;
-    width: 300px;
-`(TabBoundary);
-
-const SidebarLink = css`
-    align-items: center;
-    display: flex;
-    flex: 1 1 auto;
-    padding: 1rem;
-`(Link);
+const SidebarLink = ({ className, ...props }: PropsFor<typeof Link>) => (
+    <Link className={`items-center flex flex-auto p-4 ${className ?? ''}`} {...props} />
+);
 
 const actionsMap = actions({
     navigate: 'navigation fired',
@@ -80,7 +70,7 @@ export const _Sidebar = () => {
 
     return (
         <>
-            <Sidebar cycle={false} onKeyDown={stopPropagation}>
+            <TabBoundary className="w-72 border" cycle={false} onKeyDown={stopPropagation}>
                 <SidebarLink autoFocus={true} focusKey="link1" />
                 <SidebarLink focusKey="link2" />
                 <SidebarLink focusKey="link3" />
@@ -95,8 +85,7 @@ export const _Sidebar = () => {
                 <SidebarLink focusKey="link5" />
                 <Hotkey hotkey="enter" handler={navigationHandler} />
                 <NavigationMap navigationMap={outerMap} tabDirectionAxis="y" />
-                {globalStyles}
-            </Sidebar>
+            </TabBoundary>
             <HotkeyLegend />
         </>
     );

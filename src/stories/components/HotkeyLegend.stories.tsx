@@ -1,14 +1,10 @@
 import { action } from '@storybook/addon-actions';
-import {
-    GlobalHotkeyBoundary as GlobalHotkeyBoundaryBase,
-    HotkeyObject,
-    HotkeyLegend,
-} from '@zeroconf/keyboard-navigation';
+import { GlobalHotkeyBoundary, HotkeyObject, HotkeyLegend } from '@zeroconf/keyboard-navigation';
 import { hotkeyToText } from '@zeroconf/keyboard-navigation/hotkeys/components/__tests__/helpers/hotkeyToText';
 import React, { useCallback, useEffect, useRef } from 'react';
-import styled from '@emotion/styled';
 import { HotkeyRegistry } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { Hotkey as HotkeyBase } from '@zeroconf/keyboard-navigation/hotkeys/components';
+import type { Meta } from '@storybook/react';
 
 const renderHotkey = (hotkey: HotkeyObject) => {
     const hotkeyText = hotkeyToText(hotkey);
@@ -32,19 +28,10 @@ const Hotkey: React.FC<FocusByKeyProps> = (props) => {
     return <HotkeyBase hotkey={props.hotkey} handler={handler} />;
 };
 
-const GlobalHotkeyBoundary = styled(GlobalHotkeyBoundaryBase)`
-    &:focus {
-        border-color: red;
-    }
-    border: 1px solid black;
-    height: 100px;
-    outline: 0;
-    width: 100px;
-`;
-
 export default {
     title: 'Components/HotkeyLegend',
-};
+    component: HotkeyLegend,
+} satisfies Meta<typeof HotkeyLegend>;
 
 export const EmptyLegend = () => <HotkeyLegend renderHotkey={renderHotkey} />;
 
@@ -73,7 +60,12 @@ export const LegendWithSimpleContent = () => {
     }, [ref]);
 
     return (
-        <GlobalHotkeyBoundary hotkeyRegistryRef={hotkeyRegistryRef} ref={ref} tabIndex={-1}>
+        <GlobalHotkeyBoundary
+            className="focus:border-red-500 border border-black h-24 outline-none w-24"
+            hotkeyRegistryRef={hotkeyRegistryRef}
+            ref={ref}
+            tabIndex={-1}
+        >
             <Hotkey hotkey="ctrl" />
             <Hotkey hotkey="s" />
             <Hotkey hotkey="esc" handler={blur} />

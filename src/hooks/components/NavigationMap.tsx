@@ -1,5 +1,5 @@
 import { useNavigationMap } from '@zeroconf/keyboard-navigation/hooks/useNavigationMap';
-import { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import type { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 
 interface NavigationMapProps {
     navigationMap: NavigationFieldMap;

@@ -1,5 +1,6 @@
 import { ModifierKeys, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
-import { createNavigationHandler, NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import { createNavigationHandler } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import type { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 
 function getFailureFocuser() {

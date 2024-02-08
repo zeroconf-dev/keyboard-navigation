@@ -1,9 +1,10 @@
-import { NavigationFieldMap, createNavigationHandler } from '@zeroconf/keyboard-navigation/FieldNavigation';
-import { NavigationKeyHandler } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
+import { createNavigationHandler } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import type { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import type { NavigationKeyHandler } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { TabBoundary } from '@zeroconf/keyboard-navigation/hooks/components/TabBoundary';
+import type { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 import { assertNeverNonThrow, filterPropKeys, UnpackedHTMLAttributes } from '@zeroconf/keyboard-navigation/util';
 import { useMemo, useRef } from 'react';
-import { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
 
 interface ComponentProps<TComp extends keyof JSX.IntrinsicElements = 'div'> {
     /**

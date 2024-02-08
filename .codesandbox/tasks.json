@@ -11,58 +11,50 @@
   "tasks": {
     "build": {
       "name": "build",
-      "command": "yarn build",
-      "runAtStart": false
+      "command": "yarn build"
     },
     "build:example": {
       "name": "build:example",
-      "command": "yarn build:example",
-      "runAtStart": false
+      "command": "yarn build:example"
     },
     "clean": {
       "name": "clean",
-      "command": "yarn clean",
-      "runAtStart": false
+      "command": "yarn clean"
     },
     "docz:dev": {
       "name": "docz:dev",
-      "command": "yarn docz:dev",
-      "runAtStart": false
+      "command": "yarn docz:dev"
     },
     "docz:build": {
       "name": "docz:build",
-      "command": "yarn docz:build",
-      "runAtStart": false
+      "command": "yarn docz:build"
     },
     "fmt": {
       "name": "fmt",
-      "command": "yarn fmt",
-      "runAtStart": false
+      "command": "yarn fmt"
     },
     "lint": {
       "name": "lint",
-      "command": "yarn lint",
-      "runAtStart": false
+      "command": "yarn lint"
     },
     "prepublishOnly": {
       "name": "prepublishOnly",
-      "command": "yarn prepublishOnly",
-      "runAtStart": false
+      "command": "yarn prepublishOnly"
     },
     "test": {
       "name": "test",
-      "command": "yarn test",
-      "runAtStart": false
+      "command": "yarn test"
     },
     "storybook": {
       "name": "storybook",
       "command": "yarn storybook",
-      "runAtStart": false
+      "preview": {
+        "port": 6006
+      }
     },
     "build-storybook": {
       "name": "build-storybook",
-      "command": "yarn build-storybook",
-      "runAtStart": false
+      "command": "yarn build-storybook"
     }
   }
 }

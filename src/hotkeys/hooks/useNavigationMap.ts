@@ -1,4 +1,5 @@
-import { createNavigationHandler, NavigationFieldMap, useTabRegistry } from '@zeroconf/keyboard-navigation/hooks';
+import { createNavigationHandler, useTabRegistry } from '@zeroconf/keyboard-navigation/hooks';
+import type { NavigationFieldMap } from '@zeroconf/keyboard-navigation/hooks';
 import { useHotkeys } from '@zeroconf/keyboard-navigation/hotkeys/hooks/useHotkeys';
 import { HotkeyMap } from '@zeroconf/keyboard-navigation/hotkeys/HotkeyRegistry';
 import { useMemo } from 'react';

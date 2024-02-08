@@ -11,62 +11,12 @@ const meta = {
 
 export default meta;
 
-// css`
-//     flex: 1 1 auto;
-//     display: grid;
-//     grid-template-columns: repeat(3, 1fr);
-//     grid-template-rows: repeat(auto-fill, minmax(3rem, 1fr));
-//     grid-column-gap: 1rem;
-//     grid-row-gap: 2rem;
-// `
-const Container = TabBoundary;
-
-// css`
-//     border: none;
-//     font-family: sans-serif;
-//     font-size: 14px;
-//     height: 100%;
-//     outline: none;
-//     padding: 15px;
-//     width: 100%;
-// `
-const EditorInput = Input;
-
-// css`
-//     font-family: sans-serif;
-//     font-size: 14px;
-//     height: 100%;
-//     padding: 15px;
-// `
-const EditorValue = (props: JSX.IntrinsicElements['div']) => <div {...props} />;
-
 interface EditorProps {
     className?: string;
     disabled?: boolean;
     focusKey: string;
 }
 
-// css`
-//     &:focus,
-//     &:focus-within,
-//     &.active {
-//         border-color: red;
-//         outline: none;
-//     }
-//     &.disabled {
-//         opacity: 0.4;
-//     }
-//     border: 1px solid black;
-//     border-radius: 5px;
-//     overflow: hidden;
-//     height: 3rem;
-//     ${(props: { disabled?: boolean }) =>
-//         props.disabled
-//             ? null
-//             : {
-//                   cursor: 'text',
-//               }};
-// `
 const Editor = (props: EditorProps) => {
     const { className, disabled = false, focusKey } = props;
     const { focus, ref } = useFocus<HTMLDivElement>();
@@ -119,8 +69,9 @@ const Editor = (props: EditorProps) => {
         ? [
               <Hotkey key="submit" hotkey="enter" handler={submitEditor} />,
               <Hotkey key="cancel" hotkey="esc" handler={cancelEditor} />,
-              <EditorInput
+              <Input
                   autoFocus={true}
+                  className="border-none text-sm h-full w-full outline-none p-4"
                   key="editor"
                   name="editor"
                   onBlur={cancelEditor}
@@ -132,17 +83,18 @@ const Editor = (props: EditorProps) => {
         : [
               <Hotkey key="activate" hotkey="enter" handler={activateEditor} />,
               <Hotkey key="clear" hotkey="del" handler={clearEditor} />,
-              <EditorValue className={disabled ? 'disabled' : undefined} key="value">
+              <div className="text-sm h-full p-4" key="value">
                   {submittedValue || focusKey}
-              </EditorValue>,
+              </div>,
           ];
 
     // To "inherit" arrow key navigation.
     const crossLocalBoundary = true;
 
+    const classNames = `${className ?? ''} focus:outline-none overflow-hidden h-12 border border-solid rounded-md border-black focus:border-red-500 focus-within:border-red-500`;
     return (
         <TabBoundary
-            className={`${className} ${disabled ? 'disabled' : ''}`}
+            className={classNames}
             crossLocalBoundary={crossLocalBoundary}
             boundaryKey={focusKey}
             onClick={activateEditor}
@@ -163,7 +115,7 @@ const navigationMap: NavigationFieldMap = [
 
 export const Grid = () => (
     <>
-        <Container scope="grid">
+        <TabBoundary className="grid grid-cols-3 gap-x-4 gap-y-8" scope="grid">
             <Editor focusKey="editor1" />
             <Editor focusKey="editor2" />
             <Editor focusKey="editor3" />
@@ -176,7 +128,7 @@ export const Grid = () => (
             <Editor focusKey="editor8" />
             <Editor focusKey="editor9" />
             <NavigationMap navigationMap={navigationMap} />
-        </Container>
+        </TabBoundary>
         <div style={{ height: '1rem' }}>
             <HotkeyLegend />
         </div>
@@ -184,5 +136,5 @@ export const Grid = () => (
 );
 
 Grid.story = {
-    title: 'Grid'
+    title: 'Grid',
 };

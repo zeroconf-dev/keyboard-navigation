@@ -23,5 +23,5 @@
         },
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": [".docz", ".storybook", "build", "docs", "examples", "node_modules", "package", "reports"],
+    "exclude": [".storybook", "build", "examples", "node_modules", "package", "reports"],
 }

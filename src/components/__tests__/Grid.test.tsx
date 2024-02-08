@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import { cleanup, render } from '@testing-library/react';
-import { Focuser as FocuserClassic, NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
+import { Focuser as FocuserClassic } from '@zeroconf/keyboard-navigation/components/Focuser';
+import type { NavigationKeyHandler } from '@zeroconf/keyboard-navigation/components/Focuser';
 import { Grid as GridClassic } from '@zeroconf/keyboard-navigation/components/Grid';
 import { Section as SectionClassic } from '@zeroconf/keyboard-navigation/components/Section';
 import { expectInstanceOf } from '@zeroconf/keyboard-navigation/components/__tests__/helpers/assert';
@@ -12,7 +13,7 @@ import {
     shiftTab,
     tab,
 } from '@zeroconf/keyboard-navigation/components/__tests__/helpers/event';
-import { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
+import type { NavigationFieldMap } from '@zeroconf/keyboard-navigation/FieldNavigation';
 import { Focuser as FocuserHooks } from '@zeroconf/keyboard-navigation/hooks/components/Focuser';
 import { Grid as GridHooks } from '@zeroconf/keyboard-navigation/hooks/components/Grid';
 import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/components/Section';

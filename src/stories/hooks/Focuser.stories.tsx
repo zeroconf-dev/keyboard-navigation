@@ -3,23 +3,6 @@ import { Button, TabBoundary, useTabRegistry } from '@zeroconf/keyboard-navigati
 import { FocuserFn, FocuserOptions } from '@zeroconf/keyboard-navigation/TabRegistry';
 import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
-const styles: { [key: string]: React.CSSProperties } = {
-    button: {
-        boxSizing: 'border-box',
-        margin: 10,
-    },
-    card: {
-        border: '1px solid #aaa',
-        borderRadius: 5,
-        boxSizing: 'border-box',
-        color: '#666',
-        height: 150,
-        margin: 10,
-        padding: 10,
-        width: 400,
-    },
-};
-
 const useFocusable = (
     focusKey: string | undefined,
     ref: React.RefObject<{ focus: FocuserFn } | HTMLElement>,
@@ -65,7 +48,12 @@ const Card: React.FC<CardProps> = (props) => {
     const ref = useRef<HTMLDivElement>(null);
     const p = useFocusable(props.focusKey, ref, props.autoFocus);
     return (
-        <div {...p} onFocus={props.onFocus} ref={ref} style={styles.card}>
+        <div
+            {...p}
+            className="focus:border-red-500 border border-gray-300 h-40 w-96 m-3 p-3 text-gray-500 rounded-md outline-none"
+            onFocus={props.onFocus}
+            ref={ref}
+        >
             {props.children}
         </div>
     );
@@ -83,7 +71,7 @@ const FocusOnClick: React.FC<FocusOnClickProps> = (props) => {
         }
     }, [tabRegistry, props.focusKey]);
     return (
-        <Button name="focus-card" onClick={onClick} style={styles.button}>
+        <Button className="m-3 box-border" name="focus-card" onClick={onClick}>
             {props.children}
         </Button>
     );

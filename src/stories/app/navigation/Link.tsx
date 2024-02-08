@@ -2,6 +2,12 @@ import { useFocusable, Hotkey, HotkeyBoundary } from '@zeroconf/keyboard-navigat
 import { useFocus } from '@zeroconf/keyboard-navigation/stories/utils/useFocus';
 import { useLayoutEffect } from 'react';
 
+const meta = {
+    title: 'App/Example',
+};
+
+export default meta;
+
 interface LinkProps {
     autoFocus?: boolean;
     className?: string;
@@ -57,4 +63,8 @@ export const Link = (props: LinkProps) => {
             {special}
         </HotkeyBoundary>
     );
+};
+
+Link.story = {
+    title: 'Link',
 };
