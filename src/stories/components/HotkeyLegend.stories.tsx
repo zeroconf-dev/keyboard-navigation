@@ -61,7 +61,7 @@ export const LegendWithSimpleContent = () => {
 
     return (
         <GlobalHotkeyBoundary
-            className="focus:border-red-500 border border-black h-24 outline-none w-24"
+            className="size-24 border border-black outline-none focus:border-red-500"
             hotkeyRegistryRef={hotkeyRegistryRef}
             ref={ref}
             tabIndex={-1}

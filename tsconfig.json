@@ -20,8 +20,9 @@
             "@zeroconf/keyboard-navigation/*": ["src/*"],
             "@zeroconf/keyboard-navigation": ["src/index"],
             "@testing-library/react": ["node_modules/@testing-library/react/types/index.d.ts"],
-        },
+            "prettier": ["node_modules/prettier/index.d.ts"]
+        }
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": [".storybook", "build", "examples", "node_modules", "package", "reports"],
+    "exclude": [".storybook", "build", "examples", "node_modules", "package", "reports"]
 }

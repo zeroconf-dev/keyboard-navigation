@@ -45,6 +45,7 @@ import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/com
             const renderGrid = (navigationHandler: NavigationKeyHandler) => (
                 <>
                     <Section
+                        // eslint-disable-next-line tailwindcss/no-custom-classname
                         className="section1"
                         focusKey="section1"
                         key="section1"
@@ -52,6 +53,7 @@ import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/com
                         onFocus={onFocus1}
                     />
                     <Section
+                        // eslint-disable-next-line tailwindcss/no-custom-classname
                         className="section2"
                         focusKey="section2"
                         key="section2"
@@ -113,16 +115,19 @@ import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/com
 
             const renderGrid = (navigationHandler: NavigationKeyHandler) => (
                 <>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Focuser focusKey="focuser1" onFocus={onFocus.focuser1} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser2" onFocus={onFocus.focuser2} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser3" onFocus={onFocus.focuser3} onNavigationKeys={navigationHandler} />
                     </div>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Focuser focusKey="focuser4" onFocus={onFocus.focuser4} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser5" onFocus={onFocus.focuser5} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser6" onFocus={onFocus.focuser6} onNavigationKeys={navigationHandler} />
                     </div>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Focuser focusKey="focuser7" onFocus={onFocus.focuser7} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser8" onFocus={onFocus.focuser8} onNavigationKeys={navigationHandler} />
@@ -186,16 +191,19 @@ import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/com
 
             const renderGrid = (navigationHandler: NavigationKeyHandler) => (
                 <>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Focuser focusKey="focuser1" onFocus={onFocus.focuser1} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser2" onFocus={onFocus.focuser2} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser3" onFocus={onFocus.focuser3} onNavigationKeys={navigationHandler} />
                     </div>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Focuser focusKey="focuser4" onFocus={onFocus.focuser4} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser5" onFocus={onFocus.focuser5} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser6" onFocus={onFocus.focuser6} onNavigationKeys={navigationHandler} />
                     </div>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Focuser focusKey="focuser7" onFocus={onFocus.focuser7} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser8" onFocus={onFocus.focuser8} onNavigationKeys={navigationHandler} />
@@ -257,16 +265,19 @@ import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/com
 
             const renderGrid = (navigationHandler: NavigationKeyHandler) => (
                 <>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Focuser focusKey="focuser1" onFocus={onFocus.focuser1} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser2" onFocus={onFocus.focuser2} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser3" onFocus={onFocus.focuser3} onNavigationKeys={navigationHandler} />
                     </div>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Focuser focusKey="focuser4" onFocus={onFocus.focuser4} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser5" onFocus={onFocus.focuser5} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser6" onFocus={onFocus.focuser6} onNavigationKeys={navigationHandler} />
                     </div>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Focuser focusKey="focuser7" onFocus={onFocus.focuser7} onNavigationKeys={navigationHandler} />
                         <Focuser focusKey="focuser8" onFocus={onFocus.focuser8} onNavigationKeys={navigationHandler} />
@@ -327,7 +338,9 @@ import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/com
             };
 
             const renderGrid = (navigationHandler: NavigationKeyHandler) => (
+                // eslint-disable-next-line tailwindcss/no-custom-classname
                 <div className="grid-content">
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Section focusKey="section1" navigationHandler={navigationHandler} onFocus={onFocus.section1}>
                             <Section focusKey="inner-section1" />
@@ -336,6 +349,7 @@ import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/com
                             <div />
                         </Section>
                     </div>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Section focusKey="section3" navigationHandler={navigationHandler} onFocus={onFocus.section3}>
                             <div />
@@ -392,7 +406,9 @@ import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/com
             };
 
             const renderGrid = (navigationHandler: NavigationKeyHandler) => (
+                // eslint-disable-next-line tailwindcss/no-custom-classname
                 <div className="grid-content">
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Section focusKey="section1" navigationHandler={navigationHandler} onFocus={onFocus.section1}>
                             <Section focusKey="inner-section1" />
@@ -401,6 +417,7 @@ import { Section as SectionHooks } from '@zeroconf/keyboard-navigation/hooks/com
                             <div />
                         </Section>
                     </div>
+                    {/*eslint-disable-next-line tailwindcss/no-custom-classname */}
                     <div className="row">
                         <Section focusKey="section3" navigationHandler={navigationHandler} onFocus={onFocus.section3}>
                             <div />

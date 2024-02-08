@@ -6,7 +6,7 @@ import { HotkeyLegend } from '@zeroconf/keyboard-navigation/stories/utils/Hotkey
 import { Link } from '@zeroconf/keyboard-navigation/stories/app/navigation/Link';
 
 const SidebarLink = ({ className, ...props }: PropsFor<typeof Link>) => (
-    <Link className={`items-center flex flex-auto p-4 ${className ?? ''}`} {...props} />
+    <Link className={`flex flex-auto items-center p-4 ${className ?? ''}`} {...props} />
 );
 
 const actionsMap = actions({

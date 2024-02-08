@@ -1,10 +1,11 @@
 module.exports = {
     parser: '@typescript-eslint/parser',
     extends: [
+        'plugin:tailwindcss/recommended',
         'plugin:react/recommended',
         'plugin:@typescript-eslint/recommended',
-        'plugin:prettier/recommended',
         'plugin:storybook/recommended',
+        'plugin:prettier/recommended',
     ],
     parserOptions: {
         ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features

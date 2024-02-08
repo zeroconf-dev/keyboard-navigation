@@ -71,7 +71,7 @@ const Editor = (props: EditorProps) => {
               <Hotkey key="cancel" hotkey="esc" handler={cancelEditor} />,
               <Input
                   autoFocus={true}
-                  className="border-none text-sm h-full w-full outline-none p-4"
+                  className="size-full border-none p-4 text-sm outline-none"
                   key="editor"
                   name="editor"
                   onBlur={cancelEditor}
@@ -83,7 +83,7 @@ const Editor = (props: EditorProps) => {
         : [
               <Hotkey key="activate" hotkey="enter" handler={activateEditor} />,
               <Hotkey key="clear" hotkey="del" handler={clearEditor} />,
-              <div className="text-sm h-full p-4" key="value">
+              <div className="h-full p-4 text-sm" key="value">
                   {submittedValue || focusKey}
               </div>,
           ];

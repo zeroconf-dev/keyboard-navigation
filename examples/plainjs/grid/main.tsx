@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Grid } from '../../../src/components/Grid';
-import { Section, TabBoundary } from '../../../src/index';
+import { Section, TabBoundary } from '../../../src/classic';
 
 const navigationMap: [string, string][] = [['section1', 'section2'], ['section3', 'section4']];
 

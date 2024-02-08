@@ -226,6 +226,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
         );
         return (
             <TabBoundary
+                // eslint-disable-next-line tailwindcss/no-custom-classname
                 className={this.props.className || 'section-container'}
                 {...boundaryProps}
                 as={this.props.as}
@@ -243,6 +244,7 @@ class SectionWithTabRegistry<TComp extends keyof JSX.IntrinsicElements = 'div'> 
                 />
                 <TabBoundary
                     boundaryKey={this.props.focusKey + '-section'}
+                    // eslint-disable-next-line tailwindcss/no-custom-classname
                     className="section"
                     cycle={this.props.cycle}
                     focusParentOnChildOrigin={true}

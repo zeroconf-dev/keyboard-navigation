@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Input, Select, TabBoundary, TabRegistry } from '../../../src/index';
+import { Button, Input, Select, TabBoundary, TabRegistry } from '../../../src/classic';
 
 interface Props {}
 

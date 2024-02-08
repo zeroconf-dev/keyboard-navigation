@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions';
 import { Button, TabBoundary, useTabRegistry } from '@zeroconf/keyboard-navigation/hooks';
 import { FocuserFn, FocuserOptions } from '@zeroconf/keyboard-navigation/TabRegistry';
-import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 const useFocusable = (
     focusKey: string | undefined,
@@ -10,8 +10,12 @@ const useFocusable = (
 ) => {
     const focus = useCallback((e?: FocuserOptions) => {
         if (ref.current != null) {
-            const res = ref.current.focus(e as FocuserOptions);
-            return res === undefined ? true : res;
+            if (ref.current instanceof HTMLElement) {
+                ref.current.focus();
+                return true;
+            } else {
+                return ref.current.focus(e ?? { focusOrigin: 'none' });
+            }
         }
         return false;
     }, []);
@@ -19,17 +23,17 @@ const useFocusable = (
 
     useEffect(() => {
         if (tabRegistry != null && focusKey) {
-            tabRegistry.add(focusKey, focus as any);
+            tabRegistry.add(focusKey, focus);
             return () => tabRegistry.delete(focusKey);
         }
         return;
     }, [tabRegistry, focusKey, focus]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (tabRegistry != null && autoFocus) {
             tabRegistry.focus(focusKey);
         }
-    }, [tabRegistry, focusKey, autoFocus]);
+    }, []);
 
     return {
         'data-focuskey': focusKey,
@@ -50,7 +54,7 @@ const Card: React.FC<CardProps> = (props) => {
     return (
         <div
             {...p}
-            className="focus:border-red-500 border border-gray-300 h-40 w-96 m-3 p-3 text-gray-500 rounded-md outline-none"
+            className="m-3 h-40 w-96 cursor-pointer rounded-md border border-gray-300 p-3 text-gray-500 outline-none focus:border-red-500 active:bg-zinc-200"
             onFocus={props.onFocus}
             ref={ref}
         >
@@ -60,6 +64,7 @@ const Card: React.FC<CardProps> = (props) => {
 };
 
 interface FocusOnClickProps {
+    readonly autoFocus?: boolean;
     readonly children?: React.ReactNode;
     readonly focusKey: string;
 }
@@ -71,7 +76,12 @@ const FocusOnClick: React.FC<FocusOnClickProps> = (props) => {
         }
     }, [tabRegistry, props.focusKey]);
     return (
-        <Button className="m-3 box-border" name="focus-card" onClick={onClick}>
+        <Button
+            autoFocus={props.autoFocus}
+            className="m-3 box-border rounded-md border border-zinc-800 p-2 outline-none focus:border-red-500 active:bg-zinc-200"
+            name="focus-card"
+            onClick={onClick}
+        >
             {props.children}
         </Button>
     );
@@ -133,7 +143,9 @@ export const ProgramticallyFocusCard = () => (
         <Card focusKey="card" onFocus={action('focused')}>
             Click the button to focus card.
         </Card>
-        <FocusOnClick focusKey="card">Focus card above</FocusOnClick>
+        <FocusOnClick autoFocus={true} focusKey="card">
+            Focus card above
+        </FocusOnClick>
     </TabBoundary>
 );
 

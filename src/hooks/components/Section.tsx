@@ -202,6 +202,7 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
 
     return (
         <TabBoundary
+            // eslint-disable-next-line tailwindcss/no-custom-classname
             className={props.className || 'section-container'}
             {...boundaryProps}
             as={props.as}
@@ -219,6 +220,7 @@ export const Section = <TComp extends keyof JSX.IntrinsicElements>(props: Props<
             />
             <TabBoundary
                 boundaryKey={props.focusKey + '-section'}
+                // eslint-disable-next-line tailwindcss/no-custom-classname
                 className="section"
                 cycle={props.cycle}
                 focusParentOnChildOrigin={true}

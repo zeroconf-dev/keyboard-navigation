@@ -1,6 +1,7 @@
 import { useFocusable, Hotkey, HotkeyBoundary } from '@zeroconf/keyboard-navigation';
 import { useFocus } from '@zeroconf/keyboard-navigation/stories/utils/useFocus';
 import { useLayoutEffect } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 const meta = {
     title: 'App/Example',
@@ -9,22 +10,11 @@ const meta = {
 export default meta;
 
 interface LinkProps {
-    autoFocus?: boolean;
-    className?: string;
-    focusKey: string;
+    readonly autoFocus?: boolean;
+    readonly className?: string;
+    readonly focusKey: string;
 }
 
-// css`
-//     &:focus {
-//         border-color: red;
-//         border-bottom-color: red;
-//     }
-//     cursor: pointer;
-//     border: 1px solid transparent;
-//     border-bottom-color: black;
-//     height: 50px;
-//     outline: none;
-// `
 export const Link = (props: LinkProps) => {
     const { autoFocus, className, focusKey } = props;
     const { focus, ref } = useFocus<HTMLDivElement>();
@@ -58,7 +48,15 @@ export const Link = (props: LinkProps) => {
         ) : null;
 
     return (
-        <HotkeyBoundary crossLocalBoundary={true} className={className} {...focusableProps} ref={ref}>
+        <HotkeyBoundary
+            className={twMerge(
+                'h-20 cursor-pointer border border-transparent border-b-black outline-none focus:border-red-500',
+                className,
+            )}
+            crossLocalBoundary={true}
+            {...focusableProps}
+            ref={ref}
+        >
             {focusKey}
             {special}
         </HotkeyBoundary>

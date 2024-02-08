@@ -36,9 +36,9 @@ export default {
             exclude: tsconfig.exclude,
             include: ['src/*.tsx', 'src/**/*.tsx', 'src/*.ts', 'src/**/*.ts', entry],
             typescript: typescript,
-            tsconfig: Object.assign({}, tsconfig.compilerOptions, {
-                target: 'es2015',
-            }),
+            tsconfig: './tsconfig.json',
+            target: 'es2015',
+            rootDir: '.',
         }),
         commonjs({
             include: 'node_modules/**',
