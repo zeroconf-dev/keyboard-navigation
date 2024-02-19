@@ -3,7 +3,7 @@
     "setupTasks": [
         {
             "name": "Install Dependencies",
-            "command": "yarn install"
+            "command": "npm ci --silent"
         }
     ],
 
@@ -11,42 +11,43 @@
     "tasks": {
         "build": {
             "name": "build",
-            "command": "yarn build"
+            "command": "npm run build"
         },
         "build:example": {
             "name": "build:example",
-            "command": "yarn build:example"
+            "command": "npm run build:example"
         },
         "clean": {
             "name": "clean",
-            "command": "yarn clean"
+            "command": "npm run clean"
         },
         "fmt": {
             "name": "fmt",
-            "command": "yarn fmt"
+            "command": "npm run fmt"
         },
         "lint": {
             "name": "lint",
-            "command": "yarn lint"
+            "command": "npm run lint"
         },
         "prepublishOnly": {
             "name": "prepublishOnly",
-            "command": "yarn prepublishOnly"
+            "command": "npm run prepublishOnly"
         },
         "test": {
             "name": "test",
-            "command": "yarn test"
+            "command": "npm run test"
         },
         "storybook": {
             "name": "storybook",
-            "command": "yarn storybook",
+            "command": "npm run storybook",
+            "runAtStart": true,
             "preview": {
                 "port": 6006
             }
         },
         "build-storybook": {
             "name": "build-storybook",
-            "command": "yarn build-storybook"
+            "command": "npm run build-storybook"
         }
     }
 }
