@@ -24,7 +24,14 @@ export type HotkeyHandler = (opts: {
     hotkeyRegistry: HotkeyRegistry;
     tabRegistry: TabRegistry | null;
 }) => boolean;
-type HotkeyTuppleWithID = [HotkeyID, string, HotkeyObject, HotkeyHandler, TabRegistry | null];
+type HotkeyTuppleWithID = [
+    id: HotkeyID,
+    hotkeyStr: string,
+    hotkeyObjectHash: string,
+    hotkeyObject: HotkeyObject,
+    handler: HotkeyHandler,
+    tabRegistry: TabRegistry | null,
+];
 export type HotkeyMap = {
     [hotkey: string]: HotkeyHandler | null | undefined | false;
 };
@@ -44,6 +51,16 @@ export type HotkeyID = HotkeyIDBrand & number;
 let _hotkeyId = 0 as HotkeyID;
 const nextHotkeyId = () => _hotkeyId++;
 
+const serializeHotkey = (hotkey: HotkeyObject) =>
+    `${hotkey.alt ? 'a' : ''}` +
+    `${hotkey.cmd ? 'C' : ''}` +
+    `${hotkey.ctrl ? 'c' : ''}` +
+    `${hotkey.meta ? 'm' : ''}` +
+    `${hotkey.mod ? 'M' : ''}` +
+    `${hotkey.nonStrict ? 'S' : ''}` +
+    `${hotkey.shift ? 's' : ''}` +
+    `:${hotkey.key ?? ''}`;
+
 export class HotkeyRegistry {
     public get currentLocalRegistry() {
         return currentLocalRegistry;
@@ -53,6 +70,7 @@ export class HotkeyRegistry {
         currentLocalRegistry = registry;
         subscriptions.forEach((handler) => handler(registry));
     }
+
     public static get global() {
         if (globalRegistry == null) {
             globalRegistry = new HotkeyRegistry(globalScope, null, {
@@ -204,7 +222,7 @@ export class HotkeyRegistry {
         tabRegistry?: TabRegistry | null,
     ): HotkeyID {
         const hotkeyId = nextHotkeyId();
-        this.hotkeys.set(hotkeyId, [hotkeyId, hotkeyStr, hotkey, handler, tabRegistry || null]);
+        this.hotkeys.set(hotkeyId, [hotkeyId, hotkeyStr, serializeHotkey(hotkey), hotkey, handler, tabRegistry || null]);
         return hotkeyId;
     }
 
@@ -240,17 +258,25 @@ export class HotkeyRegistry {
     }
 
     public iterHotkeys = function* (this: HotkeyRegistry): Generator<HotkeyObject, void, void> {
+        const seen = new Set<string>();
         for (const reg of this) {
             for (const hotkey of reg.hotkeys.values()) {
-                yield hotkey[2];
+                if (!seen.has(hotkey[2])) {
+                    seen.add(hotkey[2]);
+                    yield hotkey[3];
+                }
             }
         }
     };
 
     public iterLocalHotkeys = function* (this: HotkeyRegistry): Generator<HotkeyObject, void, void> {
+        const seen = new Set<string>();
         for (const reg of this.iterLocal()) {
             for (const hotkey of reg.hotkeys.values()) {
-                yield hotkey[2];
+                if (!seen.has(hotkey[2])) {
+                    seen.add(hotkey[2]);
+                    yield hotkey[3];
+                }
             }
         }
         return;
@@ -268,8 +294,8 @@ export class HotkeyRegistry {
     public run(event: HotkeyEvent & Partial<EventBubbleControl> & { target?: HTMLElement }): boolean {
         const focusKey = getTargetFocusKey(event.target);
         for (const hotkey of this.hotkeys.values()) {
-            if (isHotkeyMatching(hotkey[2], event)) {
-                if (hotkey[3]({ focusKey: focusKey, event, hotkeyRegistry: this, tabRegistry: hotkey[4] })) {
+            if (isHotkeyMatching(hotkey[3], event)) {
+                if (hotkey[4]({ focusKey: focusKey, event, hotkeyRegistry: this, tabRegistry: hotkey[5] })) {
                     if (typeof event.preventDefault === 'function') {
                         event.preventDefault();
                     }
