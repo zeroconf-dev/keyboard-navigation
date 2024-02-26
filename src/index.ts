@@ -36,3 +36,4 @@ export type {
 export { parse } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 export type { HotkeyObject } from '@zeroconf/keyboard-navigation/hotkeys/parser';
 export { TabRegistry } from '@zeroconf/keyboard-navigation/TabRegistry';
+export type { FocuserFn, FocuserOptions } from '@zeroconf/keyboard-navigation/TabRegistry';
